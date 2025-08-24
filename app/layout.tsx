@@ -27,8 +27,8 @@ export default function RootLayout({
       <head>
         <style>{`
 html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
+  font-family: "GT Standard", ${GeistSans.style.fontFamily};
+  --font-sans: "GT Standard", ${GeistSans.variable};
   --font-mono: ${GeistMono.variable};
   --font-playfair: ${playfair.variable};
 }

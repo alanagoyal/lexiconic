@@ -126,7 +126,7 @@
 
 /* Minimal aesthetic inspired by Possible Monuments */
 .monuments-title {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "GT Standard", system-ui, -apple-system, sans-serif;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -149,7 +149,7 @@
 }
 
 .word-definition {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "GT Standard", system-ui, -apple-system, sans-serif;
   font-weight: 400;
   line-height: 1.4;
 }
