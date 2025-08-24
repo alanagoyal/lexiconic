@@ -4,76 +4,76 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color tokens to match library/dictionary aesthetic */
-  --background: oklch(1 0 0); /* Pure white for clean library feel */
-  --foreground: oklch(0.3 0 0); /* Dark slate for readability */
-  --card: oklch(0.98 0.005 200); /* Very light cyan for word tiles */
-  --card-foreground: oklch(0.2 0.02 200); /* Deep cyan for tile text */
-  --popover: oklch(1 0 0); /* White for expanded definitions */
-  --popover-foreground: oklch(0.3 0 0); /* Dark slate for definition text */
-  --primary: oklch(0.35 0.08 200); /* Deep cyan for primary elements */
-  --primary-foreground: oklch(0.98 0 0); /* Light text on primary */
-  --secondary: oklch(0.65 0.15 280); /* Vibrant violet for accents */
-  --secondary-foreground: oklch(0.98 0 0); /* Light text on secondary */
-  --muted: oklch(0.96 0.01 120); /* Very light green for muted sections */
-  --muted-foreground: oklch(0.45 0 0); /* Medium gray for muted text */
-  --accent: oklch(0.65 0.15 280); /* Violet for highlighting */
-  --accent-foreground: oklch(0.98 0 0); /* Light text on accent */
-  --destructive: oklch(0.55 0.2 25); /* Red for destructive actions */
-  --destructive-foreground: oklch(0.98 0 0); /* Light text on destructive */
-  --border: oklch(0.85 0 0); /* Light gray borders */
-  --input: oklch(0.98 0.005 200); /* Light cyan for inputs */
-  --ring: oklch(0.65 0.15 280); /* Violet focus rings */
-  --chart-1: oklch(0.6 0.15 15); /* Coral chart color */
-  --chart-2: oklch(0.55 0.1 280); /* Purple chart color */
-  --chart-3: oklch(0.6 0.12 120); /* Green chart color */
-  --chart-4: oklch(0.75 0.08 350); /* Pink chart color */
-  --chart-5: oklch(0.65 0.1 220); /* Blue chart color */
-  --radius: 0.5rem; /* Moderate rounding for sophistication */
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.3 0 0);
-  --sidebar-primary: oklch(0.35 0.08 200);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.65 0.15 280);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.85 0 0);
-  --sidebar-ring: oklch(0.65 0.15 280);
+  /* Possible Monuments inspired minimal aesthetic */
+  --background: #fafafa; /* Off-white background like reference site */
+  --foreground: #1a1a1a; /* Near black for strong contrast */
+  --card: #ffffff; /* Clean white for content areas */
+  --card-foreground: #1a1a1a; /* Dark text on cards */
+  --popover: #ffffff; /* White popover */
+  --popover-foreground: #1a1a1a; /* Dark text in popover */
+  --primary: #1a1a1a; /* Black for primary elements */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #666666; /* Mid gray for secondary elements */
+  --secondary-foreground: #ffffff; /* White text on secondary */
+  --muted: #f5f5f5; /* Very light gray for muted sections */
+  --muted-foreground: #666666; /* Medium gray for muted text */
+  --accent: #1a1a1a; /* Black accent */
+  --accent-foreground: #ffffff; /* White text on accent */
+  --destructive: #dc2626; /* Red for destructive actions */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #e5e5e5; /* Light gray borders */
+  --input: #ffffff; /* White inputs */
+  --ring: #1a1a1a; /* Black focus rings */
+  --chart-1: #1a1a1a;
+  --chart-2: #666666;
+  --chart-3: #999999;
+  --chart-4: #cccccc;
+  --chart-5: #e5e5e5;
+  --radius: 0; /* No rounding for minimal aesthetic */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #1a1a1a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #666666;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #1a1a1a;
 }
 
 .dark {
-  /* Dark mode tokens for library aesthetic */
-  --background: oklch(0.08 0 0); /* Very dark for elegant night reading */
-  --foreground: oklch(0.92 0 0); /* Light text */
-  --card: oklch(0.12 0.01 200); /* Dark cyan cards */
-  --card-foreground: oklch(0.88 0.02 200); /* Light cyan text */
-  --popover: oklch(0.1 0 0); /* Dark popover */
-  --popover-foreground: oklch(0.92 0 0); /* Light popover text */
-  --primary: oklch(0.7 0.1 200); /* Brighter cyan for dark mode */
-  --primary-foreground: oklch(0.08 0 0); /* Dark text on primary */
-  --secondary: oklch(0.75 0.18 280); /* Brighter violet */
-  --secondary-foreground: oklch(0.08 0 0); /* Dark text on secondary */
-  --muted: oklch(0.15 0.01 120); /* Dark muted */
-  --muted-foreground: oklch(0.65 0 0); /* Medium light muted text */
-  --accent: oklch(0.75 0.18 280); /* Bright violet accent */
-  --accent-foreground: oklch(0.08 0 0); /* Dark text on accent */
-  --destructive: oklch(0.65 0.25 25); /* Brighter red */
-  --destructive-foreground: oklch(0.08 0 0); /* Dark text on destructive */
-  --border: oklch(0.2 0 0); /* Dark borders */
-  --input: oklch(0.12 0.01 200); /* Dark cyan inputs */
-  --ring: oklch(0.75 0.18 280); /* Bright violet rings */
-  --chart-1: oklch(0.7 0.2 15);
-  --chart-2: oklch(0.65 0.15 280);
-  --chart-3: oklch(0.7 0.15 120);
-  --chart-4: oklch(0.8 0.12 350);
-  --chart-5: oklch(0.75 0.12 220);
-  --sidebar: oklch(0.1 0 0);
-  --sidebar-foreground: oklch(0.92 0 0);
-  --sidebar-primary: oklch(0.7 0.1 200);
-  --sidebar-primary-foreground: oklch(0.08 0 0);
-  --sidebar-accent: oklch(0.75 0.18 280);
-  --sidebar-accent-foreground: oklch(0.08 0 0);
-  --sidebar-border: oklch(0.2 0 0);
-  --sidebar-ring: oklch(0.75 0.18 280);
+  /* Dark mode minimal aesthetic */
+  --background: #0a0a0a; /* Very dark background */
+  --foreground: #fafafa; /* Light text */
+  --card: #1a1a1a; /* Dark cards */
+  --card-foreground: #fafafa; /* Light text on cards */
+  --popover: #1a1a1a; /* Dark popover */
+  --popover-foreground: #fafafa; /* Light popover text */
+  --primary: #fafafa; /* Light for primary elements */
+  --primary-foreground: #0a0a0a; /* Dark text on primary */
+  --secondary: #999999; /* Light gray for secondary */
+  --secondary-foreground: #0a0a0a; /* Dark text on secondary */
+  --muted: #1a1a1a; /* Dark muted */
+  --muted-foreground: #999999; /* Light gray muted text */
+  --accent: #fafafa; /* Light accent */
+  --accent-foreground: #0a0a0a; /* Dark text on accent */
+  --destructive: #ef4444; /* Brighter red for dark mode */
+  --destructive-foreground: #fafafa; /* Light text on destructive */
+  --border: #333333; /* Dark borders */
+  --input: #1a1a1a; /* Dark inputs */
+  --ring: #fafafa; /* Light focus rings */
+  --chart-1: #fafafa;
+  --chart-2: #999999;
+  --chart-3: #666666;
+  --chart-4: #333333;
+  --chart-5: #1a1a1a;
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #fafafa;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #999999;
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #333333;
+  --sidebar-ring: #fafafa;
 }
 
 @theme inline {
@@ -124,24 +124,46 @@
   }
 }
 
-/* Added custom typography styles for dictionary aesthetic */
-.dictionary-title {
-  font-family: "Playfair Display", serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+/* Minimal aesthetic inspired by Possible Monuments */
+.monuments-title {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.word-tile {
-  transition: all 0.2s ease-in-out;
-  backdrop-filter: blur(10px);
+.word-row {
+  transition: background-color 0.15s ease;
+  border: none;
 }
 
-.word-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+.word-row:hover {
+  background-color: var(--muted);
 }
 
 .native-script {
-  font-family: "Noto Sans", "Arial Unicode MS", sans-serif;
-  font-weight: 500;
+  font-family: "Times New Roman", serif;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.word-definition {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Grid layout consistency */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr 4fr;
+  min-height: 100px;
+}
+
+@media (max-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
 }

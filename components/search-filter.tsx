@@ -44,28 +44,26 @@ export function SearchFilter({
   const hasActiveFilters = searchTerm || selectedLanguages.length > 0 || selectedCategories.length > 0
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4">
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search words, definitions, or languages..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10"
+            className="border-border bg-background text-sm"
           />
         </div>
 
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                <Filter className="w-4 h-4" />
-                Languages
+              <Button variant="outline" size="sm" className="monuments-title text-xs border-border bg-background">
+                LANGUAGES
                 {selectedLanguages.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 px-1 py-0 text-xs">
-                    {selectedLanguages.length}
-                  </Badge>
+                  <span className="ml-2 text-foreground">
+                    ({selectedLanguages.length})
+                  </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
@@ -84,13 +82,12 @@ export function SearchFilter({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                <Filter className="w-4 h-4" />
-                Categories
+              <Button variant="outline" size="sm" className="monuments-title text-xs border-border bg-background">
+                CATEGORIES
                 {selectedCategories.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 px-1 py-0 text-xs">
-                    {selectedCategories.length}
-                  </Badge>
+                  <span className="ml-2 text-foreground">
+                    ({selectedCategories.length})
+                  </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
@@ -108,19 +105,18 @@ export function SearchFilter({
           </DropdownMenu>
 
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2">
-              <X className="w-4 h-4" />
-              Clear
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="monuments-title text-xs">
+              CLEAR
             </Button>
           )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           Showing {filteredCount} of {totalWords} words
         </span>
-        {hasActiveFilters && <span className="text-primary">Filters active</span>}
+        {hasActiveFilters && <span className="text-foreground">FILTERS ACTIVE</span>}
       </div>
     </div>
   )

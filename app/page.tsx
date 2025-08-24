@@ -227,47 +227,48 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header - inspired by Possible Monuments */}
-      <header className="border-b border-border/20 bg-background sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      {/* Header - minimal style inspired by Possible Monuments */}
+      <header className="border-b border-border bg-background">
+        <div className="px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-serif text-foreground tracking-tight">UNTRANSLATABLE WORDS?</h1>
-            </div>
-            <div className="flex items-center gap-6">
-              <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-                <Languages className="w-4 h-4" />
-                <span>{availableLanguages.length} languages</span>
-              </div>
-              <Button onClick={getRandomWord} variant="ghost" size="sm" className="gap-2">
-                <Sparkles className="w-4 h-4" />
+            <h1 className="monuments-title text-sm md:text-base text-foreground">UNTRANSLATABLE WORDS?</h1>
+            <div className="flex items-center gap-8">
+              <button 
+                onClick={getRandomWord}
+                className="monuments-title text-sm text-foreground hover:text-muted-foreground transition-colors"
+              >
                 DISCOVER
-              </Button>
+              </button>
+              <div className="monuments-title text-xs text-muted-foreground">
+                {availableLanguages.length} LANGUAGES
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Search and Filters */}
-      <div className="max-w-7xl mx-auto px-6 py-6 border-b border-border/10">
-        <SearchFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          selectedLanguages={selectedLanguages}
-          onLanguageToggle={handleLanguageToggle}
-          selectedCategories={selectedCategories}
-          onCategoryToggle={handleCategoryToggle}
-          availableLanguages={availableLanguages}
-          availableCategories={availableCategories}
-          totalWords={words.length}
-          filteredCount={filteredWords.length}
-        />
+      {/* Search and Filters - moved to a separate bar */}
+      <div className="border-b border-border bg-background">
+        <div className="px-6 py-4">
+          <SearchFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedLanguages={selectedLanguages}
+            onLanguageToggle={handleLanguageToggle}
+            selectedCategories={selectedCategories}
+            onCategoryToggle={handleCategoryToggle}
+            availableLanguages={availableLanguages}
+            availableCategories={availableCategories}
+            totalWords={words.length}
+            filteredCount={filteredWords.length}
+          />
+        </div>
       </div>
 
-      {/* Words List */}
-      <main className="max-w-7xl mx-auto">
+      {/* Words List - full width grid layout */}
+      <main>
         {displayedWords.length > 0 ? (
-          <div className="space-y-0">
+          <div>
             {displayedWords.map((word, index) => (
               <div key={`${word.word}-${index}`} id={`word-${word.word}`}>
                 <WordRow word={word} />
@@ -276,9 +277,9 @@ export default function HomePage() {
 
             {/* Load More Indicator */}
             {displayedCount < filteredWords.length && (
-              <div className="text-center py-8">
+              <div className="border-t border-border p-6 text-center">
                 {isLoadingMore ? (
-                  <div className="text-muted-foreground">Loading more words...</div>
+                  <div className="text-muted-foreground text-sm">Loading more words...</div>
                 ) : (
                   <div className="text-sm text-muted-foreground">
                     Showing {displayedCount} of {filteredWords.length} words
@@ -288,22 +289,18 @@ export default function HomePage() {
             )}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No words found</h3>
-            <p className="text-muted-foreground">Try adjusting your search terms or filters</p>
+          <div className="p-16 text-center">
+            <div className="text-muted-foreground text-sm">No words found</div>
+            <div className="text-muted-foreground text-xs mt-2">Try adjusting your search terms or filters</div>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/10 bg-muted/20 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>
-              Celebrating the beautiful complexity of human language • Each word tells a story of culture, emotion, and
-              experience
-            </p>
+      <footer className="border-t border-border bg-background mt-16">
+        <div className="px-6 py-8 text-center">
+          <div className="text-xs text-muted-foreground uppercase letter-spacing-wide">
+            A digital exploration of linguistic untranslatability
           </div>
         </div>
       </footer>
