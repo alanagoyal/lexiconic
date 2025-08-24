@@ -71,74 +71,74 @@ export function WordRow({ word }: WordRowProps) {
         <div className="border-t border-border bg-muted/10">
           <div className="grid grid-cols-12">
             <div className="col-span-3"></div> {/* Empty space to align with content */}
-            <div className="col-span-9 p-6 border-l border-border">
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  {word.literal && word.literal !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Literal Translation</h4>
-                      <p className="text-foreground">{word.literal}</p>
-                    </div>
-                  )}
+            <div className="col-span-4 p-6 border-l border-border">
+              <div className="space-y-4">
+                {word.literal && word.literal !== "—" && (
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Literal Translation</h4>
+                    <p className="text-foreground">{word.literal}</p>
+                  </div>
+                )}
 
-                  {word.english_approx && word.english_approx !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">English Approximation</h4>
-                      <p className="text-foreground">{word.english_approx}</p>
-                    </div>
-                  )}
+                {word.english_approx && word.english_approx !== "—" && (
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">English Approximation</h4>
+                    <p className="text-foreground">{word.english_approx}</p>
+                  </div>
+                )}
 
-                  {word.example_native && word.example_native !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
-                      <p className="native-script text-foreground">{word.example_native}</p>
-                      {word.example_gloss && word.example_gloss !== "—" && (
-                        <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  {word.usage_notes && word.usage_notes !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage Notes</h4>
-                      <p className="text-sm text-foreground">{word.usage_notes}</p>
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    {word.family && word.family !== "—" && (
-                      <div className="text-xs text-muted-foreground">
-                        Language family: {word.family}
-                      </div>
-                    )}
-                    {word.disputed === "True" && (
-                      <div className="text-xs text-foreground border-l-2 border-border pl-2">
-                        Note: This translation is disputed
-                      </div>
-                    )}
-                    {word.loanword_in_english === "True" && (
-                      <div className="text-xs text-muted-foreground">
-                        This word exists as a loanword in English
-                      </div>
+                {word.example_native && word.example_native !== "—" && (
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
+                    <p className="native-script text-foreground">{word.example_native}</p>
+                    {word.example_gloss && word.example_gloss !== "—" && (
+                      <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
                     )}
                   </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="col-span-5 p-6 border-l border-border">
+              <div className="space-y-4">
+                {word.usage_notes && word.usage_notes !== "—" && (
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage Notes</h4>
+                    <p className="text-sm text-foreground">{word.usage_notes}</p>
+                  </div>
+                )}
 
-                  {word.sources && word.sources !== "—" && (
-                    <div className="pt-4 border-t border-border">
-                      <a
-                        href={word.sources}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-foreground hover:text-muted-foreground inline-flex items-center gap-1 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Source <ExternalLink className="w-3 h-3" />
-                      </a>
+                <div className="space-y-2">
+                  {word.family && word.family !== "—" && (
+                    <div className="text-xs text-muted-foreground">
+                      Language family: {word.family}
+                    </div>
+                  )}
+                  {word.disputed === "True" && (
+                    <div className="text-xs text-foreground border-l-2 border-border pl-2">
+                      Note: This translation is disputed
+                    </div>
+                  )}
+                  {word.loanword_in_english === "True" && (
+                    <div className="text-xs text-muted-foreground">
+                      This word exists as a loanword in English
                     </div>
                   )}
                 </div>
+
+                {word.sources && word.sources !== "—" && (
+                  <div className="pt-4 border-t border-border">
+                    <a
+                      href={word.sources}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-foreground hover:text-muted-foreground inline-flex items-center gap-1 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Source <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
