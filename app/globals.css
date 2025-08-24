@@ -1,0 +1,147 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color tokens to match library/dictionary aesthetic */
+  --background: oklch(1 0 0); /* Pure white for clean library feel */
+  --foreground: oklch(0.3 0 0); /* Dark slate for readability */
+  --card: oklch(0.98 0.005 200); /* Very light cyan for word tiles */
+  --card-foreground: oklch(0.2 0.02 200); /* Deep cyan for tile text */
+  --popover: oklch(1 0 0); /* White for expanded definitions */
+  --popover-foreground: oklch(0.3 0 0); /* Dark slate for definition text */
+  --primary: oklch(0.35 0.08 200); /* Deep cyan for primary elements */
+  --primary-foreground: oklch(0.98 0 0); /* Light text on primary */
+  --secondary: oklch(0.65 0.15 280); /* Vibrant violet for accents */
+  --secondary-foreground: oklch(0.98 0 0); /* Light text on secondary */
+  --muted: oklch(0.96 0.01 120); /* Very light green for muted sections */
+  --muted-foreground: oklch(0.45 0 0); /* Medium gray for muted text */
+  --accent: oklch(0.65 0.15 280); /* Violet for highlighting */
+  --accent-foreground: oklch(0.98 0 0); /* Light text on accent */
+  --destructive: oklch(0.55 0.2 25); /* Red for destructive actions */
+  --destructive-foreground: oklch(0.98 0 0); /* Light text on destructive */
+  --border: oklch(0.85 0 0); /* Light gray borders */
+  --input: oklch(0.98 0.005 200); /* Light cyan for inputs */
+  --ring: oklch(0.65 0.15 280); /* Violet focus rings */
+  --chart-1: oklch(0.6 0.15 15); /* Coral chart color */
+  --chart-2: oklch(0.55 0.1 280); /* Purple chart color */
+  --chart-3: oklch(0.6 0.12 120); /* Green chart color */
+  --chart-4: oklch(0.75 0.08 350); /* Pink chart color */
+  --chart-5: oklch(0.65 0.1 220); /* Blue chart color */
+  --radius: 0.5rem; /* Moderate rounding for sophistication */
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.3 0 0);
+  --sidebar-primary: oklch(0.35 0.08 200);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.65 0.15 280);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.85 0 0);
+  --sidebar-ring: oklch(0.65 0.15 280);
+}
+
+.dark {
+  /* Dark mode tokens for library aesthetic */
+  --background: oklch(0.08 0 0); /* Very dark for elegant night reading */
+  --foreground: oklch(0.92 0 0); /* Light text */
+  --card: oklch(0.12 0.01 200); /* Dark cyan cards */
+  --card-foreground: oklch(0.88 0.02 200); /* Light cyan text */
+  --popover: oklch(0.1 0 0); /* Dark popover */
+  --popover-foreground: oklch(0.92 0 0); /* Light popover text */
+  --primary: oklch(0.7 0.1 200); /* Brighter cyan for dark mode */
+  --primary-foreground: oklch(0.08 0 0); /* Dark text on primary */
+  --secondary: oklch(0.75 0.18 280); /* Brighter violet */
+  --secondary-foreground: oklch(0.08 0 0); /* Dark text on secondary */
+  --muted: oklch(0.15 0.01 120); /* Dark muted */
+  --muted-foreground: oklch(0.65 0 0); /* Medium light muted text */
+  --accent: oklch(0.75 0.18 280); /* Bright violet accent */
+  --accent-foreground: oklch(0.08 0 0); /* Dark text on accent */
+  --destructive: oklch(0.65 0.25 25); /* Brighter red */
+  --destructive-foreground: oklch(0.08 0 0); /* Dark text on destructive */
+  --border: oklch(0.2 0 0); /* Dark borders */
+  --input: oklch(0.12 0.01 200); /* Dark cyan inputs */
+  --ring: oklch(0.75 0.18 280); /* Bright violet rings */
+  --chart-1: oklch(0.7 0.2 15);
+  --chart-2: oklch(0.65 0.15 280);
+  --chart-3: oklch(0.7 0.15 120);
+  --chart-4: oklch(0.8 0.12 350);
+  --chart-5: oklch(0.75 0.12 220);
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(0.92 0 0);
+  --sidebar-primary: oklch(0.7 0.1 200);
+  --sidebar-primary-foreground: oklch(0.08 0 0);
+  --sidebar-accent: oklch(0.75 0.18 280);
+  --sidebar-accent-foreground: oklch(0.08 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.75 0.18 280);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Added custom typography styles for dictionary aesthetic */
+.dictionary-title {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.word-tile {
+  transition: all 0.2s ease-in-out;
+  backdrop-filter: blur(10px);
+}
+
+.word-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.native-script {
+  font-family: "Noto Sans", "Arial Unicode MS", sans-serif;
+  font-weight: 500;
+}
