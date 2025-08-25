@@ -227,15 +227,15 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header - minimal style inspired by Possible Monuments */}
+      {/* Header - responsive design */}
       <header className="border-b border-border bg-background">
-        <div className="px-6 py-4">
+        <div className="px-4 md:px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="monuments-title text-sm md:text-base text-foreground">UNTRANSLATABLE WORDS?</h1>
-            <div className="flex items-center gap-8">
+            <h1 className="monuments-title text-xs md:text-base text-foreground">UNTRANSLATABLE WORDS?</h1>
+            <div className="flex items-center gap-4 md:gap-8">
               <button 
                 onClick={getRandomWord}
-                className="monuments-title text-sm text-foreground hover:text-muted-foreground transition-colors"
+                className="monuments-title text-xs md:text-sm text-foreground hover:text-muted-foreground transition-colors"
               >
                 DISCOVER
               </button>
@@ -247,9 +247,9 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Search and Filters - moved to a separate bar */}
+      {/* Search and Filters - responsive padding */}
       <div className="border-b border-border bg-background">
-        <div className="px-6 py-4">
+        <div className="px-4 md:px-6 py-4">
           <SearchFilter
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
