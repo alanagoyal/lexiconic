@@ -286,7 +286,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-background mt-16">
+      <footer className="border-t border-border bg-background">
         <div className="px-6 py-8 text-center">
           <div className="text-xs text-muted-foreground uppercase letter-spacing-wide">
             A digital exploration of linguistic untranslatability
