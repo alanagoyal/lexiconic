@@ -231,18 +231,7 @@ export default function HomePage() {
       <header className="border-b border-border bg-background">
         <div className="px-4 md:px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="monuments-title text-xs md:text-base text-foreground">UNTRANSLATABLE WORDS?</h1>
-            <div className="flex items-center gap-4 md:gap-8">
-              <button 
-                onClick={getRandomWord}
-                className="monuments-title text-xs md:text-sm text-foreground hover:text-muted-foreground transition-colors"
-              >
-                DISCOVER
-              </button>
-              <div className="monuments-title text-xs text-muted-foreground">
-                {availableLanguages.length} LANGUAGES
-              </div>
-            </div>
+            <h1 className="monuments-title text-xs md:text-base text-foreground">BETWEEN WORDS</h1>
           </div>
         </div>
       </header>
