@@ -55,7 +55,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
 
           <div className="text-left space-y-2 py-4">
-            <div className="native-script text-3xl text-foreground">
+            <div className="native-script text-3xl text-foreground truncate w-full">
               {word.native_script || word.word}
             </div>
             {word.transliteration &&
@@ -76,8 +76,8 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
         <div className="hidden md:contents">
           {/* Left Column - Native Word */}
           <div className="col-span-4 p-4 flex items-center justify-start">
-            <div className="text-left space-y-2">
-              <div className="native-script text-4xl md:text-5xl text-foreground">
+            <div className="text-left space-y-2 w-full max-w-full">
+              <div className="native-script text-4xl md:text-5xl text-foreground truncate w-full">
                 {word.native_script || word.word}
               </div>
               {word.transliteration &&
