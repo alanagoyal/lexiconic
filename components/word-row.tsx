@@ -54,7 +54,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
             </div>
           </div>
 
-          <div className="text-center space-y-2 py-4">
+          <div className="text-left space-y-2 py-4">
             <div className="native-script text-3xl text-foreground">
               {word.native_script || word.word}
             </div>
@@ -75,8 +75,8 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
         {/* Desktop Layout - 3-column grid */}
         <div className="hidden md:contents">
           {/* Left Column - Native Word */}
-          <div className="col-span-4 p-6 flex items-center justify-center">
-            <div className="text-center space-y-2">
+          <div className="col-span-4 p-4 flex items-center justify-start">
+            <div className="text-left space-y-2">
               <div className="native-script text-4xl md:text-5xl text-foreground">
                 {word.native_script || word.word}
               </div>
@@ -91,14 +91,14 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
 
           {/* Center Column - Definition */}
-          <div className="col-span-5 p-6 flex items-center border-l border-border">
+          <div className="col-span-5 p-4 flex items-center border-l border-border">
             <div className="word-definition text-lg md:text-xl text-foreground leading-relaxed">
               {word.definition}
             </div>
           </div>
 
           {/* Right Column - Language/Category Info */}
-          <div className="col-span-3 p-6 flex flex-col justify-center space-y-1 text-sm border-l border-border">
+          <div className="col-span-3 p-4 flex flex-col justify-center space-y-1 text-sm border-l border-border">
             <div className="text-foreground font-medium">{word.language}</div>
             {word.category && word.category !== "—" && (
               <div className="text-muted-foreground">{word.category}</div>
@@ -191,7 +191,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           {/* Desktop Expanded Content */}
           <div className="hidden md:block">
             <div className="grid grid-cols-12">
-              <div className="col-span-4 p-6">
+              <div className="col-span-4 p-4">
                 <div className="space-y-4">
                   {word.literal && word.literal !== "—" && (
                     <div>
@@ -213,7 +213,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               </div>
 
-              <div className="col-span-5 p-6 border-l border-border">
+              <div className="col-span-5 p-4 border-l border-border">
                 <div className="space-y-4">
                   {word.usage_notes && word.usage_notes !== "—" && (
                     <div>
@@ -244,7 +244,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               </div>
 
-              <div className="col-span-3 p-6 border-l border-border">
+              <div className="col-span-3 p-4 border-l border-border">
                 <div className="space-y-2">
                   {word.sources && word.sources !== "—" && (
                     <div>
