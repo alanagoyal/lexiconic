@@ -33,13 +33,13 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
   return (
     <div
-      className="word-row border-b border-border cursor-pointer"
+      className="word-row cursor-pointer border-b border-border"
       onClick={onToggleExpand}
     >
       {/* Main Grid Layout - responsive design */}
       <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
         {/* Mobile Layout - stacked */}
-        <div className="md:hidden p-4 space-y-4 border-b border-border">
+        <div className="md:hidden p-4 space-y-4">
           <div className="flex justify-between items-start">
             <div className="space-y-1 text-sm">
               <div className="text-foreground font-medium">{word.language}</div>
@@ -112,7 +112,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
       {/* Expanded Content - responsive layout */}
       {isExpanded && (
-        <div className="border-t border-border bg-muted/10">
+        <div className="bg-muted/10">
           {/* Mobile Expanded Content */}
           <div className="md:hidden p-4">
             <div className="space-y-4">
