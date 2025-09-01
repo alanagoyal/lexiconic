@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 
 interface WordData {
@@ -26,15 +25,16 @@ interface WordData {
 
 interface WordRowProps {
   word: WordData;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
 }
 
-export function WordRow({ word }: WordRowProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
   return (
     <div
       className="word-row border-b border-border cursor-pointer"
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={onToggleExpand}
     >
       {/* Main Grid Layout - responsive design */}
       <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
