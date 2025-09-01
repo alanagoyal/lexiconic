@@ -14,7 +14,6 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Between Words",
   description: "Explore beautiful words from around the world that have no direct English translation",
-  generator: "v0.app",
 }
 
 export default function RootLayout({
