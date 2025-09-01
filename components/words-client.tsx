@@ -112,7 +112,7 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Footer */}
       <footer className="border-t border-border bg-background">
         <div className="px-6 py-8 text-center">
-          <div className="text-xs text-muted-foreground uppercase letter-spacing-wide">
+          <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
             A digital exploration of linguistic untranslatability
           </div>
         </div>
