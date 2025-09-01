@@ -33,6 +33,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
 
   const availableLanguages = useMemo(() => {
     const languages = new Set(words.map((word) => word.language).filter(Boolean))
@@ -84,6 +85,10 @@ export function WordsClient({ words }: WordsClientProps) {
     )
   }
 
+  const handleRowExpand = (wordId: string) => {
+    setExpandedRowId(expandedRowId === wordId ? null : wordId)
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header - responsive design */}
@@ -119,15 +124,22 @@ export function WordsClient({ words }: WordsClientProps) {
       <main>
         {filteredWords.length > 0 ? (
           <div>
-            {filteredWords.map((word, index) => (
-              <div
-                key={`${word.word}-${index}`}
-                id={`word-${word.word}`}
-                className="virtualized-item"
-              >
-                <WordRow word={word} />
-              </div>
-            ))}
+            {filteredWords.map((word, index) => {
+              const wordId = `${word.word}-${index}`
+              return (
+                <div
+                  key={wordId}
+                  id={`word-${word.word}`}
+                  className="virtualized-item"
+                >
+                  <WordRow 
+                    word={word} 
+                    isExpanded={expandedRowId === wordId}
+                    onToggleExpand={() => handleRowExpand(wordId)}
+                  />
+                </div>
+              )
+            })}
           </div>
         ) : (
           <div className="p-16 text-center">
