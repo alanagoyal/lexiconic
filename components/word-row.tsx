@@ -67,7 +67,7 @@ export function WordRow({ word }: WordRowProps) {
               )}
           </div>
 
-          <div className="word-definition text-base text-foreground leading-relaxed pt-2 border-t border-border">
+          <div className="word-definition text-base text-foreground leading-relaxed pt-2">
             {word.definition}
           </div>
         </div>
