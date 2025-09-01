@@ -121,7 +121,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
                     Literal Translation
                   </h4>
-                  <p className="text-foreground">{word.literal}</p>
+                  <p className="text-sm text-foreground">{word.literal}</p>
                 </div>
               )}
 
@@ -130,7 +130,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
                     English Approximation
                   </h4>
-                  <p className="text-foreground">{word.english_approx}</p>
+                  <p className="text-sm text-foreground">{word.english_approx}</p>
                 </div>
               )}
 
@@ -139,7 +139,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
                     Example
                   </h4>
-                  <p className="native-script text-foreground">
+                  <p className="native-script text-sm text-foreground">
                     {word.example_native}
                   </p>
                   {word.example_gloss && word.example_gloss !== "—" && (
@@ -198,7 +198,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
                         Literal Translation
                       </h4>
-                      <p className="text-foreground">{word.literal}</p>
+                      <p className="text-sm text-foreground">{word.literal}</p>
                     </div>
                   )}
 
@@ -207,7 +207,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
                         English Approximation
                       </h4>
-                      <p className="text-foreground">{word.english_approx}</p>
+                      <p className="text-sm text-foreground">{word.english_approx}</p>
                     </div>
                   )}
                 </div>
@@ -231,7 +231,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
                         Example
                       </h4>
-                      <p className="native-script text-foreground">
+                      <p className="native-script text-sm text-foreground">
                         {word.example_native}
                       </p>
                       {word.example_gloss && word.example_gloss !== "—" && (
