@@ -65,19 +65,8 @@ export function WordRow({ word }: WordRowProps) {
 
         {/* Desktop Layout - 3-column grid */}
         <div className="hidden md:contents">
-          {/* Left Column - Language/Category Info */}
-          <div className="col-span-3 p-6 flex flex-col justify-center space-y-1 text-sm">
-            <div className="text-foreground font-medium">{word.language}</div>
-            {word.category && word.category !== "—" && (
-              <div className="text-muted-foreground">{word.category}</div>
-            )}
-            {word.region && word.region !== "—" && (
-              <div className="text-muted-foreground text-xs">{word.region}</div>
-            )}
-          </div>
-
-          {/* Center-Left Column - Native Word */}
-          <div className="col-span-4 p-6 flex items-center justify-center border-l border-border">
+          {/* Left Column - Native Word */}
+          <div className="col-span-4 p-6 flex items-center justify-center">
             <div className="text-center space-y-2">
               <div className="native-script text-4xl md:text-5xl text-foreground">
                 {word.native_script || word.word}
@@ -88,11 +77,22 @@ export function WordRow({ word }: WordRowProps) {
             </div>
           </div>
 
-          {/* Right Column - Definition */}
+          {/* Center Column - Definition */}
           <div className="col-span-5 p-6 flex items-center border-l border-border">
             <div className="word-definition text-lg md:text-xl text-foreground leading-relaxed">
               {word.definition}
             </div>
+          </div>
+
+          {/* Right Column - Language/Category Info */}
+          <div className="col-span-3 p-6 flex flex-col justify-center space-y-1 text-sm border-l border-border">
+            <div className="text-foreground font-medium">{word.language}</div>
+            {word.category && word.category !== "—" && (
+              <div className="text-muted-foreground">{word.category}</div>
+            )}
+            {word.region && word.region !== "—" && (
+              <div className="text-muted-foreground text-xs">{word.region}</div>
+            )}
           </div>
         </div>
       </div>
@@ -171,8 +171,7 @@ export function WordRow({ word }: WordRowProps) {
           {/* Desktop Expanded Content */}
           <div className="hidden md:block">
             <div className="grid grid-cols-12">
-              <div className="col-span-3"></div> {/* Empty space to align with content */}
-              <div className="col-span-4 p-6 border-l border-border">
+              <div className="col-span-4 p-6">
                 <div className="space-y-4">
                   {word.literal && word.literal !== "—" && (
                     <div>
@@ -208,7 +207,11 @@ export function WordRow({ word }: WordRowProps) {
                       <p className="text-sm text-foreground">{word.usage_notes}</p>
                     </div>
                   )}
+                </div>
+              </div>
 
+              <div className="col-span-3 p-6 border-l border-border">
+                <div className="space-y-4">
                   <div className="space-y-2">
                     {word.family && word.family !== "—" && (
                       <div className="text-xs text-muted-foreground">
