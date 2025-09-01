@@ -167,3 +167,9 @@
     min-height: auto;
   }
 }
+
+/* Lightweight virtualization: render rows only when visible */
+.virtualized-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 160px; /* reasonable fallback height for rows */
+}
