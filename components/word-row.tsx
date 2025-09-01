@@ -186,16 +186,6 @@ export function WordRow({ word }: WordRowProps) {
                       <p className="text-foreground">{word.english_approx}</p>
                     </div>
                   )}
-
-                  {word.example_native && word.example_native !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
-                      <p className="native-script text-foreground">{word.example_native}</p>
-                      {word.example_gloss && word.example_gloss !== "—" && (
-                        <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
               
@@ -205,6 +195,16 @@ export function WordRow({ word }: WordRowProps) {
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage Notes</h4>
                       <p className="text-sm text-foreground">{word.usage_notes}</p>
+                    </div>
+                  )}
+
+                  {word.example_native && word.example_native !== "—" && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
+                      <p className="native-script text-foreground">{word.example_native}</p>
+                      {word.example_gloss && word.example_gloss !== "—" && (
+                        <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
+                      )}
                     </div>
                   )}
                 </div>
