@@ -31,21 +31,7 @@ interface WordsClientProps {
 
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
-
-  const availableLanguages = useMemo(() => {
-    const languages = new Set(words.map((word) => word.language).filter(Boolean))
-    return Array.from(languages).sort()
-  }, [words])
-
-  const availableCategories = useMemo(() => {
-    const categories = new Set(
-      words.map((word) => word.category).filter((cat) => cat && cat !== "—"),
-    )
-    return Array.from(categories).sort()
-  }, [words])
 
   const filteredWords = useMemo(() => {
     return words.filter((word) => {
@@ -58,32 +44,10 @@ export function WordsClient({ words }: WordsClientProps) {
         (word.transliteration &&
           word.transliteration.toLowerCase().includes(searchTerm.toLowerCase()))
 
-      const matchesLanguage =
-        selectedLanguages.length === 0 ||
-        selectedLanguages.includes(word.language)
-      const matchesCategory =
-        selectedCategories.length === 0 ||
-        selectedCategories.includes(word.category)
-
-      return matchesSearch && matchesLanguage && matchesCategory
+      return matchesSearch
     })
-  }, [words, searchTerm, selectedLanguages, selectedCategories])
+  }, [words, searchTerm])
 
-  const handleLanguageToggle = (language: string) => {
-    setSelectedLanguages((prev) =>
-      prev.includes(language)
-        ? prev.filter((l) => l !== language)
-        : [...prev, language],
-    )
-  }
-
-  const handleCategoryToggle = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category],
-    )
-  }
 
   const handleRowExpand = (wordId: string) => {
     setExpandedRowId(expandedRowId === wordId ? null : wordId)
@@ -102,22 +66,14 @@ export function WordsClient({ words }: WordsClientProps) {
         </div>
       </header>
 
-      {/* Search and Filters - responsive padding */}
+      {/* Search - full width */}
       <div className="border-b border-border bg-background">
-        <div className="px-4 md:px-6 py-4">
-          <SearchFilter
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            selectedLanguages={selectedLanguages}
-            onLanguageToggle={handleLanguageToggle}
-            selectedCategories={selectedCategories}
-            onCategoryToggle={handleCategoryToggle}
-            availableLanguages={availableLanguages}
-            availableCategories={availableCategories}
-            totalWords={words.length}
-            filteredCount={filteredWords.length}
-          />
-        </div>
+        <SearchFilter
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          totalWords={words.length}
+          filteredCount={filteredWords.length}
+        />
       </div>
 
       {/* Words List - full width grid layout with lightweight virtualization */}
