@@ -124,9 +124,14 @@
   }
 }
 
+/* Font utility classes */
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
 /* Minimal aesthetic inspired by Possible Monuments */
 .monuments-title {
-  font-family: "GT Standard", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-playfair), serif;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -134,7 +139,6 @@
 
 .word-row {
   transition: background-color 0.15s ease;
-  border: none;
 }
 
 .word-row:hover {
@@ -149,7 +153,7 @@
 }
 
 .word-definition {
-  font-family: "GT Standard", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-playfair), serif;
   font-weight: 400;
   line-height: 1.4;
 }
