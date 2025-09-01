@@ -1,38 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ExternalLink } from "lucide-react"
+import { useState } from "react";
+import { ExternalLink } from "lucide-react";
 
 interface WordData {
-  word: string
-  native_script: string
-  transliteration: string
-  language: string
-  family: string
-  category: string
-  definition: string
-  literal: string
-  usage_notes: string
-  example_native: string
-  example_gloss: string
-  english_approx: string
-  loanword_in_english: string
-  disputed: string
-  region: string
-  closest_english_paraphrase: string
-  sources: string
-  needs_citation: string
+  word: string;
+  native_script: string;
+  transliteration: string;
+  language: string;
+  family: string;
+  category: string;
+  definition: string;
+  literal: string;
+  usage_notes: string;
+  example_native: string;
+  example_gloss: string;
+  english_approx: string;
+  loanword_in_english: string;
+  disputed: string;
+  region: string;
+  closest_english_paraphrase: string;
+  sources: string;
+  needs_citation: string;
 }
 
 interface WordRowProps {
-  word: WordData
+  word: WordData;
 }
 
 export function WordRow({ word }: WordRowProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="word-row border-b border-border cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+    <div
+      className="word-row border-b border-border cursor-pointer"
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
       {/* Main Grid Layout - responsive design */}
       <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
         {/* Mobile Layout - stacked */}
@@ -44,20 +47,26 @@ export function WordRow({ word }: WordRowProps) {
                 <div className="text-muted-foreground">{word.category}</div>
               )}
               {word.region && word.region !== "—" && (
-                <div className="text-muted-foreground text-xs">{word.region}</div>
+                <div className="text-muted-foreground text-xs">
+                  {word.region}
+                </div>
               )}
             </div>
           </div>
-          
+
           <div className="text-center space-y-2 py-4">
             <div className="native-script text-3xl text-foreground">
               {word.native_script || word.word}
             </div>
-            {word.transliteration && word.transliteration !== word.word && word.transliteration !== "—" && (
-              <div className="text-sm text-muted-foreground">{word.transliteration}</div>
-            )}
+            {word.transliteration &&
+              word.transliteration !== word.word &&
+              word.transliteration !== "—" && (
+                <div className="text-sm text-muted-foreground">
+                  {word.transliteration}
+                </div>
+              )}
           </div>
-          
+
           <div className="word-definition text-base text-foreground leading-relaxed pt-2 border-t border-border">
             {word.definition}
           </div>
@@ -71,9 +80,13 @@ export function WordRow({ word }: WordRowProps) {
               <div className="native-script text-4xl md:text-5xl text-foreground">
                 {word.native_script || word.word}
               </div>
-              {word.transliteration && word.transliteration !== word.word && word.transliteration !== "—" && (
-                <div className="text-sm text-muted-foreground">{word.transliteration}</div>
-              )}
+              {word.transliteration &&
+                word.transliteration !== word.word &&
+                word.transliteration !== "—" && (
+                  <div className="text-sm text-muted-foreground">
+                    {word.transliteration}
+                  </div>
+                )}
             </div>
           </div>
 
@@ -105,41 +118,48 @@ export function WordRow({ word }: WordRowProps) {
             <div className="space-y-4">
               {word.literal && word.literal !== "—" && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Literal Translation</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                    Literal Translation
+                  </h4>
                   <p className="text-foreground">{word.literal}</p>
                 </div>
               )}
 
               {word.english_approx && word.english_approx !== "—" && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">English Approximation</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                    English Approximation
+                  </h4>
                   <p className="text-foreground">{word.english_approx}</p>
                 </div>
               )}
 
               {word.example_native && word.example_native !== "—" && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
-                  <p className="native-script text-foreground">{word.example_native}</p>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                    Example
+                  </h4>
+                  <p className="native-script text-foreground">
+                    {word.example_native}
+                  </p>
                   {word.example_gloss && word.example_gloss !== "—" && (
-                    <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {word.example_gloss}
+                    </p>
                   )}
                 </div>
               )}
 
               {word.usage_notes && word.usage_notes !== "—" && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage Notes</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                    Usage Notes
+                  </h4>
                   <p className="text-sm text-foreground">{word.usage_notes}</p>
                 </div>
               )}
 
               <div className="space-y-2">
-                {word.family && word.family !== "—" && (
-                  <div className="text-xs text-muted-foreground">
-                    Language family: {word.family}
-                  </div>
-                )}
                 {word.disputed === "True" && (
                   <div className="text-xs text-foreground border-l-2 border-border pl-2">
                     Note: This translation is disputed
@@ -153,12 +173,12 @@ export function WordRow({ word }: WordRowProps) {
               </div>
 
               {word.sources && word.sources !== "—" && (
-                <div className="pt-4 border-t border-border">
+                <div>
                   <a
                     href={word.sources}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-foreground hover:text-muted-foreground inline-flex items-center gap-1 transition-colors"
+                    className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Source <ExternalLink className="w-3 h-3" />
@@ -175,35 +195,49 @@ export function WordRow({ word }: WordRowProps) {
                 <div className="space-y-4">
                   {word.literal && word.literal !== "—" && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Literal Translation</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        Literal Translation
+                      </h4>
                       <p className="text-foreground">{word.literal}</p>
                     </div>
                   )}
 
                   {word.english_approx && word.english_approx !== "—" && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">English Approximation</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        English Approximation
+                      </h4>
                       <p className="text-foreground">{word.english_approx}</p>
                     </div>
                   )}
                 </div>
               </div>
-              
+
               <div className="col-span-5 p-6 border-l border-border">
                 <div className="space-y-4">
                   {word.usage_notes && word.usage_notes !== "—" && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage Notes</h4>
-                      <p className="text-sm text-foreground">{word.usage_notes}</p>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        Usage Notes
+                      </h4>
+                      <p className="text-sm text-foreground">
+                        {word.usage_notes}
+                      </p>
                     </div>
                   )}
 
                   {word.example_native && word.example_native !== "—" && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Example</h4>
-                      <p className="native-script text-foreground">{word.example_native}</p>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        Example
+                      </h4>
+                      <p className="native-script text-foreground">
+                        {word.example_native}
+                      </p>
                       {word.example_gloss && word.example_gloss !== "—" && (
-                        <p className="text-sm text-muted-foreground mt-1">{word.example_gloss}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {word.example_gloss}
+                        </p>
                       )}
                     </div>
                   )}
@@ -211,7 +245,20 @@ export function WordRow({ word }: WordRowProps) {
               </div>
 
               <div className="col-span-3 p-6 border-l border-border">
-                <div className="space-y-4">
+                <div className="space-y-2">
+                  {word.sources && word.sources !== "—" && (
+                    <div>
+                      <a
+                        href={word.sources}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Source <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     {word.disputed === "True" && (
                       <div className="text-xs text-foreground border-l-2 border-border pl-2">
@@ -224,20 +271,6 @@ export function WordRow({ word }: WordRowProps) {
                       </div>
                     )}
                   </div>
-
-                  {word.sources && word.sources !== "—" && (
-                    <div className="pt-4 border-t border-border">
-                      <a
-                        href={word.sources}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-foreground hover:text-muted-foreground inline-flex items-center gap-1 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Source <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -245,5 +278,5 @@ export function WordRow({ word }: WordRowProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
