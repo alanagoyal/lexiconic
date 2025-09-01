@@ -13,7 +13,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "Between Words",
-  description: "Explore beautiful words from around the world that have no direct English translation",
+  description: "A digital exploration of linguistic untranslatability",
 }
 
 export default function RootLayout({
