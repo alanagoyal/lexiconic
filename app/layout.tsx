@@ -12,9 +12,8 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Untranslatable Words - A Digital Cabinet of Curiosities",
-  description: "Explore beautiful words from around the world that have no direct English translation",
-  generator: "v0.app",
+  title: "Between Words",
+  description: "A digital exploration of linguistic untranslatability",
 }
 
 export default function RootLayout({
