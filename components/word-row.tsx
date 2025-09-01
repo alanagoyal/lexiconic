@@ -213,11 +213,6 @@ export function WordRow({ word }: WordRowProps) {
               <div className="col-span-3 p-6 border-l border-border">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    {word.family && word.family !== "—" && (
-                      <div className="text-xs text-muted-foreground">
-                        Language family: {word.family}
-                      </div>
-                    )}
                     {word.disputed === "True" && (
                       <div className="text-xs text-foreground border-l-2 border-border pl-2">
                         Note: This translation is disputed
