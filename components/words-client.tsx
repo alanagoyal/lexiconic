@@ -95,7 +95,7 @@ export function WordsClient({ words }: WordsClientProps) {
       <header className="border-b border-border bg-background">
         <div className="px-4 md:px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="monuments-title text-xs md:text-base text-foreground">
+            <h1 className="monuments-title text-xs md:text-base text-foreground font-playfair">
               BETWEEN WORDS
             </h1>
           </div>
