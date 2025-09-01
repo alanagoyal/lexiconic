@@ -55,25 +55,27 @@ export function WordsClient({ words }: WordsClientProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header - responsive design */}
-      <header className="border-b border-border bg-background">
-        <div className="px-4 md:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="monuments-title text-lg md:text-2xl font-bold text-foreground font-playfair">
-              BETWEEN WORDS
-            </h1>
+      {/* Header and Search - sticky together */}
+      <div className="sticky top-0 z-10 bg-background">
+        <header className="border-b border-border bg-background">
+          <div className="px-4 md:px-6 py-4">
+            <div className="flex items-center justify-between">
+              <h1 className="monuments-title text-lg md:text-2xl font-bold text-foreground font-playfair">
+                BETWEEN WORDS
+              </h1>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Search - full width */}
-      <div className="border-b border-border bg-background">
-        <SearchFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          totalWords={words.length}
-          filteredCount={filteredWords.length}
-        />
+        {/* Search - full width */}
+        <div className="border-b border-border bg-background">
+          <SearchFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            totalWords={words.length}
+            filteredCount={filteredWords.length}
+          />
+        </div>
       </div>
 
       {/* Words List - full width grid layout with lightweight virtualization */}
