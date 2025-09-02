@@ -9,6 +9,7 @@ import {
   searchWordsBySimilarity,
   type WordWithEmbedding 
 } from "@/lib/semantic-search"
+import { downloadEmbeddings, copyEmbeddingsToClipboard } from "@/lib/export-embeddings"
 
 export interface WordData {
   word: string
@@ -37,15 +38,28 @@ export interface WordWithEmbedding extends WordData {
 }
 
 interface WordsClientProps {
-  words: WordData[]
+  words: WordWithEmbedding[]
 }
 
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
-  const [wordsWithEmbeddings, setWordsWithEmbeddings] = useState<WordWithEmbedding[]>([])
+  const [wordsWithEmbeddings, setWordsWithEmbeddings] = useState<WordWithEmbedding[]>(words)
   const [isGeneratingEmbeddings, setIsGeneratingEmbeddings] = useState(false)
   const [semanticSearchEnabled, setSemanticSearchEnabled] = useState(false)
+  const [showExportOptions, setShowExportOptions] = useState(false)
+
+  // Check if embeddings are already available
+  const hasPrecomputedEmbeddings = words.some(word => word.embedding && word.embedding.length > 0)
+
+  // Initialize semantic search state
+  useEffect(() => {
+    if (hasPrecomputedEmbeddings) {
+      setSemanticSearchEnabled(true)
+      setWordsWithEmbeddings(words)
+      console.log('Using pre-computed embeddings')
+    }
+  }, [hasPrecomputedEmbeddings, words])
 
   // Generate embeddings for all words
   const generateAllEmbeddings = useCallback(async () => {
@@ -172,11 +186,19 @@ export function WordsClient({ words }: WordsClientProps) {
                 className="text-sm px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isGeneratingEmbeddings ? 'Generating Embeddings...' : 
-                 semanticSearchEnabled ? 'Semantic Search Ready' : 
+                 semanticSearchEnabled ? (hasPrecomputedEmbeddings ? 'Using Pre-computed Embeddings' : 'Semantic Search Ready') : 
                  'Enable Semantic Search'}
               </button>
               {semanticSearchEnabled && (
-                <span className="text-xs text-green-600">✓ Semantic search enabled</span>
+                <>
+                  <span className="text-xs text-green-600">✓ Semantic search enabled</span>
+                  <button
+                    onClick={() => setShowExportOptions(!showExportOptions)}
+                    className="text-sm px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    Export Embeddings
+                  </button>
+                </>
               )}
             </div>
             {isGeneratingEmbeddings && (
@@ -185,6 +207,35 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             )}
           </div>
+          {showExportOptions && semanticSearchEnabled && (
+            <div className="px-4 py-3 bg-gray-50 border-b border-border">
+              <div className="text-sm font-medium mb-2">Export Options:</div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => downloadEmbeddings(wordsWithEmbeddings)}
+                  className="text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Download JSON
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await copyEmbeddingsToClipboard(wordsWithEmbeddings)
+                      alert('Embeddings copied to clipboard!')
+                    } catch (error) {
+                      alert('Failed to copy embeddings')
+                    }
+                  }}
+                  className="text-sm px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
+                >
+                  Copy to Clipboard
+                </button>
+              </div>
+              <div className="text-xs text-gray-600 mt-2">
+                Save this JSON data to your project and update the data source to avoid regenerating embeddings.
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
