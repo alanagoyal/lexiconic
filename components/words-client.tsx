@@ -1,8 +1,12 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState, useEffect } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
+import { 
+  searchWordsBySimilarity,
+  type WordWithEmbedding 
+} from "@/lib/semantic-search"
 
 export interface WordData {
   word: string
@@ -25,28 +29,87 @@ export interface WordData {
   needs_citation: string
 }
 
+
 interface WordsClientProps {
-  words: WordData[]
+  words: WordWithEmbedding[]
 }
 
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
 
-  const filteredWords = useMemo(() => {
-    return words.filter((word) => {
-      const matchesSearch =
-        !searchTerm ||
-        word.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.native_script.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.definition.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.language.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (word.transliteration &&
-          word.transliteration.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Generate search embedding and perform hybrid search
+  const performSearch = async (query: string) => {
+    if (!query) {
+      setDisplayedWords(words)
+      return
+    }
 
-      return matchesSearch
-    })
-  }, [words, searchTerm])
+    try {
+      // Get embedding for search query
+      const response = await fetch('/api/search-embedding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      })
+
+      if (response.ok) {
+        const { embedding } = await response.json()
+        
+        // Semantic search with pre-computed embeddings
+        const semanticResults = searchWordsBySimilarity(words, embedding, 0.15, 30)
+        
+        // Keyword search
+        const keywordResults = words.filter((word) => {
+          const searchLower = query.toLowerCase()
+          return word.word.toLowerCase().includes(searchLower) ||
+                 word.native_script.toLowerCase().includes(searchLower) ||
+                 word.definition.toLowerCase().includes(searchLower) ||
+                 word.language.toLowerCase().includes(searchLower) ||
+                 (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
+                 (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
+                 (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
+        })
+
+        // Combine results (semantic first, then keyword)
+        const combined = [...semanticResults]
+        keywordResults.forEach(kwResult => {
+          if (!combined.some(semResult => semResult.word === kwResult.word)) {
+            combined.push(kwResult)
+          }
+        })
+
+        setDisplayedWords(combined)
+      } else {
+        throw new Error('Search API failed')
+      }
+    } catch (error) {
+      console.error('Semantic search failed, using keyword only:', error)
+      
+      // Fallback to keyword search
+      const keywordResults = words.filter((word) => {
+        const searchLower = query.toLowerCase()
+        return word.word.toLowerCase().includes(searchLower) ||
+               word.native_script.toLowerCase().includes(searchLower) ||
+               word.definition.toLowerCase().includes(searchLower) ||
+               word.language.toLowerCase().includes(searchLower) ||
+               (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
+               (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
+               (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
+      })
+      setDisplayedWords(keywordResults)
+    }
+  }
+
+  // Debounced search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      performSearch(searchTerm)
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchTerm])
 
 
   const handleRowExpand = (wordId: string) => {
@@ -73,16 +136,16 @@ export function WordsClient({ words }: WordsClientProps) {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             totalWords={words.length}
-            filteredCount={filteredWords.length}
+            filteredCount={displayedWords.length}
           />
         </div>
       </div>
 
       {/* Words List - full width grid layout with lightweight virtualization */}
       <main>
-        {filteredWords.length > 0 ? (
+        {displayedWords.length > 0 ? (
           <div>
-            {filteredWords.map((word, index) => {
+            {displayedWords.map((word, index) => {
               const wordId = `${word.word}-${index}`
               return (
                 <div
