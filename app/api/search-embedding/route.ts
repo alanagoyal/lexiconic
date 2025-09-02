@@ -7,18 +7,18 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const { text } = await request.json()
+    const { query } = await request.json()
 
-    if (!text || typeof text !== 'string') {
+    if (!query || typeof query !== 'string') {
       return NextResponse.json(
-        { error: 'Text is required and must be a string' },
+        { error: 'Query is required and must be a string' },
         { status: 400 }
       )
     }
 
     const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
-      input: text,
+      input: query,
       encoding_format: 'float',
     })
 
@@ -26,9 +26,9 @@ export async function POST(request: NextRequest) {
       embedding: response.data[0].embedding,
     })
   } catch (error) {
-    console.error('Error generating embedding:', error)
+    console.error('Error generating search embedding:', error)
     return NextResponse.json(
-      { error: 'Failed to generate embedding' },
+      { error: 'Failed to generate search embedding' },
       { status: 500 }
     )
   }

@@ -1,15 +1,12 @@
 "use client"
 
-import { useMemo, useState, useEffect, useCallback } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { 
-  generateEmbedding, 
-  createSearchableText, 
   searchWordsBySimilarity,
   type WordWithEmbedding 
 } from "@/lib/semantic-search"
-import { downloadEmbeddings, copyEmbeddingsToClipboard } from "@/lib/export-embeddings"
 
 export interface WordData {
   word: string
@@ -44,79 +41,42 @@ interface WordsClientProps {
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
-  const [wordsWithEmbeddings, setWordsWithEmbeddings] = useState<WordWithEmbedding[]>(words)
-  const [isGeneratingEmbeddings, setIsGeneratingEmbeddings] = useState(false)
-  const [semanticSearchEnabled, setSemanticSearchEnabled] = useState(false)
-  const [showExportOptions, setShowExportOptions] = useState(false)
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
 
-  // Check if embeddings are already available
-  const hasPrecomputedEmbeddings = words.some(word => word.embedding && word.embedding.length > 0)
-
-  // Initialize semantic search state
-  useEffect(() => {
-    if (hasPrecomputedEmbeddings) {
-      setSemanticSearchEnabled(true)
-      setWordsWithEmbeddings(words)
-      console.log('Using pre-computed embeddings')
+  // Generate search embedding and perform hybrid search
+  const performSearch = async (query: string) => {
+    if (!query) {
+      setDisplayedWords(words)
+      return
     }
-  }, [hasPrecomputedEmbeddings, words])
 
-  // Generate embeddings for all words
-  const generateAllEmbeddings = useCallback(async () => {
-    if (isGeneratingEmbeddings) return
-    
-    setIsGeneratingEmbeddings(true)
     try {
-      const batchSize = 10 // Process in batches to avoid overwhelming the API
-      const wordsWithEmb: WordWithEmbedding[] = []
-      
-      for (let i = 0; i < words.length; i += batchSize) {
-        const batch = words.slice(i, i + batchSize)
-        const batchPromises = batch.map(async (word) => {
-          const searchableText = createSearchableText(word)
-          const embedding = await generateEmbedding(searchableText)
-          return {
-            ...word,
-            embedding,
-            searchableText,
-          }
+      // Get embedding for search query
+      const response = await fetch('/api/search-embedding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      })
+
+      if (response.ok) {
+        const { embedding } = await response.json()
+        
+        // Semantic search with pre-computed embeddings
+        const semanticResults = searchWordsBySimilarity(words, embedding, 0.15, 30)
+        
+        // Keyword search
+        const keywordResults = words.filter((word) => {
+          const searchLower = query.toLowerCase()
+          return word.word.toLowerCase().includes(searchLower) ||
+                 word.native_script.toLowerCase().includes(searchLower) ||
+                 word.definition.toLowerCase().includes(searchLower) ||
+                 word.language.toLowerCase().includes(searchLower) ||
+                 (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
+                 (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
+                 (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
         })
-        
-        const batchResults = await Promise.all(batchPromises)
-        wordsWithEmb.push(...batchResults)
-      }
-      
-      setWordsWithEmbeddings(wordsWithEmb)
-      setSemanticSearchEnabled(true)
-    } catch (error) {
-      console.error('Failed to generate embeddings:', error)
-    } finally {
-      setIsGeneratingEmbeddings(false)
-    }
-  }, [words, isGeneratingEmbeddings])
 
-  const filteredWords = useMemo(async () => {
-    if (!searchTerm) {
-      return semanticSearchEnabled ? wordsWithEmbeddings : words
-    }
-
-    // Use semantic search if enabled and embeddings are available
-    if (semanticSearchEnabled && wordsWithEmbeddings.length > 0) {
-      try {
-        const queryEmbedding = await generateEmbedding(searchTerm)
-        const semanticResults = searchWordsBySimilarity(wordsWithEmbeddings, queryEmbedding, 0.2)
-        
-        // Also include traditional keyword matches
-        const keywordResults = words.filter((word) =>
-          word.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          word.native_script.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          word.definition.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          word.language.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (word.transliteration &&
-            word.transliteration.toLowerCase().includes(searchTerm.toLowerCase()))
-        )
-
-        // Combine and deduplicate results (semantic first, then keyword)
+        // Combine results (semantic first, then keyword)
         const combined = [...semanticResults]
         keywordResults.forEach(kwResult => {
           if (!combined.some(semResult => semResult.word === kwResult.word)) {
@@ -124,32 +84,36 @@ export function WordsClient({ words }: WordsClientProps) {
           }
         })
 
-        return combined
-      } catch (error) {
-        console.error('Semantic search failed, falling back to keyword search:', error)
+        setDisplayedWords(combined)
+      } else {
+        throw new Error('Search API failed')
       }
+    } catch (error) {
+      console.error('Semantic search failed, using keyword only:', error)
+      
+      // Fallback to keyword search
+      const keywordResults = words.filter((word) => {
+        const searchLower = query.toLowerCase()
+        return word.word.toLowerCase().includes(searchLower) ||
+               word.native_script.toLowerCase().includes(searchLower) ||
+               word.definition.toLowerCase().includes(searchLower) ||
+               word.language.toLowerCase().includes(searchLower) ||
+               (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
+               (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
+               (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
+      })
+      setDisplayedWords(keywordResults)
     }
+  }
 
-    // Fallback to traditional keyword search
-    return words.filter((word) => {
-      const matchesSearch =
-        word.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.native_script.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.definition.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        word.language.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (word.transliteration &&
-          word.transliteration.toLowerCase().includes(searchTerm.toLowerCase()))
-
-      return matchesSearch
-    })
-  }, [words, wordsWithEmbeddings, searchTerm, semanticSearchEnabled])
-
-  // Convert async useMemo result to state
-  const [displayedWords, setDisplayedWords] = useState<WordData[]>(words)
-  
+  // Debounced search
   useEffect(() => {
-    filteredWords.then(setDisplayedWords)
-  }, [filteredWords])
+    const timeoutId = setTimeout(() => {
+      performSearch(searchTerm)
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchTerm])
 
 
   const handleRowExpand = (wordId: string) => {
@@ -178,64 +142,6 @@ export function WordsClient({ words }: WordsClientProps) {
             totalWords={words.length}
             filteredCount={displayedWords.length}
           />
-          <div className="px-4 py-2 border-b border-border bg-background flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={generateAllEmbeddings}
-                disabled={isGeneratingEmbeddings || semanticSearchEnabled}
-                className="text-sm px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {isGeneratingEmbeddings ? 'Generating Embeddings...' : 
-                 semanticSearchEnabled ? (hasPrecomputedEmbeddings ? 'Using Pre-computed Embeddings' : 'Semantic Search Ready') : 
-                 'Enable Semantic Search'}
-              </button>
-              {semanticSearchEnabled && (
-                <>
-                  <span className="text-xs text-green-600">✓ Semantic search enabled</span>
-                  <button
-                    onClick={() => setShowExportOptions(!showExportOptions)}
-                    className="text-sm px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    Export Embeddings
-                  </button>
-                </>
-              )}
-            </div>
-            {isGeneratingEmbeddings && (
-              <div className="text-xs text-muted-foreground">
-                This may take a few minutes for all words...
-              </div>
-            )}
-          </div>
-          {showExportOptions && semanticSearchEnabled && (
-            <div className="px-4 py-3 bg-gray-50 border-b border-border">
-              <div className="text-sm font-medium mb-2">Export Options:</div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => downloadEmbeddings(wordsWithEmbeddings)}
-                  className="text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Download JSON
-                </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      await copyEmbeddingsToClipboard(wordsWithEmbeddings)
-                      alert('Embeddings copied to clipboard!')
-                    } catch (error) {
-                      alert('Failed to copy embeddings')
-                    }
-                  }}
-                  className="text-sm px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
-                >
-                  Copy to Clipboard
-                </button>
-              </div>
-              <div className="text-xs text-gray-600 mt-2">
-                Save this JSON data to your project and update the data source to avoid regenerating embeddings.
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
