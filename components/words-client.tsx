@@ -1,8 +1,14 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect, useCallback } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
+import { 
+  generateEmbedding, 
+  createSearchableText, 
+  searchWordsBySimilarity,
+  type WordWithEmbedding 
+} from "@/lib/semantic-search"
 
 export interface WordData {
   word: string
@@ -25,6 +31,11 @@ export interface WordData {
   needs_citation: string
 }
 
+export interface WordWithEmbedding extends WordData {
+  embedding?: number[]
+  searchableText?: string
+}
+
 interface WordsClientProps {
   words: WordData[]
 }
@@ -32,11 +43,82 @@ interface WordsClientProps {
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
+  const [wordsWithEmbeddings, setWordsWithEmbeddings] = useState<WordWithEmbedding[]>([])
+  const [isGeneratingEmbeddings, setIsGeneratingEmbeddings] = useState(false)
+  const [semanticSearchEnabled, setSemanticSearchEnabled] = useState(false)
 
-  const filteredWords = useMemo(() => {
+  // Generate embeddings for all words
+  const generateAllEmbeddings = useCallback(async () => {
+    if (isGeneratingEmbeddings) return
+    
+    setIsGeneratingEmbeddings(true)
+    try {
+      const batchSize = 10 // Process in batches to avoid overwhelming the API
+      const wordsWithEmb: WordWithEmbedding[] = []
+      
+      for (let i = 0; i < words.length; i += batchSize) {
+        const batch = words.slice(i, i + batchSize)
+        const batchPromises = batch.map(async (word) => {
+          const searchableText = createSearchableText(word)
+          const embedding = await generateEmbedding(searchableText)
+          return {
+            ...word,
+            embedding,
+            searchableText,
+          }
+        })
+        
+        const batchResults = await Promise.all(batchPromises)
+        wordsWithEmb.push(...batchResults)
+      }
+      
+      setWordsWithEmbeddings(wordsWithEmb)
+      setSemanticSearchEnabled(true)
+    } catch (error) {
+      console.error('Failed to generate embeddings:', error)
+    } finally {
+      setIsGeneratingEmbeddings(false)
+    }
+  }, [words, isGeneratingEmbeddings])
+
+  const filteredWords = useMemo(async () => {
+    if (!searchTerm) {
+      return semanticSearchEnabled ? wordsWithEmbeddings : words
+    }
+
+    // Use semantic search if enabled and embeddings are available
+    if (semanticSearchEnabled && wordsWithEmbeddings.length > 0) {
+      try {
+        const queryEmbedding = await generateEmbedding(searchTerm)
+        const semanticResults = searchWordsBySimilarity(wordsWithEmbeddings, queryEmbedding, 0.2)
+        
+        // Also include traditional keyword matches
+        const keywordResults = words.filter((word) =>
+          word.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          word.native_script.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          word.definition.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          word.language.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (word.transliteration &&
+            word.transliteration.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+
+        // Combine and deduplicate results (semantic first, then keyword)
+        const combined = [...semanticResults]
+        keywordResults.forEach(kwResult => {
+          if (!combined.some(semResult => semResult.word === kwResult.word)) {
+            combined.push(kwResult)
+          }
+        })
+
+        return combined
+      } catch (error) {
+        console.error('Semantic search failed, falling back to keyword search:', error)
+      }
+    }
+
+    // Fallback to traditional keyword search
     return words.filter((word) => {
       const matchesSearch =
-        !searchTerm ||
         word.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
         word.native_script.toLowerCase().includes(searchTerm.toLowerCase()) ||
         word.definition.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +128,14 @@ export function WordsClient({ words }: WordsClientProps) {
 
       return matchesSearch
     })
-  }, [words, searchTerm])
+  }, [words, wordsWithEmbeddings, searchTerm, semanticSearchEnabled])
+
+  // Convert async useMemo result to state
+  const [displayedWords, setDisplayedWords] = useState<WordData[]>(words)
+  
+  useEffect(() => {
+    filteredWords.then(setDisplayedWords)
+  }, [filteredWords])
 
 
   const handleRowExpand = (wordId: string) => {
@@ -73,16 +162,37 @@ export function WordsClient({ words }: WordsClientProps) {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             totalWords={words.length}
-            filteredCount={filteredWords.length}
+            filteredCount={displayedWords.length}
           />
+          <div className="px-4 py-2 border-b border-border bg-background flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={generateAllEmbeddings}
+                disabled={isGeneratingEmbeddings || semanticSearchEnabled}
+                className="text-sm px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {isGeneratingEmbeddings ? 'Generating Embeddings...' : 
+                 semanticSearchEnabled ? 'Semantic Search Ready' : 
+                 'Enable Semantic Search'}
+              </button>
+              {semanticSearchEnabled && (
+                <span className="text-xs text-green-600">✓ Semantic search enabled</span>
+              )}
+            </div>
+            {isGeneratingEmbeddings && (
+              <div className="text-xs text-muted-foreground">
+                This may take a few minutes for all words...
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Words List - full width grid layout with lightweight virtualization */}
       <main>
-        {filteredWords.length > 0 ? (
+        {displayedWords.length > 0 ? (
           <div>
-            {filteredWords.map((word, index) => {
+            {displayedWords.map((word, index) => {
               const wordId = `${word.word}-${index}`
               return (
                 <div
