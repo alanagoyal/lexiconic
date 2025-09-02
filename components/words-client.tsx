@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { 
@@ -29,10 +29,6 @@ export interface WordData {
   needs_citation: string
 }
 
-export interface WordWithEmbedding extends WordData {
-  embedding?: number[]
-  searchableText?: string
-}
 
 interface WordsClientProps {
   words: WordWithEmbedding[]
