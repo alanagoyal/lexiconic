@@ -1,17 +1,13 @@
-import type { WordWithEmbedding } from '@/components/words-client'
+import type { WordWithEmbedding } from './semantic-search'
 import { createSearchableText } from './semantic-search'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 // Load words with embeddings from local JSON file
 export async function loadWords(): Promise<WordWithEmbedding[]> {
-  const response = await fetch('/data/words-with-embeddings.json', {
-    cache: 'force-cache'
-  })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to load words: ${response.status}`)
-  }
-
-  const wordsWithEmbeddings: WordWithEmbedding[] = await response.json()
+  const filePath = join(process.cwd(), 'public', 'data', 'words-with-embeddings.json')
+  const fileContents = readFileSync(filePath, 'utf8')
+  const wordsWithEmbeddings: WordWithEmbedding[] = JSON.parse(fileContents)
   console.log('Loaded words with pre-computed embeddings')
   
   // Ensure searchableText exists
