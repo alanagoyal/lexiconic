@@ -33,7 +33,7 @@ html {
 }
         `}</style>
       </head>
-      <body className={`${playfair.variable}`}>{children}</body>
+      <body className={`${playfair.variable} crinkled-paper`}>{children}</body>
     </html>
   )
 }
