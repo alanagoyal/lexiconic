@@ -1,6 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useDeferredValue, Suspense } from "react"
+import { useQueryState, parseAsString } from 'nuqs'
+import { VList } from 'virtua'
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { 
@@ -35,17 +37,23 @@ interface WordsClientProps {
 }
 
 export function WordsClient({ words }: WordsClientProps) {
-  const [searchTerm, setSearchTerm] = useState("")
+  // URL state management for search
+  const [searchTerm, setSearchTerm] = useQueryState('q', parseAsString.withDefault(''))
+  const deferredSearchTerm = useDeferredValue(searchTerm)
+  
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
+  const [isSearching, setIsSearching] = useState(false)
 
   // Generate search embedding and perform hybrid search
   const performSearch = async (query: string) => {
     if (!query) {
       setDisplayedWords(words)
+      setIsSearching(false)
       return
     }
 
+    setIsSearching(true)
     try {
       // Get embedding for search query
       const response = await fetch('/api/search-embedding', {
@@ -99,17 +107,19 @@ export function WordsClient({ words }: WordsClientProps) {
                (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
       })
       setDisplayedWords(keywordResults)
+    } finally {
+      setIsSearching(false)
     }
   }
 
-  // Debounced search
+  // Search with deferred value for performance
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      performSearch(searchTerm)
+      performSearch(deferredSearchTerm)
     }, 300)
 
     return () => clearTimeout(timeoutId)
-  }, [searchTerm])
+  }, [deferredSearchTerm])
 
 
   const handleRowExpand = (wordId: string) => {
@@ -118,6 +128,14 @@ export function WordsClient({ words }: WordsClientProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground px-3 py-2 rounded z-50"
+      >
+        Skip to content
+      </a>
+      
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <header className="border-b border-border bg-background">
@@ -137,37 +155,72 @@ export function WordsClient({ words }: WordsClientProps) {
             onSearchChange={setSearchTerm}
             totalWords={words.length}
             filteredCount={displayedWords.length}
+            isSearching={isSearching}
           />
         </div>
       </div>
 
-      {/* Words List - full width grid layout with lightweight virtualization */}
-      <main>
+      {/* Words List - virtualized for performance */}
+      <main id="main-content" role="main" aria-label="Words list">
+        {/* Screen reader announcement for search results */}
+        <div 
+          role="status" 
+          aria-live="polite" 
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {isSearching && "Searching…"}
+          {!isSearching && displayedWords.length > 0 && `Showing ${displayedWords.length} of ${words.length} words`}
+          {!isSearching && displayedWords.length === 0 && searchTerm && "No words found"}
+        </div>
+        
         {displayedWords.length > 0 ? (
-          <div>
-            {displayedWords.map((word, index) => {
-              const wordId = `${word.word}-${index}`
-              return (
-                <div
-                  key={wordId}
-                  id={`word-${word.word}`}
-                  className="virtualized-item"
-                >
-                  <WordRow 
-                    word={word} 
-                    isExpanded={expandedRowId === wordId}
-                    onToggleExpand={() => handleRowExpand(wordId)}
-                  />
-                </div>
-              )
-            })}
-          </div>
+          // Use virtualization for lists > 100 items per agent.md guidelines
+          displayedWords.length > 100 ? (
+            <VList style={{ height: 'calc(100vh - 200px)' }} className="overflow-auto">
+              {displayedWords.map((word, index) => {
+                const wordId = `${word.word}-${index}`
+                return (
+                  <div key={wordId} className="virtualized-item">
+                    <WordRow 
+                      word={word} 
+                      isExpanded={expandedRowId === wordId}
+                      onToggleExpand={() => handleRowExpand(wordId)}
+                    />
+                  </div>
+                )
+              })}
+            </VList>
+          ) : (
+            <div>
+              {displayedWords.map((word, index) => {
+                const wordId = `${word.word}-${index}`
+                return (
+                  <div
+                    key={wordId}
+                    id={`word-${word.word}`}
+                    className="virtualized-item"
+                  >
+                    <WordRow 
+                      word={word} 
+                      isExpanded={expandedRowId === wordId}
+                      onToggleExpand={() => handleRowExpand(wordId)}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )
         ) : (
           <div className="p-16 text-center">
-            <div className="text-muted-foreground text-sm">No words found</div>
-            <div className="text-muted-foreground text-xs mt-2">
-              Try adjusting your search terms or filters
+            <div className="text-muted-foreground text-sm">
+              {searchTerm ? 'No words found' : 'No words available'}
             </div>
+            {searchTerm && (
+              <div className="text-muted-foreground text-xs mt-2">
+                Try adjusting your search terms
+              </div>
+            )}
           </div>
         )}
       </main>

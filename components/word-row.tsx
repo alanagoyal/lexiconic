@@ -33,10 +33,11 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
   return (
     <button
-      className="word-row cursor-pointer border-b border-border w-full text-left"
+      className="word-row cursor-pointer border-b border-border w-full text-left touch-action-manipulation focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600"
       onClick={onToggleExpand}
       aria-expanded={isExpanded}
       aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+      type="button"
     >
       {/* Main Grid Layout - responsive design */}
       <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
@@ -180,8 +181,13 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                     href={word.sources}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                    className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 touch-action-manipulation"
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.stopPropagation()
+                      }
+                    }}
                   >
                     Source <ExternalLink className="w-3 h-3" />
                   </a>
@@ -254,8 +260,13 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                         href={word.sources}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                        className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 touch-action-manipulation"
                         onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation()
+                          }
+                        }}
                       >
                         Source <ExternalLink className="w-3 h-3" />
                       </a>
