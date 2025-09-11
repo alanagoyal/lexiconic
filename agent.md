@@ -373,7 +373,7 @@ const LargeList = ({ items }) => {
 import { VList, VListHandle } from 'virtua';
 
 const AdvancedList = ({ items }) => {
-  const listRef = useRef < VListHandle > null;
+  const listRef = useRef<VListHandle>(null);
 
   // Scroll to top programmatically
   const scrollToTop = () => {
