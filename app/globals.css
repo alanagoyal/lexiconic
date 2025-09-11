@@ -190,29 +190,40 @@
 }
 
 .description-cell:hover {
-  overflow: visible;
+  overflow: hidden;
   white-space: nowrap;
-  animation: marquee 6s linear infinite;
-  background: var(--card);
-  z-index: 10;
-  padding: 2px 4px;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  color: transparent;
 }
 
-@keyframes marquee {
+.description-cell:hover::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  animation: marquee-scroll 8s linear infinite;
+  color: inherit;
+  font: inherit;
+}
+
+.description-cell:hover::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 100%;
+  top: 0;
+  white-space: nowrap;
+  animation: marquee-scroll 8s linear infinite;
+  color: inherit;
+  font: inherit;
+  padding-left: 2em;
+}
+
+@keyframes marquee-scroll {
   0% {
     transform: translateX(0%);
   }
-  50% {
-    transform: translateX(calc(-100% + 200px));
-  }
   100% {
-    transform: translateX(0%);
+    transform: translateX(-100%);
   }
-}
-
-/* Pause animation on hover for better readability */
-.description-cell:hover:active {
-  animation-play-state: paused;
 }
