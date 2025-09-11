@@ -32,9 +32,11 @@ interface WordRowProps {
 export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
   return (
-    <div
-      className="word-row cursor-pointer border-b border-border"
+    <button
+      className="word-row cursor-pointer border-b border-border w-full text-left"
       onClick={onToggleExpand}
+      aria-expanded={isExpanded}
+      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
     >
       {/* Main Grid Layout - responsive design */}
       <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
@@ -277,6 +279,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
         </div>
       )}
-    </div>
+    </button>
   );
 }
