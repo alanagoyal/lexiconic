@@ -95,7 +95,7 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
                   <BookOpen className="w-4 h-4" />
                   Definition
                 </h4>
-                <p className="text-sm text-foreground leading-relaxed">{word.definition}</p>
+                <p className="description-cell text-sm text-foreground leading-relaxed">{word.definition}</p>
               </div>
 
               {word.literal && word.literal !== "—" && (

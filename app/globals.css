@@ -177,3 +177,42 @@
   content-visibility: auto;
   contain-intrinsic-size: 160px; /* reasonable fallback height for rows */
 }
+
+/* Text clamp and marquee animation for description cells */
+.description-cell {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  position: relative;
+  cursor: default;
+}
+
+.description-cell:hover {
+  overflow: visible;
+  white-space: nowrap;
+  animation: marquee 6s linear infinite;
+  background: var(--card);
+  z-index: 10;
+  padding: 2px 4px;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(calc(-100% + 200px));
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* Pause animation on hover for better readability */
+.description-cell:hover:active {
+  animation-play-state: paused;
+}
