@@ -67,8 +67,8 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
               )}
           </div>
 
-          <div className="word-definition description-cell text-base text-foreground leading-relaxed pt-2 font-playfair" data-text={word.definition}>
-            {word.definition}
+          <div className="word-definition description-cell text-base text-foreground leading-relaxed pt-2 font-playfair">
+            <span className="marquee-text">{word.definition} • {word.definition} • {word.definition}</span>
           </div>
         </div>
 
@@ -92,8 +92,8 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
           {/* Center Column - Definition */}
           <div className="col-span-5 p-4 flex items-center border-l border-border">
-            <div className="word-definition description-cell text-lg md:text-xl text-foreground leading-relaxed font-playfair" data-text={word.definition}>
-              {word.definition}
+            <div className="word-definition description-cell text-lg md:text-xl text-foreground leading-relaxed font-playfair">
+              <span className="marquee-text">{word.definition} • {word.definition} • {word.definition}</span>
             </div>
           </div>
 
