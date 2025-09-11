@@ -181,51 +181,31 @@
 /* Crinkled paper effect */
 .crinkled-paper {
   position: relative;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.02) 0%, transparent 50%),
-    radial-gradient(circle at 60% 60%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
-    linear-gradient(135deg, transparent 30%, rgba(0, 0, 0, 0.01) 50%, transparent 70%),
-    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%);
-  background-size: 
-    200px 200px,
-    300px 300px, 
-    150px 150px,
-    250px 250px,
-    100px 100px,
-    180px 180px;
-  background-position:
-    0 0,
-    50px 50px,
-    100px 0,
-    0 100px,
-    25px 25px,
-    75px 75px;
+  background-image: url('/paper-texture.jpg');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  background-attachment: fixed;
 }
 
 .crinkled-paper::before {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.4;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill-opacity='0.08'%3E%3Cpolygon fill='%23000' points='36,1 26,1 22,6 6,6 6,16 4,16 4,27 5,27 5,57 7,57 7,59 53,59 53,56 58,56 58,46 55,46 55,44 55,14 53,14 53,4 36,4'/%3E%3Cpolygon fill='%23000' points='15,8 25,8 25,62 15,62'/%3E%3C/g%3E%3C/svg%3E");
+  background-color: var(--background);
+  opacity: 0.8;
   pointer-events: none;
+  z-index: -1;
+  mix-blend-mode: normal;
 }
 
 .dark .crinkled-paper {
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.015) 0%, transparent 50%),
-    radial-gradient(circle at 60% 60%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-    linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.01) 50%, transparent 70%),
-    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.015) 50%, transparent 70%);
+  background-blend-mode: overlay;
 }
 
 .dark .crinkled-paper::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill-opacity='0.05'%3E%3Cpolygon fill='%23fff' points='36,1 26,1 22,6 6,6 6,16 4,16 4,27 5,27 5,57 7,57 7,59 53,59 53,56 58,56 58,46 55,46 55,44 55,14 53,14 53,4 36,4'/%3E%3Cpolygon fill='%23fff' points='15,8 25,8 25,62 15,62'/%3E%3C/g%3E%3C/svg%3E");
+  background-color: var(--background);
+  opacity: 0.85;
 }
