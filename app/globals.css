@@ -180,32 +180,18 @@
 
 /* Crinkled paper effect */
 .crinkled-paper {
-  position: relative;
-  background-image: url('/paper-texture.jpg');
-  background-size: 600px 600px;
-  background-repeat: repeat;
-  background-attachment: fixed;
-}
-
-.crinkled-paper::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--background);
-  opacity: 0.8;
-  pointer-events: none;
-  z-index: -1;
-  mix-blend-mode: normal;
+  background-image: 
+    linear-gradient(rgba(250, 250, 250, 0.7), rgba(250, 250, 250, 0.7)),
+    url('/paper-texture.jpg');
+  background-size: cover, 300px 300px;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed, fixed;
+  background-position: center, center;
+  min-height: 100vh;
 }
 
 .dark .crinkled-paper {
-  background-blend-mode: overlay;
-}
-
-.dark .crinkled-paper::before {
-  background-color: var(--background);
-  opacity: 0.85;
+  background-image: 
+    linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8)),
+    url('/paper-texture.jpg');
 }
