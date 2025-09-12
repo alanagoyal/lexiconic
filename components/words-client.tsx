@@ -38,14 +38,17 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
+  const [isSearching, setIsSearching] = useState(false)
 
   // Generate search embedding and perform hybrid search
   const performSearch = async (query: string) => {
     if (!query) {
       setDisplayedWords(words)
+      setIsSearching(false)
       return
     }
 
+    setIsSearching(true)
     try {
       // Get embedding for search query
       const response = await fetch('/api/search-embedding', {
@@ -81,6 +84,7 @@ export function WordsClient({ words }: WordsClientProps) {
         })
 
         setDisplayedWords(combined)
+        setIsSearching(false)
       } else {
         throw new Error('Search API failed')
       }
@@ -99,6 +103,7 @@ export function WordsClient({ words }: WordsClientProps) {
                (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
       })
       setDisplayedWords(keywordResults)
+      setIsSearching(false)
     }
   }
 
@@ -137,6 +142,7 @@ export function WordsClient({ words }: WordsClientProps) {
             onSearchChange={setSearchTerm}
             totalWords={words.length}
             filteredCount={displayedWords.length}
+            isSearching={isSearching}
           />
         </div>
       </div>
