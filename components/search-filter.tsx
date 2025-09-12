@@ -28,7 +28,7 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
+        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex flex-row-reverse items-center gap-2">
           <div className="relative pointer-events-none">
             {/* Reserve width to avoid layout shift */}
             <span className="invisible block">{placeholderText}</span>
