@@ -28,11 +28,11 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex flex-row-reverse items-center gap-2">
+        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex items-center gap-2">
           <div className="relative pointer-events-none">
             {/* Reserve width to avoid layout shift */}
             <span className="invisible block">{placeholderText}</span>
-            <div className="absolute inset-0 flex items-center">
+            <div className="absolute inset-0 flex items-center justify-end">
               {isSearching ? (
                 <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
               ) : (
