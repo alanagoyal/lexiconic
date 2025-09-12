@@ -1,5 +1,6 @@
 "use client"
 import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
 
 interface SearchFilterProps {
   searchTerm: string
@@ -29,24 +30,7 @@ export function SearchFilter({
         <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
           {isSearching ? (
             <div className="flex items-center gap-2">
-              <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                  strokeDasharray="32"
-                  strokeDashoffset="32"
-                  className="opacity-25"
-                />
-                <path
-                  d="M4 12a8 8 0 0 1 8-8v8z"
-                  fill="currentColor"
-                  className="opacity-75"
-                />
-              </svg>
+              <Loader2 className="h-3 w-3 animate-spin" />
               <span className="pointer-events-none">Searching...</span>
             </div>
           ) : (

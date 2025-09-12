@@ -109,6 +109,11 @@ export function WordsClient({ words }: WordsClientProps) {
 
   // Debounced search
   useEffect(() => {
+    // Set loading state immediately when search term changes
+    if (searchTerm) {
+      setIsSearching(true)
+    }
+    
     const timeoutId = setTimeout(() => {
       performSearch(searchTerm)
     }, 300)
