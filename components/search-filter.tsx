@@ -31,17 +31,19 @@ export function SearchFilter({
           {isSearching ? (
             <Loader2 className="h-3 w-3 animate-spin pointer-events-none" />
           ) : (
-            <span className="pointer-events-none">
-              Showing {filteredCount} of {totalWords} words
-            </span>
+            <>
+              <span className="pointer-events-none">
+                Showing {filteredCount} of {totalWords} words
+              </span>
+              <button
+                onClick={() => onSearchChange("")}
+                className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            </>
           )}
-          <button
-            onClick={() => onSearchChange("")}
-            className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
-            aria-label="Clear search"
-          >
-            ×
-          </button>
         </div>
       )}
     </div>
