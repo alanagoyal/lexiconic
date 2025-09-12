@@ -1,11 +1,13 @@
 "use client"
 import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
 
 interface SearchFilterProps {
   searchTerm: string
   onSearchChange: (term: string) => void
   totalWords: number
   filteredCount: number
+  isSearching?: boolean
 }
 
 export function SearchFilter({
@@ -13,7 +15,9 @@ export function SearchFilter({
   onSearchChange,
   totalWords,
   filteredCount,
+  isSearching = false,
 }: SearchFilterProps) {
+  const placeholderText = `Showing ${totalWords} of ${totalWords} words`
   return (
     <div className="w-full relative">
       <Input
@@ -24,10 +28,20 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
-          <span className="pointer-events-none">
-            Showing {filteredCount} of {totalWords} words
-          </span>
+        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex items-center gap-2">
+          <div className="relative pointer-events-none">
+            {/* Reserve width to avoid layout shift */}
+            <span className="invisible block">{placeholderText}</span>
+            <div className="absolute inset-0 flex items-center justify-end">
+              {isSearching ? (
+                <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <span>
+                  Showing {filteredCount} of {totalWords} words
+                </span>
+              )}
+            </div>
+          </div>
           <button
             onClick={() => onSearchChange("")}
             className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
