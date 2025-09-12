@@ -27,23 +27,17 @@ export function SearchFilter({
       
       {searchTerm && (
         <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
-          {isSearching ? (
-            <span className="pointer-events-none">
-              Searching...
-            </span>
-          ) : (
-            <>
-              <span className="pointer-events-none">
-                Showing {filteredCount} of {totalWords} words
-              </span>
-              <button
-                onClick={() => onSearchChange("")}
-                className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
-                aria-label="Clear search"
-              >
-                ×
-              </button>
-            </>
+          <span className="pointer-events-none">
+            {isSearching ? "Searching..." : `Showing ${filteredCount} of ${totalWords} words`}
+          </span>
+          {!isSearching && (
+            <button
+              onClick={() => onSearchChange("")}
+              className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
+              aria-label="Clear search"
+            >
+              ×
+            </button>
           )}
         </div>
       )}
