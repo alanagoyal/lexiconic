@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { 
@@ -38,9 +38,11 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
+  const [isSearching, setIsSearching] = useState(false)
+  const searchIdRef = useRef(0)
 
   // Generate search embedding and perform hybrid search
-  const performSearch = async (query: string) => {
+  const performSearch = async (query: string, id: number) => {
     if (!query) {
       setDisplayedWords(words)
       return
@@ -80,7 +82,9 @@ export function WordsClient({ words }: WordsClientProps) {
           }
         })
 
-        setDisplayedWords(combined)
+        if (searchIdRef.current === id) {
+          setDisplayedWords(combined)
+        }
       } else {
         throw new Error('Search API failed')
       }
@@ -98,14 +102,29 @@ export function WordsClient({ words }: WordsClientProps) {
                (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
                (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
       })
-      setDisplayedWords(keywordResults)
+      if (searchIdRef.current === id) {
+        setDisplayedWords(keywordResults)
+      }
+    } finally {
+      if (searchIdRef.current === id) {
+        setIsSearching(false)
+      }
     }
   }
 
   // Debounced search
   useEffect(() => {
+    // If search is cleared, immediately reset without loader
+    if (!searchTerm) {
+      setIsSearching(false)
+      setDisplayedWords(words)
+      return
+    }
+
     const timeoutId = setTimeout(() => {
-      performSearch(searchTerm)
+      const id = ++searchIdRef.current
+      setIsSearching(true)
+      performSearch(searchTerm, id)
     }, 300)
 
     return () => clearTimeout(timeoutId)
@@ -137,6 +156,7 @@ export function WordsClient({ words }: WordsClientProps) {
             onSearchChange={setSearchTerm}
             totalWords={words.length}
             filteredCount={displayedWords.length}
+            isSearching={isSearching}
           />
         </div>
       </div>
@@ -183,4 +203,3 @@ export function WordsClient({ words }: WordsClientProps) {
     </div>
   )
 }
-
