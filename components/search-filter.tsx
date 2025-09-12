@@ -29,10 +29,7 @@ export function SearchFilter({
       {searchTerm && (
         <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
           {isSearching ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              <span className="pointer-events-none">Searching...</span>
-            </div>
+            <Loader2 className="h-3 w-3 animate-spin pointer-events-none" />
           ) : (
             <span className="pointer-events-none">
               Showing {filteredCount} of {totalWords} words
