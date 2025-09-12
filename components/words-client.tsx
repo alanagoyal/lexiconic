@@ -130,6 +130,20 @@ export function WordsClient({ words }: WordsClientProps) {
     return () => clearTimeout(timeoutId)
   }, [searchTerm])
 
+  // Show spinner immediately on input; cancel stale in-flight searches on clear
+  const handleSearchChange = (term: string) => {
+    const trimmed = term.trim()
+    if (trimmed === "") {
+      // Invalidate any in-flight searches so they can't update state
+      searchIdRef.current += 1
+      setIsSearching(false)
+      setDisplayedWords(words)
+    } else {
+      setIsSearching(true)
+    }
+    setSearchTerm(term)
+  }
+
 
   const handleRowExpand = (wordId: string) => {
     setExpandedRowId(expandedRowId === wordId ? null : wordId)
@@ -153,7 +167,7 @@ export function WordsClient({ words }: WordsClientProps) {
         <div className="border-b border-border bg-background">
           <SearchFilter
             searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            onSearchChange={handleSearchChange}
             totalWords={words.length}
             filteredCount={displayedWords.length}
             isSearching={isSearching}
