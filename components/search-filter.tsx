@@ -27,7 +27,7 @@ export function SearchFilter({
       
       {searchTerm && (
         <div className="absolute bottom-2 right-6 text-xs text-muted-foreground flex items-center gap-2">
-          <span className="pointer-events-none">
+          <span className="pointer-events-none min-w-0 flex-shrink-0" style={{ width: '140px', textAlign: 'left' }}>
             {isSearching ? "Searching..." : `Showing ${filteredCount} of ${totalWords} words`}
           </span>
           {!isSearching && (
