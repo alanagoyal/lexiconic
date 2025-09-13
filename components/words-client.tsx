@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { VList } from "virtua"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { 
@@ -175,27 +176,54 @@ export function WordsClient({ words }: WordsClientProps) {
         </div>
       </div>
 
-      {/* Words List - full width grid layout with lightweight virtualization */}
+      {/* Words List - full width grid layout with virtualization for large sets */}
       <main>
         {displayedWords.length > 0 ? (
-          <div>
-            {displayedWords.map((word, index) => {
-              const wordId = `${word.word}-${index}`
-              return (
-                <div
-                  key={wordId}
-                  id={`word-${word.word}`}
-                  className="virtualized-item"
-                >
-                  <WordRow 
-                    word={word} 
-                    isExpanded={expandedRowId === wordId}
-                    onToggleExpand={() => handleRowExpand(wordId)}
-                  />
-                </div>
-              )
-            })}
-          </div>
+          displayedWords.length > 100 ? (
+            <VList
+              overscan={8}
+              className="overflow-y-auto"
+              style={{ height: 'calc(100vh - 200px)' }}
+            >
+              {displayedWords.map((word) => {
+                const baseId = `${word.word}:${word.language}`
+                return (
+                  <div
+                    key={baseId}
+                    id={`word-${word.word}`}
+                    className="virtualized-item"
+                  >
+                    <WordRow
+                      word={word}
+                      isExpanded={expandedRowId === baseId}
+                      onToggleExpand={() => handleRowExpand(baseId)}
+                    />
+                  </div>
+                )
+              })}
+            </VList>
+          ) : (
+            <div>
+              {displayedWords.map((word, index) => {
+                const baseId = `${word.word}:${word.language}`
+                // Fallback to index only if absolutely needed to keep key unique
+                const key = baseId || `${word.word}-${index}`
+                return (
+                  <div
+                    key={key}
+                    id={`word-${word.word}`}
+                    className="virtualized-item"
+                  >
+                    <WordRow
+                      word={word}
+                      isExpanded={expandedRowId === baseId}
+                      onToggleExpand={() => handleRowExpand(baseId)}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )
         ) : (
           <div className="p-16 text-center">
             <div className="text-muted-foreground text-sm">No words found</div>
