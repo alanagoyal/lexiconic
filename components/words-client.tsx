@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { useQueryState, parseAsString } from "nuqs"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
@@ -46,6 +46,47 @@ export function WordsClient({ words }: WordsClientProps) {
   const [isSearching, setIsSearching] = useState(false)
   const searchIdRef = useRef(0)
 
+  // Lightweight session cache: query -> indexes into `words`.
+  // Prevent re-fetch/spinner on refresh for previously searched queries.
+  const DATASET_VERSION = useMemo(() => {
+    const first = words[0]
+    const last = words[words.length - 1]
+    return [
+      words.length,
+      first?.word ?? "",
+      first?.language ?? "",
+      last?.word ?? "",
+      last?.language ?? "",
+    ].join("|")
+  }, [words])
+
+  const CACHE_PREFIX = "bw:search:indexes:" as const
+
+  const readCachedIndexes = (query: string): number[] | null => {
+    try {
+      if (typeof window === "undefined") return null
+      const raw = sessionStorage.getItem(CACHE_PREFIX + query)
+      if (!raw) return null
+      const parsed = JSON.parse(raw) as { v: number; dv: string; idx: number[] }
+      if (!parsed || parsed.v !== 1 || parsed.dv !== DATASET_VERSION || !Array.isArray(parsed.idx)) {
+        return null
+      }
+      return parsed.idx.filter((n) => Number.isInteger(n) && n >= 0 && n < words.length)
+    } catch {
+      return null
+    }
+  }
+
+  const writeCachedIndexes = (query: string, indexes: number[]) => {
+    try {
+      if (typeof window === "undefined") return
+      const payload = JSON.stringify({ v: 1, dv: DATASET_VERSION, idx: indexes })
+      sessionStorage.setItem(CACHE_PREFIX + query, payload)
+    } catch {
+      // ignore storage errors
+    }
+  }
+
   // Generate search embedding and perform hybrid search
   const performSearch = async (query: string, id: number) => {
     if (!query) {
@@ -89,6 +130,13 @@ export function WordsClient({ words }: WordsClientProps) {
 
         if (searchIdRef.current === id) {
           setDisplayedWords(combined)
+          // Cache compact index list so refresh shows results instantly
+          const indexMap = new Map<WordWithEmbedding, number>()
+          words.forEach((w, i) => indexMap.set(w, i))
+          const indexes = combined
+            .map((w) => indexMap.get(w))
+            .filter((n): n is number => typeof n === "number")
+          writeCachedIndexes(query, indexes)
         }
       } else {
         throw new Error('Search API failed')
@@ -109,6 +157,12 @@ export function WordsClient({ words }: WordsClientProps) {
       })
       if (searchIdRef.current === id) {
         setDisplayedWords(keywordResults)
+        const indexMap = new Map<WordWithEmbedding, number>()
+        words.forEach((w, i) => indexMap.set(w, i))
+        const indexes = keywordResults
+          .map((w) => indexMap.get(w))
+          .filter((n): n is number => typeof n === "number")
+        writeCachedIndexes(query, indexes)
       }
     } finally {
       if (searchIdRef.current === id) {
@@ -123,6 +177,15 @@ export function WordsClient({ words }: WordsClientProps) {
     if (!searchTerm) {
       setIsSearching(false)
       setDisplayedWords(words)
+      return
+    }
+
+    // Use cached results immediately if available for this query
+    const cached = readCachedIndexes(searchTerm)
+    if (cached && cached.length > 0) {
+      const resolved = cached.map((i) => words[i]).filter(Boolean)
+      setDisplayedWords(resolved)
+      setIsSearching(false)
       return
     }
 
