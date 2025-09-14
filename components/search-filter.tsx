@@ -44,7 +44,7 @@ export function SearchFilter({
           </div>
           <button
             onClick={() => onSearchChange("")}
-            className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-sm"
+            className="pointer-events-auto hover:text-foreground transition-colors cursor-pointer text-base"
             aria-label="Clear search"
           >
             ×
