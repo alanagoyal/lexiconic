@@ -28,3 +28,29 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## Data + Embeddings workflow
+
+- Base dataset: `public/data/words.json` (no embeddings)
+- Precomputed dataset: `public/data/words-with-embeddings.json` (used by the app)
+
+### Add words from The Intrepid Guide
+
+- Run `npm run augment:intrepid` to scrape and merge new words from:
+  `https://www.theintrepidguide.com/untranslatable-words-ultimate-list/`
+- The script deduplicates by `(word, language)` and writes updates to
+  `public/data/words.json`.
+
+### Generate embeddings
+
+- Run `npm run generate:embeddings` to produce
+  `public/data/words-with-embeddings.json` using OpenAI
+  `text-embedding-3-small`.
+- Requires `OPENAI_API_KEY` in the environment.
+
+### CI automation
+
+- A GitHub Action at `.github/workflows/generate-embeddings.yml` runs on pushes
+  that modify `public/data/words.json`, regenerates embeddings, and commits the
+  updated `public/data/words-with-embeddings.json` back to the branch.
+- Set repository secret `OPENAI_API_KEY` for the workflow.

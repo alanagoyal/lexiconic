@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "augment:intrepid": "node scripts/augment-intrepid.mjs",
+    "generate:embeddings": "node scripts/generate-embeddings.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
