@@ -1,0 +1,131 @@
+name: Update Word Embeddings
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'public/data/words*.json'
+      - 'public/data/*words*.json'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'public/data/words*.json'
+      - 'public/data/*words*.json'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-embeddings:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        # Need to checkout with token that can push changes
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install openai
+        
+    - name: Check for data changes
+      id: changes
+      run: |
+        # Check if any words data files were modified
+        if git diff --name-only HEAD^ HEAD | grep -E "public/data/.*words.*\.json"; then
+          echo "data_changed=true" >> $GITHUB_OUTPUT
+          echo "Words data files were modified"
+        else
+          echo "data_changed=false" >> $GITHUB_OUTPUT
+          echo "No words data files were modified"
+        fi
+        
+    - name: Find words data file
+      id: find_file
+      if: steps.changes.outputs.data_changed == 'true'
+      run: |
+        # Look for the main words data file (without embeddings)
+        if [ -f "public/data/words.json" ]; then
+          echo "data_file=public/data/words.json" >> $GITHUB_OUTPUT
+        elif [ -f "public/data/words-updated.json" ]; then
+          echo "data_file=public/data/words-updated.json" >> $GITHUB_OUTPUT
+        else
+          # Fall back to looking for any words file without embeddings in name
+          DATA_FILE=$(find public/data -name "*words*.json" | grep -v "embeddings" | head -1)
+          if [ -n "$DATA_FILE" ]; then
+            echo "data_file=$DATA_FILE" >> $GITHUB_OUTPUT
+          else
+            echo "No suitable words data file found"
+            exit 1
+          fi
+        fi
+        echo "Using data file: $(cat $GITHUB_OUTPUT | grep data_file | cut -d'=' -f2)"
+        
+    - name: Generate embeddings
+      if: steps.changes.outputs.data_changed == 'true'
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        DATA_FILE="${{ steps.find_file.outputs.data_file }}"
+        echo "Generating embeddings for: $DATA_FILE"
+        
+        # Run the embedding generation script
+        python scripts/generate_embeddings.py "$DATA_FILE"
+        
+        # Check if embeddings file was created
+        EMBEDDINGS_FILE="${DATA_FILE//.json/-with-embeddings.json}"
+        if [ -f "$EMBEDDINGS_FILE" ]; then
+          echo "Embeddings generated successfully: $EMBEDDINGS_FILE"
+          
+          # Move the embeddings file to the standard location
+          mv "$EMBEDDINGS_FILE" "public/data/words-with-embeddings.json"
+          echo "Moved embeddings file to standard location: public/data/words-with-embeddings.json"
+        else
+          echo "Error: Embeddings file was not created"
+          exit 1
+        fi
+        
+    - name: Commit updated embeddings
+      if: steps.changes.outputs.data_changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if git diff --quiet public/data/words-with-embeddings.json; then
+          echo "No changes to embeddings file"
+        else
+          git add public/data/words-with-embeddings.json
+          git commit -m "🤖 Update word embeddings
+
+          Auto-generated embeddings for updated words dataset
+          
+          🤖 Generated with GitHub Actions
+          
+          Co-Authored-By: GitHub Actions <action@github.com>"
+          
+          echo "Committed updated embeddings"
+        fi
+        
+    - name: Push changes
+      if: steps.changes.outputs.data_changed == 'true'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        
+    - name: Summary
+      if: steps.changes.outputs.data_changed == 'true'
+      run: |
+        echo "✅ Word embeddings have been updated and committed"
+        echo "📊 Check the updated file: public/data/words-with-embeddings.json"
+        
+    - name: No changes needed
+      if: steps.changes.outputs.data_changed == 'false'
+      run: |
+        echo "ℹ️  No words data files were modified, skipping embedding generation"
