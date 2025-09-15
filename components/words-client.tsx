@@ -108,6 +108,13 @@ export function WordsClient({ words }: WordsClientProps) {
     return () => clearTimeout(timeoutId)
   }, [searchTerm, words])
 
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term)
+    if (term.trim()) {
+      setIsSearching(true)
+    }
+  }
+
   const handleClear = () => {
     setSearchTerm("")
   }
@@ -179,7 +186,7 @@ export function WordsClient({ words }: WordsClientProps) {
         <div className="border-b border-border bg-background">
           <SearchFilter
             searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            onSearchChange={handleSearchChange}
             onClear={handleClear}
             totalWords={words.length}
             filteredCount={displayedWords.length}
