@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useMemo } from "react"
 import { useQueryState, parseAsString } from "nuqs"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
+import { Button } from "@/components/ui/button"
+import { Shuffle, ArrowUpAZ, ArrowDownZA } from "lucide-react"
 import { 
   searchWordsBySimilarity,
   type WordWithEmbedding 
@@ -217,6 +219,21 @@ export function WordsClient({ words }: WordsClientProps) {
     setExpandedRowId(expandedRowId === wordId ? null : wordId)
   }
 
+  const handleRandomize = () => {
+    const shuffled = [...displayedWords].sort(() => Math.random() - 0.5)
+    setDisplayedWords(shuffled)
+  }
+
+  const handleSortAscending = () => {
+    const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
+    setDisplayedWords(sorted)
+  }
+
+  const handleSortDescending = () => {
+    const sorted = [...displayedWords].sort((a, b) => b.word.localeCompare(a.word))
+    setDisplayedWords(sorted)
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header and Search - sticky together */}
@@ -227,6 +244,35 @@ export function WordsClient({ words }: WordsClientProps) {
               <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
                 BETWEEN WORDS
               </h1>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleRandomize}
+                  title="Randomize order"
+                  aria-label="Randomize order"
+                >
+                  <Shuffle className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSortAscending}
+                  title="Sort A-Z"
+                  aria-label="Sort A-Z"
+                >
+                  <ArrowUpAZ className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSortDescending}
+                  title="Sort Z-A"
+                  aria-label="Sort Z-A"
+                >
+                  <ArrowDownZA className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </header>
