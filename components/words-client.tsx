@@ -43,6 +43,7 @@ export function WordsClient({ words }: WordsClientProps) {
     parseAsString.withDefault(""),
     { history: "push" }
   )
+  const [inputValue, setInputValue] = useState(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
@@ -94,6 +95,19 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   }
 
+  // Sync input with URL param on mount/URL change
+  useEffect(() => {
+    setInputValue(searchTerm)
+  }, [searchTerm])
+
+  // Debounce URL updates
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchTerm(inputValue)
+    }, 500)
+    return () => clearTimeout(timeoutId)
+  }, [inputValue, setSearchTerm])
+
   // Search effect with debouncing and caching
   useEffect(() => {
     if (!searchTerm.trim()) {
@@ -126,7 +140,15 @@ export function WordsClient({ words }: WordsClientProps) {
     return () => clearTimeout(timeoutId)
   }, [searchTerm, words])
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value)
+    if (!value.trim()) {
+      setSearchTerm("")
+    }
+  }
+
   const handleClear = () => {
+    setInputValue("")
     setSearchTerm("")
   }
 
@@ -196,8 +218,8 @@ export function WordsClient({ words }: WordsClientProps) {
         {/* Search - full width */}
         <div className="border-b border-border bg-background">
           <SearchFilter
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            searchTerm={inputValue}
+            onSearchChange={handleInputChange}
             onClear={handleClear}
             totalWords={words.length}
             filteredCount={displayedWords.length}
