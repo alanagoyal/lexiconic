@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
-import { useQueryState, parseAsString } from "nuqs"
+import { useState, useEffect } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { Button } from "@/components/ui/button"
@@ -38,18 +37,10 @@ interface WordsClientProps {
 }
 
 export function WordsClient({ words }: WordsClientProps) {
-  const [searchTerm, setSearchTerm] = useQueryState(
-    "q",
-    parseAsString.withDefault(""),
-    { history: "push" }
-  )
-  const [inputValue, setInputValue] = useState(searchTerm)
+  const [searchTerm, setSearchTerm] = useState("")
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
-  
-  // Simple cache for search results
-  const cacheRef = useRef<Map<string, WordWithEmbedding[]>>(new Map())
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -95,20 +86,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   }
 
-  // Sync input with URL param on mount/URL change
-  useEffect(() => {
-    setInputValue(searchTerm)
-  }, [searchTerm])
-
-  // Debounce URL updates
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setSearchTerm(inputValue)
-    }, 500)
-    return () => clearTimeout(timeoutId)
-  }, [inputValue, setSearchTerm])
-
-  // Search effect with debouncing and caching
+  // Simple search effect with debouncing
   useEffect(() => {
     if (!searchTerm.trim()) {
       setIsSearching(false)
@@ -116,21 +94,11 @@ export function WordsClient({ words }: WordsClientProps) {
       return
     }
 
-    // Check cache first
-    const cached = cacheRef.current.get(searchTerm)
-    if (cached) {
-      setDisplayedWords(cached)
-      setIsSearching(false)
-      return
-    }
-
-    // Set loading state immediately
     setIsSearching(true)
 
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(searchTerm)
-        cacheRef.current.set(searchTerm, results)
         setDisplayedWords(results)
       } finally {
         setIsSearching(false)
@@ -140,15 +108,7 @@ export function WordsClient({ words }: WordsClientProps) {
     return () => clearTimeout(timeoutId)
   }, [searchTerm, words])
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value)
-    if (!value.trim()) {
-      setSearchTerm("")
-    }
-  }
-
   const handleClear = () => {
-    setInputValue("")
     setSearchTerm("")
   }
 
@@ -218,8 +178,8 @@ export function WordsClient({ words }: WordsClientProps) {
         {/* Search - full width */}
         <div className="border-b border-border bg-background">
           <SearchFilter
-            searchTerm={inputValue}
-            onSearchChange={handleInputChange}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
             onClear={handleClear}
             totalWords={words.length}
             filteredCount={displayedWords.length}
