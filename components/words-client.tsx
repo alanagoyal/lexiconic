@@ -46,172 +46,88 @@ export function WordsClient({ words }: WordsClientProps) {
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
-  const searchIdRef = useRef(0)
+  
+  // Simple cache for search results
+  const cacheRef = useRef<Map<string, WordWithEmbedding[]>>(new Map())
 
-  // Lightweight session cache: query -> indexes into `words`.
-  // Prevent re-fetch/spinner on refresh for previously searched queries.
-  const DATASET_VERSION = useMemo(() => {
-    const first = words[0]
-    const last = words[words.length - 1]
-    return [
-      words.length,
-      first?.word ?? "",
-      first?.language ?? "",
-      last?.word ?? "",
-      last?.language ?? "",
-    ].join("|")
-  }, [words])
-
-  const CACHE_PREFIX = "bw:search:indexes:" as const
-
-  const readCachedIndexes = (query: string): number[] | null => {
-    try {
-      if (typeof window === "undefined") return null
-      const raw = sessionStorage.getItem(CACHE_PREFIX + query)
-      if (!raw) return null
-      const parsed = JSON.parse(raw) as { v: number; dv: string; idx: number[] }
-      if (!parsed || parsed.v !== 1 || parsed.dv !== DATASET_VERSION || !Array.isArray(parsed.idx)) {
-        return null
-      }
-      return parsed.idx.filter((n) => Number.isInteger(n) && n >= 0 && n < words.length)
-    } catch {
-      return null
-    }
+  // Perform keyword search
+  const performKeywordSearch = (query: string): WordWithEmbedding[] => {
+    const searchLower = query.toLowerCase()
+    return words.filter((word) => 
+      word.word.toLowerCase().includes(searchLower) ||
+      word.native_script.toLowerCase().includes(searchLower) ||
+      word.definition.toLowerCase().includes(searchLower) ||
+      word.language.toLowerCase().includes(searchLower) ||
+      (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
+      (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
+      (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
+    )
   }
 
-  const writeCachedIndexes = (query: string, indexes: number[]) => {
+  // Perform semantic search
+  const performSemanticSearch = async (query: string): Promise<WordWithEmbedding[]> => {
     try {
-      if (typeof window === "undefined") return
-      const payload = JSON.stringify({ v: 1, dv: DATASET_VERSION, idx: indexes })
-      sessionStorage.setItem(CACHE_PREFIX + query, payload)
-    } catch {
-      // ignore storage errors
-    }
-  }
-
-  // Generate search embedding and perform hybrid search
-  const performSearch = async (query: string, id: number) => {
-    if (!query) {
-      setDisplayedWords(words)
-      return
-    }
-
-    try {
-      // Get embedding for search query
       const response = await fetch('/api/search-embedding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       })
 
-      if (response.ok) {
-        const { embedding } = await response.json()
-        
-        // Semantic search with pre-computed embeddings
-        const semanticResults = searchWordsBySimilarity(words, embedding, 0.15, 30)
-        
-        // Keyword search
-        const keywordResults = words.filter((word) => {
-          const searchLower = query.toLowerCase()
-          return word.word.toLowerCase().includes(searchLower) ||
-                 word.native_script.toLowerCase().includes(searchLower) ||
-                 word.definition.toLowerCase().includes(searchLower) ||
-                 word.language.toLowerCase().includes(searchLower) ||
-                 (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
-                 (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
-                 (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
-        })
+      if (!response.ok) throw new Error('Search API failed')
 
-        // Combine results (semantic first, then keyword)
-        const combined = [...semanticResults]
-        keywordResults.forEach(kwResult => {
-          if (!combined.some(semResult => semResult.word === kwResult.word)) {
-            combined.push(kwResult)
-          }
-        })
+      const { embedding } = await response.json()
+      const semanticResults = searchWordsBySimilarity(words, embedding, 0.15, 30)
+      const keywordResults = performKeywordSearch(query)
 
-        if (searchIdRef.current === id) {
-          setDisplayedWords(combined)
-          // Cache compact index list so refresh shows results instantly
-          const indexMap = new Map<WordWithEmbedding, number>()
-          words.forEach((w, i) => indexMap.set(w, i))
-          const indexes = combined
-            .map((w) => indexMap.get(w))
-            .filter((n): n is number => typeof n === "number")
-          writeCachedIndexes(query, indexes)
+      // Combine results (semantic first, then keyword)
+      const combined = [...semanticResults]
+      keywordResults.forEach(kwResult => {
+        if (!combined.some(semResult => semResult.word === kwResult.word)) {
+          combined.push(kwResult)
         }
-      } else {
-        throw new Error('Search API failed')
-      }
+      })
+
+      return combined
     } catch (error) {
       console.error('Semantic search failed, using keyword only:', error)
-      
-      // Fallback to keyword search
-      const keywordResults = words.filter((word) => {
-        const searchLower = query.toLowerCase()
-        return word.word.toLowerCase().includes(searchLower) ||
-               word.native_script.toLowerCase().includes(searchLower) ||
-               word.definition.toLowerCase().includes(searchLower) ||
-               word.language.toLowerCase().includes(searchLower) ||
-               (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
-               (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
-               (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
-      })
-      if (searchIdRef.current === id) {
-        setDisplayedWords(keywordResults)
-        const indexMap = new Map<WordWithEmbedding, number>()
-        words.forEach((w, i) => indexMap.set(w, i))
-        const indexes = keywordResults
-          .map((w) => indexMap.get(w))
-          .filter((n): n is number => typeof n === "number")
-        writeCachedIndexes(query, indexes)
-      }
-    } finally {
-      if (searchIdRef.current === id) {
-        setIsSearching(false)
-      }
+      return performKeywordSearch(query)
     }
   }
 
-  // Debounced search
+  // Search effect with debouncing and caching
   useEffect(() => {
-    // If search is cleared, immediately reset without loader
-    if (!searchTerm) {
+    if (!searchTerm.trim()) {
       setIsSearching(false)
       setDisplayedWords(words)
       return
     }
 
-    // Use cached results immediately if available for this query
-    const cached = readCachedIndexes(searchTerm)
-    if (cached && cached.length > 0) {
-      const resolved = cached.map((i) => words[i]).filter(Boolean)
-      setDisplayedWords(resolved)
+    // Check cache first
+    const cached = cacheRef.current.get(searchTerm)
+    if (cached) {
+      setDisplayedWords(cached)
       setIsSearching(false)
       return
     }
 
-    const timeoutId = setTimeout(() => {
-      const id = ++searchIdRef.current
-      setIsSearching(true)
-      performSearch(searchTerm, id)
+    // Set loading state immediately
+    setIsSearching(true)
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        const results = await performSemanticSearch(searchTerm)
+        cacheRef.current.set(searchTerm, results)
+        setDisplayedWords(results)
+      } finally {
+        setIsSearching(false)
+      }
     }, 300)
 
     return () => clearTimeout(timeoutId)
-  }, [searchTerm])
+  }, [searchTerm, words])
 
-  // Show spinner immediately on input; cancel stale in-flight searches on clear
-  const handleSearchChange = (term: string) => {
-    const trimmed = term.trim()
-    if (trimmed === "") {
-      // Invalidate any in-flight searches so they can't update state
-      searchIdRef.current += 1
-      setIsSearching(false)
-      setDisplayedWords(words)
-    } else {
-      setIsSearching(true)
-    }
-    setSearchTerm(term)
+  const handleClear = () => {
+    setSearchTerm("")
   }
 
 
@@ -281,7 +197,8 @@ export function WordsClient({ words }: WordsClientProps) {
         <div className="border-b border-border bg-background">
           <SearchFilter
             searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
+            onSearchChange={setSearchTerm}
+            onClear={handleClear}
             totalWords={words.length}
             filteredCount={displayedWords.length}
             isSearching={isSearching}
