@@ -31,15 +31,8 @@ Continue building your app on:
 
 ## Data + Embeddings workflow
 
-- Base dataset: `public/data/words.json` (no embeddings)
+- Base dataset: `public/data/words.json` (source of truth, no embeddings)
 - Precomputed dataset: `public/data/words-with-embeddings.json` (used by the app)
-
-### Add words from The Intrepid Guide
-
-- Run `npm run augment:intrepid` to scrape and merge new words from:
-  `https://www.theintrepidguide.com/untranslatable-words-ultimate-list/`
-- The script deduplicates by `(word, language)` and writes updates to
-  `public/data/words.json`.
 
 ### Generate embeddings
 
