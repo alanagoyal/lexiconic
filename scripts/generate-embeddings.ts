@@ -1,8 +1,31 @@
 #!/usr/bin/env npx tsx
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import OpenAI from 'openai';
+
+// Load environment variables from .env.local
+function loadEnvLocal() {
+  const envPath = join(process.cwd(), '.env.local');
+  if (existsSync(envPath)) {
+    const envContent = readFileSync(envPath, 'utf8');
+    const lines = envContent.split('\n');
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        if (key && valueParts.length > 0) {
+          const value = valueParts.join('=').replace(/^["']|["']$/g, '');
+          process.env[key.trim()] = value;
+        }
+      }
+    }
+  }
+}
+
+// Load .env.local before using environment variables
+loadEnvLocal();
 
 interface Word {
   word: string;
@@ -126,7 +149,8 @@ async function generateEmbeddingsForWords() {
 
 // Check if OPENAI_API_KEY is set
 if (!process.env.OPENAI_API_KEY) {
-  console.error('❌ OPENAI_API_KEY environment variable is required');
+  console.error('❌ OPENAI_API_KEY not found in environment variables or .env.local');
+  console.error('   Please add OPENAI_API_KEY=your_key_here to your .env.local file');
   process.exit(1);
 }
 

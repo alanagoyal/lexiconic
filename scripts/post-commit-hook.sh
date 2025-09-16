@@ -12,10 +12,10 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
     # Change to the repository root directory
     cd "$(git rev-parse --show-toplevel)"
 
-    # Check if OPENAI_API_KEY is set
-    if [ -z "$OPENAI_API_KEY" ]; then
-        echo "⚠️  OPENAI_API_KEY environment variable is not set"
-        echo "   Skipping embedding generation. Set OPENAI_API_KEY to enable automatic embedding generation."
+    # Check if OPENAI_API_KEY is set or if .env.local exists
+    if [ -z "$OPENAI_API_KEY" ] && [ ! -f ".env.local" ]; then
+        echo "⚠️  OPENAI_API_KEY not found in environment variables or .env.local"
+        echo "   Skipping embedding generation. Add OPENAI_API_KEY to your .env.local file to enable automatic embedding generation."
         exit 0
     fi
 
