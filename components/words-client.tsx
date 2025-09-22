@@ -68,7 +68,7 @@ export function WordsClient({ words }: WordsClientProps) {
       if (!response.ok) throw new Error('Search API failed')
 
       const { embedding } = await response.json()
-      const semanticResults = searchWordsBySimilarity(words, embedding, 0.15, 30)
+      const semanticResults = searchWordsBySimilarity(words, embedding, 0.25, 30)
       const keywordResults = performKeywordSearch(query)
 
       // Combine results (semantic first, then keyword)
