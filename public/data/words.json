@@ -142,7 +142,7 @@
   {
     "word": "arigata-meiwaku",
     "native_script": "ありがためいわく",
-    "transliteration": "",
+    "transliteration": "a-ri-ga-ta-mei-wa-ku",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/obligation",
@@ -302,7 +302,7 @@
   {
     "word": "bakku-shan",
     "native_script": "バックシャン",
-    "transliteration": "",
+    "transliteration": "bak-ku-shan",
     "language": "Japanese",
     "family": "Japonic",
     "category": "appearance/dating",
@@ -402,7 +402,7 @@
   {
     "word": "boketto",
     "native_script": "ぼけっと",
-    "transliteration": "",
+    "transliteration": "bo-ke-tto",
     "language": "Japanese",
     "family": "Japonic",
     "category": "mental/daydreaming",
@@ -482,7 +482,7 @@
   {
     "word": "ceilidh",
     "native_script": "céilidh",
-    "transliteration": "",
+    "transliteration": "Transliteration: kay-lee",
     "language": "Scottish Gaelic",
     "family": "Celtic",
     "category": "custom/music",
@@ -522,7 +522,7 @@
   {
     "word": "chindōgu",
     "native_script": "珍道具",
-    "transliteration": "",
+    "transliteration": "chin-dō-gu",
     "language": "Japanese",
     "family": "Japonic",
     "category": "objects/prank",
@@ -722,7 +722,7 @@
   {
     "word": "dapjeongneo",
     "native_script": "답정너",
-    "transliteration": "",
+    "transliteration": "dap-jeong-neo",
     "language": "Korean",
     "family": "Koreanic",
     "category": "social/deception",
@@ -1182,7 +1182,7 @@
   {
     "word": "fahrvergnügen",
     "native_script": "Fahrvergnügen",
-    "transliteration": "",
+    "transliteration": "fahr-ver-gnyu-gen",
     "language": "German",
     "family": "Germanic",
     "category": "feeling/driving",
@@ -1602,7 +1602,7 @@
   {
     "word": "gilchi",
     "native_script": "길치",
-    "transliteration": "",
+    "transliteration": "gil-chi",
     "language": "Korean",
     "family": "Koreanic",
     "category": "personality/navigation",
@@ -1702,7 +1702,7 @@
   {
     "word": "gosohada",
     "native_script": "고소하다",
-    "transliteration": "",
+    "transliteration": "go-so-ha-da",
     "language": "Korean",
     "family": "Koreanic",
     "category": "emotion/satisfaction",
@@ -2062,7 +2062,7 @@
   {
     "word": "ikigai",
     "native_script": "生きがい",
-    "transliteration": "",
+    "transliteration": "i-ki-gai",
     "language": "Japanese",
     "family": "Japonic",
     "category": "philosophy/purpose",
@@ -2302,7 +2302,7 @@
   {
     "word": "kaizen",
     "native_script": "改善",
-    "transliteration": "",
+    "transliteration": "kai-zen",
     "language": "Japanese",
     "family": "Japonic",
     "category": "philosophy/improvement",
@@ -2442,7 +2442,7 @@
   {
     "word": "koi no yokan",
     "native_script": "恋の予感",
-    "transliteration": "",
+    "transliteration": "koi-no-yo-kan",
     "language": "Japanese",
     "family": "Japonic",
     "category": "emotion/love",
@@ -2482,7 +2482,7 @@
   {
     "word": "komorebi",
     "native_script": "木漏れ日",
-    "transliteration": "",
+    "transliteration": "ko-mo-re-bi",
     "language": "Japanese",
     "family": "Japonic",
     "category": "nature/light",
@@ -2702,7 +2702,7 @@
   {
     "word": "Lebensmüde",
     "native_script": "lebensmüde",
-    "transliteration": "",
+    "transliteration": "leb-ens-mü-de",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/existential",
@@ -3102,7 +3102,7 @@
   {
     "word": "mit kliku",
     "native_script": "mít kliku",
-    "transliteration": "",
+    "transliteration": "mít-kli-ku",
     "language": "Czech",
     "family": "Indo-European",
     "category": "luck/fortune",
