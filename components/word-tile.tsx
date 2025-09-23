@@ -46,7 +46,7 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
           // Collapsed tile view
           <div className="flex flex-col justify-center items-center text-center h-full space-y-2 w-full">
             <div className="native-script text-2xl md:text-3xl font-medium text-card-foreground truncate w-full">
-              {word.native_script || word.word}
+              {(word.native_script || word.word).toLowerCase()}
             </div>
             {word.transliteration && word.transliteration !== word.word && (
               <div className="text-sm text-muted-foreground italic">{word.transliteration}</div>
@@ -59,7 +59,7 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
             <div className="flex items-start justify-between">
               <div className="w-full max-w-full">
                 <h3 className="native-script text-3xl md:text-4xl font-medium text-card-foreground mb-2 truncate w-full">
-                  {word.native_script || word.word}
+                  {(word.native_script || word.word).toLowerCase()}
                 </h3>
                 {word.transliteration && word.transliteration !== word.word && (
                   <p className="text-lg text-muted-foreground italic mb-1">{word.transliteration}</p>

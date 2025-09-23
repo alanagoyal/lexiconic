@@ -58,7 +58,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
           <div className="text-left space-y-2 py-4">
             <div className="native-script text-3xl text-foreground truncate w-full">
-              {word.native_script || word.word}
+              {(word.native_script || word.word).toLowerCase()}
             </div>
             {word.transliteration &&
               word.transliteration !== word.word &&
@@ -80,7 +80,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           <div className="col-span-4 p-4 flex items-center justify-start">
             <div className="text-left space-y-2 w-full max-w-full">
               <div className="native-script text-4xl md:text-5xl text-foreground truncate w-full">
-                {word.native_script || word.word}
+                {(word.native_script || word.word).toLowerCase()}
               </div>
               {word.transliteration &&
                 word.transliteration !== word.word &&
@@ -142,7 +142,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                     Example
                   </h4>
                   <p className="native-script text-sm text-foreground">
-                    {word.example_native}
+                    {word.example_native.toLowerCase()}
                   </p>
                   {word.example_gloss && word.example_gloss !== "—" && (
                     <p className="text-sm text-muted-foreground mt-1">
@@ -234,7 +234,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                         Example
                       </h4>
                       <p className="native-script text-sm text-foreground">
-                        {word.example_native}
+                        {word.example_native.toLowerCase()}
                       </p>
                       {word.example_gloss && word.example_gloss !== "—" && (
                         <p className="text-sm text-muted-foreground mt-1">
