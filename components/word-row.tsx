@@ -61,7 +61,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
               {(word.native_script || word.word).toLowerCase()}
             </div>
             {word.transliteration &&
-              word.transliteration !== word.word &&
+              word.transliteration !== word.native_script &&
               word.transliteration !== "—" && (
                 <div className="text-sm text-muted-foreground">
                   {word.transliteration}
@@ -83,7 +83,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 {(word.native_script || word.word).toLowerCase()}
               </div>
               {word.transliteration &&
-                word.transliteration !== word.word &&
+                word.transliteration !== word.native_script &&
                 word.transliteration !== "—" && (
                   <div className="text-sm text-muted-foreground">
                     {word.transliteration}

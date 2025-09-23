@@ -48,7 +48,7 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
             <div className="native-script text-2xl md:text-3xl font-medium text-card-foreground truncate w-full">
               {(word.native_script || word.word).toLowerCase()}
             </div>
-            {word.transliteration && word.transliteration !== word.word && (
+            {word.transliteration && word.transliteration !== word.native_script && (
               <div className="text-sm text-muted-foreground italic">{word.transliteration}</div>
             )}
             <div className="text-xs text-muted-foreground font-medium">{word.language}</div>
@@ -61,7 +61,7 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
                 <h3 className="native-script text-3xl md:text-4xl font-medium text-card-foreground mb-2 truncate w-full">
                   {(word.native_script || word.word).toLowerCase()}
                 </h3>
-                {word.transliteration && word.transliteration !== word.word && (
+                {word.transliteration && word.transliteration !== word.native_script && (
                   <p className="text-lg text-muted-foreground italic mb-1">{word.transliteration}</p>
                 )}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
