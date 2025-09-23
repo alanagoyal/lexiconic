@@ -1,78 +1,57 @@
 # Transliteration Scripts
 
-This directory contains scripts to find and generate transliterations for words with native scripts.
+Automated scripts to ensure all words with native scripts have proper transliterations.
 
 ## Scripts
 
-### 1. `find-missing-transliterations.js`
-Analyzes the `words.json` file to identify words that have native scripts in non-Latin characters but are missing transliterations.
+### `check-transliterations.js`
+Scans `words.json` to find words with non-Latin native scripts that are missing transliterations.
 
 **Usage:**
 ```bash
-node scripts/find-missing-transliterations.js
+node scripts/check-transliterations.js
 ```
 
-**Output:**
-- Console output showing all words needing transliterations
-- Creates `public/data/missing-transliterations.json` with detailed results
+**Returns:**
+- Exit code 0: All words have transliterations
+- Exit code 1: Some words need transliterations (lists them)
 
-### 2. `generate-transliterations-with-ai.js`
-Uses GPT-4o-mini to automatically generate accurate transliterations for words that need them.
+### `generate-transliterations.js`
+Uses GPT-4o-mini to automatically generate missing transliterations and updates `words.json`.
 
 **Prerequisites:**
-1. Set your OpenAI API key as an environment variable:
-   ```bash
-   export OPENAI_API_KEY="your-api-key-here"
-   ```
+- Set `OPENAI_API_KEY` in your `.env.local` file
 
 **Usage:**
 ```bash
-node scripts/generate-transliterations-with-ai.js
+node scripts/generate-transliterations.js
 ```
 
-**What it does:**
-- Reads the missing transliterations data
-- Calls GPT-4o-mini for each word to get accurate phonetic transliterations
-- Updates the `words.json` file with the new transliterations
-- Saves the AI-generated transliterations to `public/data/ai-generated-transliterations.json`
-
 **Features:**
-- Uses consistent phonetic formatting (e.g., "ah-ree-gah-tah")
-- Handles different languages appropriately
-- Includes rate limiting to be respectful to the API
-- Provides detailed logging of the process
+- Generates phonetic transliterations with hyphens (e.g., "ko-mo-re-bi")
+- Handles multiple languages (Japanese, Korean, Chinese, Arabic, Hebrew, etc.)
+- Updates `words.json` automatically
+- Includes rate limiting for API calls
 
-### 3. `add-transliterations.js`
-Manual script with predefined transliterations (backup option if AI approach isn't available).
+## Integration
 
-## Current Status
+These scripts are automatically run by the **post-commit hook** when `words.json` is modified:
 
-As of the last run, there are **15 words** that need transliterations:
+1. **Check**: Scans for missing transliterations
+2. **Generate**: Creates missing transliterations using AI
+3. **Update**: Stages changes to `words.json`
+4. **Continue**: Proceeds with embedding generation
 
-- **Japanese (8 words)**: arigata-meiwaku, bakku-shan, boketto, chindōgu, ikigai, kaizen, koi no yokan, komorebi
-- **Korean (3 words)**: dapjeongneo, gilchi, gosohada  
-- **German (2 words)**: fahrvergnügen, Lebensmüde
-- **Czech (1 word)**: mit kliku
-- **Scottish Gaelic (1 word)**: ceilidh
+## Manual Usage
 
-## Recommended Workflow
+To check current status:
+```bash
+node scripts/check-transliterations.js
+```
 
-1. First, run the finder script to see current status:
-   ```bash
-   node scripts/find-missing-transliterations.js
-   ```
+To generate missing transliterations:
+```bash
+node scripts/generate-transliterations.js
+```
 
-2. Set up your OpenAI API key and run the AI generation:
-   ```bash
-   export OPENAI_API_KEY="your-api-key-here"
-   node scripts/generate-transliterations-with-ai.js
-   ```
-
-3. Verify the results by checking the updated `words.json` file
-
-## Notes
-
-- The AI script includes a 1-second delay between API calls to be respectful
-- All transliterations follow a consistent hyphenated format for phonetic clarity
-- The system preserves existing transliterations and only fills in missing ones
-- Backup files are recommended before running bulk updates
+The system ensures that every word with a native script in non-Latin characters has an appropriate phonetic transliteration for better accessibility and pronunciation guidance.

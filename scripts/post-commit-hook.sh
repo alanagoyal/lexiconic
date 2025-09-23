@@ -25,6 +25,31 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
         exit 1
     fi
 
+    # Check for missing transliterations first
+    echo "🔍 Checking for missing transliterations..."
+    if node scripts/check-transliterations.js; then
+        echo "✅ All transliterations are present"
+    else
+        echo "⚠️  Some words need transliterations"
+        echo "🤖 Generating missing transliterations using GPT-4o-mini..."
+        
+        if node scripts/generate-transliterations.js; then
+            echo "✅ Transliterations generated successfully"
+            
+            # Check if words.json was updated
+            if git diff --quiet public/data/words.json; then
+                echo "📄 No transliterations were added"
+            else
+                echo "📝 words.json has been updated with new transliterations"
+                echo "   Staging the changes..."
+                git add public/data/words.json
+            fi
+        else
+            echo "❌ Failed to generate transliterations"
+            echo "   Continuing with embedding generation..."
+        fi
+    fi
+
     # Run the embedding generation script
     echo "🤖 Generating embeddings using OpenAI..."
     if npx tsx scripts/generate-embeddings.ts; then
@@ -37,7 +62,7 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
             echo "📝 words-with-embeddings.json has been updated"
             echo "   You may want to commit these changes:"
             echo "   git add public/data/words-with-embeddings.json"
-            echo "   git commit -m 'chore: update embeddings after words.json changes'"
+            echo "   git commit -m 'chore: update embeddings and transliterations after words.json changes'"
         fi
     else
         echo "❌ Failed to generate embeddings"
