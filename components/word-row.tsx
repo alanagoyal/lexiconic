@@ -58,10 +58,10 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
 
           <div className="text-left space-y-2 py-4">
             <div className="native-script text-3xl text-foreground truncate w-full">
-              {(word.native_script || word.word).toLowerCase()}
+              {word.word.toLowerCase()}
             </div>
             {word.transliteration &&
-              word.transliteration !== word.word &&
+              word.transliteration.trim() !== "" &&
               word.transliteration !== "—" && (
                 <div className="text-sm text-muted-foreground">
                   {word.transliteration}
@@ -80,10 +80,10 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           <div className="col-span-4 p-4 flex items-center justify-start">
             <div className="text-left space-y-2 w-full max-w-full">
               <div className="native-script text-4xl md:text-5xl text-foreground truncate w-full">
-                {(word.native_script || word.word).toLowerCase()}
+                {word.word.toLowerCase()}
               </div>
               {word.transliteration &&
-                word.transliteration !== word.word &&
+                word.transliteration.trim() !== "" &&
                 word.transliteration !== "—" && (
                   <div className="text-sm text-muted-foreground">
                     {word.transliteration}
