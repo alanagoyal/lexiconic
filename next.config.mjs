@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: '/lexiconic',
   eslint: {
     ignoreDuringBuilds: true,
   },
