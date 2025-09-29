@@ -1740,6 +1740,26 @@
     "needs_citation": "False"
   },
   {
+    "word": "反面教師",
+    "native_script": "反面教師",
+    "transliteration": "hanmen kyōshi",
+    "language": "Japanese",
+    "family": "Japonic",
+    "category": "teaching/learning",
+    "definition": "A person or example who teaches by negative example—someone whose mistakes or bad behavior show you what not to do.",
+    "literal": "reverse-side teacher",
+    "usage_notes": "Used when someone’s failure or poor conduct serves as a cautionary lesson. Common in personal, academic, and business contexts.",
+    "example_native": "彼の失敗は私にとって反面教師だった。",
+    "example_gloss": "His failure was a lesson to me on what not to do.",
+    "english_approx": "negative role model; teacher by bad example",
+    "loanword_in_english": "False",
+    "disputed": "False",
+    "region": "Japan",
+    "closest_english_paraphrase": "teacher by negative example",
+    "sources": "https://en.wiktionary.org/wiki/%E5%8F%8D%E9%9D%A2%E6%95%99%E5%B8%AB",
+    "needs_citation": "False"
+  },
+  {
     "word": "hanyauku",
     "native_script": "hanyauku",
     "transliteration": "",
@@ -3357,6 +3377,26 @@
     "region": "India",
     "closest_english_paraphrase": "respectful spiritual greeting",
     "sources": "https://www.theintrepidguide.com/untranslatable-words-ultimate-list/#google_vignette",
+    "needs_citation": "False"
+  },
+  {
+    "word": "懐かしい",
+    "native_script": "懐かしい",
+    "transliteration": "natsukashii",
+    "language": "Japanese",
+    "family": "Japonic",
+    "category": "emotion/memory",
+    "definition": "A feeling of deep, warm, happy, and slightly longing nostalgia for the past, often triggered by a specific object, taste, smell, or song.",
+    "literal": "to yearn/miss (natsukashimu - verb form)",
+    "usage_notes": "Used as an adjective or interjection, often exclaimed immediately upon encountering something from the past (e.g., “Natsukashii!”).",
+    "example_native": "この曲、懐かしいね。",
+    "example_gloss": "This song brings back such warm memories (is natsukashii).",
+    "english_approx": "nostalgic; fondly remembered",
+    "loanword_in_english": "False",
+    "disputed": "False",
+    "region": "Japan",
+    "closest_english_paraphrase": "evoking fond, warm memories",
+    "sources": "https://en.wiktionary.org/wiki/%E6%87%90%E3%81%8B%E3%81%97%E3%81%84",
     "needs_citation": "False"
   },
   {
