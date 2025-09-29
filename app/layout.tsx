@@ -13,7 +13,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Between Words",
+  title: "Lexiconic",
   description: "A digital exploration of linguistic untranslatability",
 }
 

@@ -147,7 +147,7 @@ export function WordsClient({ words }: WordsClientProps) {
           <div className="p-4">
             <div className="flex items-center justify-between">
               <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
-                BETWEEN WORDS
+                LEXICONIC
               </h1>
               <div className="flex items-center gap-2">
                 <Button
