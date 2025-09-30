@@ -2,6 +2,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { createHash } from 'crypto';
 import OpenAI from 'openai';
 
 // Load environment variables from .env.local
@@ -50,6 +51,7 @@ interface Word {
 
 interface WordWithEmbedding extends Word {
   embedding: number[];
+  embeddingHash?: string; // Hash of the text used to generate the embedding
 }
 
 const openai = new OpenAI({
@@ -70,7 +72,25 @@ async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 function createEmbeddingText(word: Word): string {
-  return `${word.word} (${word.transliteration}) - ${word.definition}. ${word.usage_notes} Example: ${word.example_gloss}`;
+  // Create comprehensive text for embedding that includes all semantic information
+  const parts = [
+    `Word: ${word.word}`,
+    word.transliteration && word.transliteration !== word.word ? `Transliteration: ${word.transliteration}` : '',
+    `Language: ${word.language}`,
+    `Category: ${word.category}`,
+    `Definition: ${word.definition}`,
+    word.literal && word.literal !== '—' ? `Literal meaning: ${word.literal}` : '',
+    word.usage_notes ? `Usage: ${word.usage_notes}` : '',
+    word.english_approx ? `Similar to: ${word.english_approx}` : '',
+    word.example_gloss ? `Example: ${word.example_gloss}` : '',
+    word.closest_english_paraphrase ? `English equivalent: ${word.closest_english_paraphrase}` : ''
+  ].filter(Boolean);
+  
+  return parts.join('. ');
+}
+
+function createTextHash(text: string): string {
+  return createHash('sha256').update(text).digest('hex');
 }
 
 async function generateEmbeddingsForWords() {
@@ -103,23 +123,31 @@ async function generateEmbeddingsForWords() {
 
     for (const word of wordsData) {
       const existing = embeddingMap.get(word.word);
+      const embeddingText = createEmbeddingText(word);
+      const currentHash = createTextHash(embeddingText);
 
-      if (existing) {
-        // Use existing embedding but update other fields in case they changed
+      // Check if we need to regenerate the embedding
+      const needsRegeneration = !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
+
+      if (existing && !needsRegeneration) {
+        // Use existing embedding - content hasn't changed
         wordsWithEmbeddings.push({
           ...word,
-          embedding: existing.embedding
+          embedding: existing.embedding,
+          embeddingHash: currentHash
         });
         console.log(`Using existing embedding for: ${word.word}`);
       } else {
-        // Generate new embedding
-        console.log(`Generating embedding for: ${word.word}...`);
-        const embeddingText = createEmbeddingText(word);
+        // Generate new embedding (new word or content changed)
+        const action = existing ? 'Regenerating' : 'Generating';
+        console.log(`${action} embedding for: ${word.word}...`);
+        
         const embedding = await generateEmbedding(embeddingText);
 
         wordsWithEmbeddings.push({
           ...word,
-          embedding
+          embedding,
+          embeddingHash: currentHash
         });
 
         newEmbeddingsCount++;
