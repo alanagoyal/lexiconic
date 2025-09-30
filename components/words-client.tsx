@@ -110,9 +110,6 @@ export function WordsClient({ words }: WordsClientProps) {
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term)
-    if (term.trim()) {
-      setIsSearching(true)
-    }
   }
 
   const handleClear = () => {
