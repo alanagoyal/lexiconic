@@ -59,7 +59,7 @@ export function WordsClient({ words }: WordsClientProps) {
   // Perform semantic search
   const performSemanticSearch = async (query: string): Promise<WordWithEmbedding[]> => {
     try {
-      const response = await fetch('/api/search-embedding', {
+      const response = await fetch('/lexiconic/api/search-embedding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
