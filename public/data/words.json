@@ -2,7 +2,7 @@
   {
     "word": "ありがためいわく",
     "native_script": "ありがためいわく",
-    "transliteration": "a-ri-ga-ta-mei-wa-ku",
+    "transliteration": "arigatameiwaku",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/obligation",
@@ -22,7 +22,7 @@
   {
     "word": "上げ劣り",
     "native_script": "上げ劣り",
-    "transliteration": "aah-gey-oh-toh-ree",
+    "transliteration": "agedori",
     "language": "Japanese",
     "family": "Japonic",
     "category": "appearance/beauty",
@@ -302,7 +302,7 @@
   {
     "word": "バックシャン",
     "native_script": "バックシャン",
-    "transliteration": "bak-ku-shan",
+    "transliteration": "bakkushan",
     "language": "Japanese",
     "family": "Japonic",
     "category": "appearance/dating",
@@ -402,7 +402,7 @@
   {
     "word": "ぼけっと",
     "native_script": "ぼけっと",
-    "transliteration": "bo-ke-tto",
+    "transliteration": "boketto",
     "language": "Japanese",
     "family": "Japonic",
     "category": "mental/daydreaming",
@@ -482,7 +482,7 @@
   {
     "word": "चाय पानी",
     "native_script": "चाय पानी",
-    "transliteration": "chai-pani",
+    "transliteration": "chai pani",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "social/hospitality",
@@ -502,7 +502,7 @@
   {
     "word": "吃苦",
     "native_script": "吃苦",
-    "transliteration": "chīkǔ",
+    "transliteration": "chiku",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "virtue",
@@ -522,7 +522,7 @@
   {
     "word": "珍道具",
     "native_script": "珍道具",
-    "transliteration": "chin-dō-gu",
+    "transliteration": "zhēn dào jù",
     "language": "Japanese",
     "family": "Japonic",
     "category": "objects/prank",
@@ -702,7 +702,7 @@
   {
     "word": "답정너",
     "native_script": "답정너",
-    "transliteration": "dap-jeong-neo",
+    "transliteration": "dapjeongneo",
     "language": "Korean",
     "family": "Koreanic",
     "category": "social/deception",
@@ -722,7 +722,7 @@
   {
     "word": "दर्शन",
     "native_script": "दर्शन",
-    "transliteration": "darśan (darshan)",
+    "transliteration": "darshan",
     "language": "Sanskrit/Hindi",
     "family": "Indo-Aryan",
     "category": "religion",
@@ -1222,7 +1222,7 @@
   {
     "word": "风水",
     "native_script": "风水",
-    "transliteration": "fēng shuǐ",
+    "transliteration": "fengshui",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "philosophy/design",
@@ -1302,7 +1302,7 @@
   {
     "word": "פירגון",
     "native_script": "פירגון",
-    "transliteration": "firgun",
+    "transliteration": "pirgun",
     "language": "Hebrew",
     "family": "Semitic",
     "category": "emotion/social",
@@ -1502,7 +1502,7 @@
   {
     "word": "ঘোড়ার ডিম",
     "native_script": "ঘোড়ার ডিম",
-    "transliteration": "gho-rar-deem",
+    "transliteration": "ghorar dim",
     "language": "Bengali",
     "family": "Indo-European",
     "category": "abstract/sarcasm",
@@ -1562,7 +1562,7 @@
   {
     "word": "길치",
     "native_script": "길치",
-    "transliteration": "gil-chi",
+    "transliteration": "gilchi",
     "language": "Korean",
     "family": "Koreanic",
     "category": "personality/navigation",
@@ -1622,7 +1622,7 @@
   {
     "word": "고소하다",
     "native_script": "고소하다",
-    "transliteration": "go-so-ha-da",
+    "transliteration": "gosohada",
     "language": "Korean",
     "family": "Koreanic",
     "category": "emotion/satisfaction",
@@ -1702,7 +1702,7 @@
   {
     "word": "关系",
     "native_script": "关系",
-    "transliteration": "guānxì",
+    "transliteration": "guanxi",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "society",
@@ -1722,7 +1722,7 @@
   {
     "word": "关系",
     "native_script": "关系",
-    "transliteration": "gwan-shee",
+    "transliteration": "guanxi",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "social/relationships",
@@ -1742,7 +1742,7 @@
   {
     "word": "反面教師",
     "native_script": "反面教師",
-    "transliteration": "hanmen kyōshi",
+    "transliteration": "hanmen jiaoshi",
     "language": "Japanese",
     "family": "Japonic",
     "category": "teaching/learning",
@@ -1882,7 +1882,7 @@
   {
     "word": "효",
     "native_script": "효",
-    "transliteration": "hee-yo",
+    "transliteration": "hyo",
     "language": "Korean",
     "family": "Koreanic",
     "category": "ethics/family",
@@ -1962,7 +1962,7 @@
   {
     "word": "本音",
     "native_script": "本音",
-    "transliteration": "honne",
+    "transliteration": "hon'in",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/emotion",
@@ -2182,7 +2182,7 @@
   {
     "word": "加油",
     "native_script": "加油",
-    "transliteration": "jiāyóu",
+    "transliteration": "jiayou",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "cheer",
@@ -2342,7 +2342,7 @@
   {
     "word": "改善",
     "native_script": "改善",
-    "transliteration": "kai-zen",
+    "transliteration": "gaishan",
     "language": "Japanese",
     "family": "Japonic",
     "category": "philosophy/improvement",
@@ -2422,7 +2422,7 @@
   {
     "word": "過労死",
     "native_script": "過労死",
-    "transliteration": "karōshi",
+    "transliteration": "karoshi",
     "language": "Japanese",
     "family": "Japonic",
     "category": "work/society",
@@ -2542,7 +2542,7 @@
   {
     "word": "木漏れ日",
     "native_script": "木漏れ日",
-    "transliteration": "ko-mo-re-bi",
+    "transliteration": "komorebi",
     "language": "Japanese",
     "family": "Japonic",
     "category": "nature/light",
@@ -2562,7 +2562,7 @@
   {
     "word": "恋の予感",
     "native_script": "恋の予感",
-    "transliteration": "koi-no-yo-kan",
+    "transliteration": "koi no yokan",
     "language": "Japanese",
     "family": "Japonic",
     "category": "emotion/love",
@@ -2642,7 +2642,7 @@
   {
     "word": "เกรงใจ",
     "native_script": "เกรงใจ",
-    "transliteration": "kreng jai (kreng jai)",
+    "transliteration": "krengjai",
     "language": "Thai",
     "family": "Tai-Kadai",
     "category": "etiquette",
@@ -2682,7 +2682,7 @@
   {
     "word": "קװעלן",
     "native_script": "קװעלן",
-    "transliteration": "kvell",
+    "transliteration": "kvalen",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "emotion",
@@ -2702,7 +2702,7 @@
   {
     "word": "教育ママ",
     "native_script": "教育ママ",
-    "transliteration": "ky-oh-ee-kuu-mama",
+    "transliteration": "kyouiku mama",
     "language": "Japanese",
     "family": "Japonic",
     "category": "personality/parenting",
@@ -2882,7 +2882,7 @@
   {
     "word": "листопа́дъ",
     "native_script": "листопа́дъ",
-    "transliteration": "listopad",
+    "transliteration": "listopad'",
     "language": "Russian",
     "family": "Indo-European",
     "category": "nature/seasonal",
@@ -2922,7 +2922,7 @@
   {
     "word": "לופֿטמענטש",
     "native_script": "לופֿטמענטש",
-    "transliteration": "luftmensch",
+    "transliteration": "luftmentsh",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "personality/dreamer",
@@ -3182,7 +3182,7 @@
   {
     "word": "面子",
     "native_script": "面子",
-    "transliteration": "miànzi",
+    "transliteration": "mianzi",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "social",
@@ -3402,7 +3402,7 @@
   {
     "word": "内卷",
     "native_script": "内卷",
-    "transliteration": "nèijuǎn",
+    "transliteration": "neijuan",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "society",
@@ -3482,7 +3482,7 @@
   {
     "word": "однолюб",
     "native_script": "однолюб",
-    "transliteration": "odnoliub",
+    "transliteration": "odnolyub",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -3742,7 +3742,7 @@
   {
     "word": "φιλοξενία",
     "native_script": "φιλοξενία",
-    "transliteration": "philoxenia",
+    "transliteration": "filoxenia",
     "language": "Greek",
     "family": "Hellenic",
     "category": "ethic",
@@ -3782,7 +3782,7 @@
   {
     "word": "почемучка",
     "native_script": "почемучка",
-    "transliteration": "POH-chay-MOO-chka",
+    "transliteration": "pochemuchka",
     "language": "Russian",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -3842,7 +3842,7 @@
   {
     "word": "пошлость",
     "native_script": "пошлость",
-    "transliteration": "poshlost",
+    "transliteration": "poshlost'",
     "language": "Russian",
     "family": "Slavic",
     "category": "aesthetics/morality",
@@ -3862,7 +3862,7 @@
   {
     "word": "빨리빨리",
     "native_script": "빨리빨리",
-    "transliteration": "ppalli-ppalli",
+    "transliteration": "ppalippalli",
     "language": "Korean",
     "family": "Koreanic",
     "category": "pace/culture",
@@ -3902,7 +3902,7 @@
   {
     "word": "Ψυθισμός",
     "native_script": "Ψυθισμός",
-    "transliteration": "psithurism",
+    "transliteration": "Psithismós",
     "language": "Greek",
     "family": "Indo-European",
     "category": "nature/sound",
@@ -3922,7 +3922,7 @@
   {
     "word": "气",
     "native_script": "气",
-    "transliteration": "qì",
+    "transliteration": "qi",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "philosophy/medicine",
@@ -3962,7 +3962,7 @@
   {
     "word": "разлюбить",
     "native_script": "разлюбить",
-    "transliteration": "razljubit",
+    "transliteration": "razlyubit'",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -3982,7 +3982,7 @@
   {
     "word": "热闹",
     "native_script": "热闹",
-    "transliteration": "rènào",
+    "transliteration": "renao",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "atmosphere",
@@ -4002,7 +4002,7 @@
   {
     "word": "人情",
     "native_script": "人情",
-    "transliteration": "rénqíng",
+    "transliteration": "renqing",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "society",
@@ -4222,7 +4222,7 @@
   {
     "word": "שלעפּן",
     "native_script": "שלעפּן",
-    "transliteration": "schlep",
+    "transliteration": "shlepan",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "action",
@@ -4322,7 +4322,7 @@
   {
     "word": "შემომეძამ",
     "native_script": "შემომეძამ",
-    "transliteration": "shemomedjam",
+    "transliteration": "shemonedzam",
     "language": "Georgian",
     "family": "Kartvelian",
     "category": "behavior/food",
@@ -4342,7 +4342,7 @@
   {
     "word": "森林浴",
     "native_script": "森林浴",
-    "transliteration": "shinrin-yoku",
+    "transliteration": "senlinyu",
     "language": "Japanese",
     "family": "Japonic",
     "category": "wellbeing",
@@ -4362,7 +4362,7 @@
   {
     "word": "שלימזל",
     "native_script": "שלימזל",
-    "transliteration": "shli-mah-zl",
+    "transliteration": "shlimazel",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "personality/misfortune",
@@ -4542,7 +4542,7 @@
   {
     "word": "تعارف",
     "native_script": "تعارف",
-    "transliteration": "ta’arof (taarof)",
+    "transliteration": "ta'aruf",
     "language": "Persian (Farsi)",
     "family": "Indo-Iranian",
     "category": "etiquette",
@@ -4562,7 +4562,7 @@
   {
     "word": "تراض",
     "native_script": "تراض",
-    "transliteration": "taarradhin",
+    "transliteration": "tarad",
     "language": "Arabic",
     "family": "Semitic",
     "category": "social/conflict",
@@ -4642,7 +4642,7 @@
   {
     "word": "طرب",
     "native_script": "طرب",
-    "transliteration": "ṭarab",
+    "transliteration": "tarab",
     "language": "Arabic",
     "family": "Afro-Asiatic",
     "category": "music/emotion",
@@ -4682,7 +4682,7 @@
   {
     "word": "建前／本音",
     "native_script": "建前／本音",
-    "transliteration": "tatemae / honne",
+    "transliteration": "tatemae/honne",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social",
@@ -5182,7 +5182,7 @@
   {
     "word": "विरह",
     "native_script": "विरह",
-    "transliteration": "viraha",
+    "transliteration": "virah",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -5282,7 +5282,7 @@
   {
     "word": "وَاسْطَة",
     "native_script": "واسطة",
-    "transliteration": "wāsta",
+    "transliteration": "wasṭah",
     "language": "Arabic",
     "family": "Afro-Asiatic",
     "category": "society",
@@ -5362,7 +5362,7 @@
   {
     "word": "يقبرني",
     "native_script": "يقبرني",
-    "transliteration": "ya'aburnee",
+    "transliteration": "yaqburni",
     "language": "Arabic",
     "family": "Semitic",
     "category": "emotion/love",
@@ -5422,7 +5422,7 @@
   {
     "word": "يقبرني",
     "native_script": "يقبرني",
-    "transliteration": "yaʿburnī",
+    "transliteration": "yaqburni",
     "language": "Arabic",
     "family": "Afro‑Asiatic",
     "category": "emotion",
@@ -5482,7 +5482,7 @@
   {
     "word": "缘分",
     "native_script": "缘分",
-    "transliteration": "yuánfèn",
+    "transliteration": "yuanfen",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "fate/relationships",
@@ -5502,7 +5502,7 @@
   {
     "word": "幽玄",
     "native_script": "幽玄",
-    "transliteration": "yūgen",
+    "transliteration": "yōgen",
     "language": "Japanese",
     "family": "Japonic",
     "category": "aesthetics",
@@ -5542,7 +5542,7 @@
   {
     "word": "Запой",
     "native_script": "Запой",
-    "transliteration": "zapoi",
+    "transliteration": "Zapoy",
     "language": "Russian",
     "family": "Indo-European",
     "category": "behavior/drinking",
@@ -5582,7 +5582,7 @@
   {
     "word": "ژغژغ",
     "native_script": "ژغژغ",
-    "transliteration": "zhaang-zhaah-gh",
+    "transliteration": "zhaghzhagh",
     "language": "Persian",
     "family": "Indo-European",
     "category": "physical/emotional",
@@ -5602,7 +5602,7 @@
   {
     "word": "злорадствовать",
     "native_script": "злорадствовать",
-    "transliteration": "zloradstvovat",
+    "transliteration": "zloradstvovat'",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/malicious",

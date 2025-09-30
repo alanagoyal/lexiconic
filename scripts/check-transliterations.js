@@ -35,6 +35,28 @@ function findWordsNeedingTransliterations() {
 }
 
 /**
+ * Find all words with non-Latin scripts (for regenerating transliterations)
+ */
+function findAllNonLatinWords() {
+  const wordsPath = path.join(__dirname, '../public/data/words.json');
+  
+  if (!fs.existsSync(wordsPath)) {
+    throw new Error(`Words file not found: ${wordsPath}`);
+  }
+
+  const words = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
+
+  // Find all words with non-Latin native scripts
+  const nonLatinWords = words.filter(word => {
+    const hasNonLatinNativeScript = hasNonLatinScript(word.native_script);
+    
+    return hasNonLatinNativeScript;
+  });
+
+  return nonLatinWords;
+}
+
+/**
  * Main function
  */
 function main() {
@@ -80,7 +102,7 @@ function main() {
 }
 
 // Export for use in other scripts
-module.exports = { findWordsNeedingTransliterations, hasNonLatinScript };
+module.exports = { findWordsNeedingTransliterations, findAllNonLatinWords, hasNonLatinScript };
 
 // Run if called directly
 if (require.main === module) {

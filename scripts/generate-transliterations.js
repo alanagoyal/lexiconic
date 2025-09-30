@@ -1,59 +1,37 @@
 const fs = require('fs');
 const path = require('path');
-const { findWordsNeedingTransliterations } = require('./check-transliterations');
+const { findWordsNeedingTransliterations, findAllNonLatinWords } = require('./check-transliterations');
+const { initLogger, invoke } = require('braintrust');
+const { z } = require('zod');
 
 // Load environment variables from .env.local
 require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
 
-const OpenAI = require('openai');
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Initialize Braintrust logger
+initLogger({
+  projectName: "lexiconic",
+  apiKey: process.env.BRAINTRUST_API_KEY,
 });
 
+// Helper function to transliterate word using braintrust
+async function transliterateWord(word) {
+  const result = await invoke({
+    projectName: "lexiconic",
+    slug: "transliterate-word-96ce",
+    input: { word },
+    schema: z.object({
+      transliteration: z.string()
+    }),
+  });
+  return result.transliteration;
+}
+
 /**
- * Get transliteration for a single word using GPT-4o-mini
+ * Get transliteration for a single word using Braintrust
  */
 async function getTransliteration(word, nativeScript, language) {
-  const prompt = `Please provide a phonetic transliteration for the following word:
-
-Word: ${word}
-Native Script: ${nativeScript}
-Language: ${language}
-
-Please provide ONLY the phonetic transliteration using hyphens to separate syllables (e.g., "ah-ree-gah-tah" for Japanese, "dahp-jeong-nuh" for Korean). 
-
-For languages that already use Latin script but have diacritics (like German ü, Czech ř), you can keep the original form or provide a simplified version.
-
-For Scottish Gaelic "ceilidh", provide the pronunciation guide.
-
-Transliteration:`;
-
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a linguistics expert specializing in transliteration and phonetic transcription. Provide accurate, consistent transliterations using hyphens to separate syllables. Respond with ONLY the transliteration, no extra text."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 100,
-      temperature: 0.1,
-    });
-
-    let transliteration = response.choices[0].message.content.trim();
-    
-    // Clean up any extra text that might be included
-    if (transliteration.toLowerCase().includes('transliteration:')) {
-      transliteration = transliteration.replace(/.*transliteration:\s*/i, '');
-    }
-    
+    const transliteration = await transliterateWord(word);
     return transliteration;
   } catch (error) {
     console.error(`Error getting transliteration for ${word}:`, error.message);
@@ -63,21 +41,23 @@ Transliteration:`;
 
 /**
  * Generate transliterations for all words that need them
+ * @param {boolean} forceRegenerate - If true, regenerate all transliterations for non-Latin words
  */
-async function generateAllTransliterations() {
-  // Check if OpenAI API key is set
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY environment variable is not set. Please add it to your .env.local file.');
+async function generateAllTransliterations(forceRegenerate = false) {
+  // Check if Braintrust API key is set
+  if (!process.env.BRAINTRUST_API_KEY) {
+    throw new Error('BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
   }
 
-  const wordsNeeding = findWordsNeedingTransliterations();
+  const wordsNeeding = forceRegenerate ? findAllNonLatinWords() : findWordsNeedingTransliterations();
   
   if (wordsNeeding.length === 0) {
     console.log('✅ All words already have transliterations');
     return { updated: 0, transliterations: {} };
   }
 
-  console.log(`🤖 Generating transliterations for ${wordsNeeding.length} words using GPT-4o-mini...\n`);
+  const action = forceRegenerate ? 'Regenerating' : 'Generating';
+  console.log(`🤖 ${action} transliterations for ${wordsNeeding.length} words using Braintrust...\n`);
   
   const transliterations = {};
   
@@ -109,7 +89,7 @@ async function generateAllTransliterations() {
   let updatedCount = 0;
   words.forEach(word => {
     if (transliterations.hasOwnProperty(word.word)) {
-      if (!word.transliteration || word.transliteration.trim() === '') {
+      if (forceRegenerate || !word.transliteration || word.transliteration.trim() === '') {
         word.transliteration = transliterations[word.word];
         updatedCount++;
       }
@@ -129,7 +109,9 @@ async function generateAllTransliterations() {
  */
 async function main() {
   try {
-    const result = await generateAllTransliterations();
+    // Check for force regenerate flag
+    const forceRegenerate = process.argv.includes('--force') || process.argv.includes('-f');
+    const result = await generateAllTransliterations(forceRegenerate);
     
     if (result.updated > 0) {
       console.log(`\n📝 Updated ${result.updated} transliterations in words.json`);
