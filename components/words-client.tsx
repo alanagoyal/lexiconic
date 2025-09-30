@@ -129,18 +129,18 @@ export function WordsClient({ words }: WordsClientProps) {
     const originalWords = [...displayedWords]
     const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
 
-    // Shuffle animation: rapidly change order for 5 seconds
+    // Shuffle animation: rapidly change order for 2 seconds
     const shuffleInterval = setInterval(() => {
       const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
       setDisplayedWords(tempShuffled)
     }, 100) // Shuffle every 100ms for a fast animation
 
-    // After 5 seconds, settle on the final random order
+    // After 2 seconds, settle on the final random order
     setTimeout(() => {
       clearInterval(shuffleInterval)
       setDisplayedWords(finalShuffled)
       setIsShuffling(false)
-    }, 5000)
+    }, 2000)
   }
 
   const handleSortAscending = () => {
