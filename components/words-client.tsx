@@ -43,6 +43,23 @@ export function WordsClient({ words }: WordsClientProps) {
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
 
+  // Run shuffle animation on initial load
+  useEffect(() => {
+    setIsShuffling(true)
+    const finalShuffled = [...words].sort(() => Math.random() - 0.5)
+
+    const shuffleInterval = setInterval(() => {
+      const tempShuffled = [...words].sort(() => Math.random() - 0.5)
+      setDisplayedWords(tempShuffled)
+    }, 100)
+
+    setTimeout(() => {
+      clearInterval(shuffleInterval)
+      setDisplayedWords(finalShuffled)
+      setIsShuffling(false)
+    }, 2000)
+  }, [])
+
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase()
