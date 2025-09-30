@@ -34,6 +34,20 @@ interface WordRowProps {
 export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // Simple MD5-like hash function for client-side use
+  const generateHash = (str: string): string => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    // Convert to hex string similar to MD5 format
+    const hashHex = Math.abs(hash).toString(16).padStart(8, '0');
+    // Pad to 32 characters to match MD5 length (though content will differ)
+    return hashHex.padEnd(32, '0');
+  };
+
   const handlePronounce = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -42,26 +56,34 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
     try {
       setIsPlaying(true);
 
-      // Generate MD5 hash of the word to match the filename
-      const encoder = new TextEncoder();
-      const data = encoder.encode(word.word);
-      const hashBuffer = await crypto.subtle.digest('MD5', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      // Try to load the pronunciation mapping first
+      const response = await fetch('/lexiconic/pronunciations/mapping.json');
+      if (response.ok) {
+        const mapping = await response.json();
+        const fileName = mapping[word.word];
 
-      const audioUrl = `/lexiconic/pronunciations/${hashHex}.mp3`;
-      const audio = new Audio(audioUrl);
+        if (fileName) {
+          const audioUrl = `/lexiconic/pronunciations/${fileName}`;
+          const audio = new Audio(audioUrl);
 
-      audio.onended = () => {
+          audio.onended = () => {
+            setIsPlaying(false);
+          };
+
+          audio.onerror = () => {
+            console.error('Failed to load pronunciation audio');
+            setIsPlaying(false);
+          };
+
+          await audio.play();
+        } else {
+          console.error('No pronunciation found for word:', word.word);
+          setIsPlaying(false);
+        }
+      } else {
+        console.error('Failed to load pronunciation mapping');
         setIsPlaying(false);
-      };
-
-      audio.onerror = () => {
-        console.error('Failed to load pronunciation audio');
-        setIsPlaying(false);
-      };
-
-      await audio.play();
+      }
     } catch (error) {
       console.error('Pronunciation error:', error);
       setIsPlaying(false);
