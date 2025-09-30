@@ -68,6 +68,24 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
         echo "❌ Failed to generate embeddings"
         exit 1
     fi
+
+    # Run the pronunciation regeneration script
+    echo "🔊 Regenerating pronunciations for changed words..."
+    if npx tsx scripts/regenerate-changed-pronunciations.ts; then
+        echo "✅ Pronunciations regenerated successfully"
+
+        # Check if there are new pronunciation files
+        if git diff --quiet public/pronunciations/; then
+            echo "📄 No changes to pronunciation files"
+        else
+            echo "📝 Pronunciation files have been updated"
+            echo "   You may want to commit these changes:"
+            echo "   git add public/pronunciations/"
+            echo "   git commit --amend --no-edit"
+        fi
+    else
+        echo "⚠️  Failed to regenerate pronunciations (continuing anyway)"
+    fi
 else
     echo "📄 words.json was not modified, skipping embedding generation"
 fi
