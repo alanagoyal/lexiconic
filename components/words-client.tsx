@@ -133,7 +133,7 @@ export function WordsClient({ words }: WordsClientProps) {
     const shuffleInterval = setInterval(() => {
       const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
       setDisplayedWords(tempShuffled)
-    }, 50) // Shuffle every 50ms for a fast animation
+    }, 100) // Shuffle every 100ms for a fast animation
 
     // After 1 second, settle on the final random order
     setTimeout(() => {
