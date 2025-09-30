@@ -69,14 +69,24 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
   };
 
   return (
-    <button
-      className="word-row cursor-pointer border-b border-border w-full text-left"
-      onClick={onToggleExpand}
-      aria-expanded={isExpanded}
-      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+    <div
+      className="word-row border-b border-border w-full"
     >
       {/* Main Grid Layout - responsive design */}
-      <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
+      <div
+        className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer"
+        onClick={onToggleExpand}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggleExpand();
+          }
+        }}
+        aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+      >
         {/* Mobile Layout - stacked */}
         <div className="md:hidden p-4 space-y-4">
           <div className="flex justify-between items-start">
@@ -342,6 +352,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
         </div>
       )}
-    </button>
+    </div>
   );
 }
