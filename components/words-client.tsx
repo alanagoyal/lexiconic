@@ -41,6 +41,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
+  const [isShuffling, setIsShuffling] = useState(false)
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -122,8 +123,24 @@ export function WordsClient({ words }: WordsClientProps) {
   }
 
   const handleRandomize = () => {
-    const shuffled = [...displayedWords].sort(() => Math.random() - 0.5)
-    setDisplayedWords(shuffled)
+    if (isShuffling) return
+
+    setIsShuffling(true)
+    const originalWords = [...displayedWords]
+    const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
+
+    // Shuffle animation: rapidly change order for 5 seconds
+    const shuffleInterval = setInterval(() => {
+      const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
+      setDisplayedWords(tempShuffled)
+    }, 100) // Shuffle every 100ms for a fast animation
+
+    // After 5 seconds, settle on the final random order
+    setTimeout(() => {
+      clearInterval(shuffleInterval)
+      setDisplayedWords(finalShuffled)
+      setIsShuffling(false)
+    }, 5000)
   }
 
   const handleSortAscending = () => {
@@ -153,8 +170,9 @@ export function WordsClient({ words }: WordsClientProps) {
                   onClick={handleRandomize}
                   title="Randomize order"
                   aria-label="Randomize order"
+                  disabled={isShuffling}
                 >
-                  <Shuffle className="h-4 w-4" />
+                  <Shuffle className={`h-4 w-4 ${isShuffling ? 'animate-spin' : ''}`} />
                 </Button>
                 <Button
                   variant="ghost"
