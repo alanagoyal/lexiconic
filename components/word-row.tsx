@@ -42,23 +42,23 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
     try {
       setIsPlaying(true);
 
-      const response = await fetch('/lexiconic/api/pronounce', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: word.word }),
-      });
+      // Generate MD5 hash of the word to match the filename
+      const encoder = new TextEncoder();
+      const data = encoder.encode(word.word);
+      const hashBuffer = await crypto.subtle.digest('MD5', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-      if (!response.ok) throw new Error('Failed to generate speech');
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+      const audioUrl = `/lexiconic/pronunciations/${hashHex}.mp3`;
       const audio = new Audio(audioUrl);
 
       audio.onended = () => {
         setIsPlaying(false);
-        URL.revokeObjectURL(audioUrl);
+      };
+
+      audio.onerror = () => {
+        console.error('Failed to load pronunciation audio');
+        setIsPlaying(false);
       };
 
       await audio.play();
