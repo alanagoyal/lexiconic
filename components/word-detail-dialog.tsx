@@ -62,7 +62,7 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary">{word.language}</Badge>
+              <Badge variant="secondary">{word.language.toLowerCase()}</Badge>
               {word.category && <Badge variant="outline">{word.category}</Badge>}
             </div>
           </div>
