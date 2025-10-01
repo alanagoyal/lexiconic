@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { execSync } from 'child_process';
 
 // Load environment variables from .env.local
 function loadEnvLocal() {
@@ -45,12 +46,12 @@ interface Word {
   native_script: string;
   transliteration: string;
   language: string;
+  pronunciation?: string;
   [key: string]: any;
 }
 
 // Generate a safe filename from a word
 function generateAudioFileName(word: string): string {
-  // Create a hash of the word for the filename to avoid special character issues
   const hash = crypto.createHash('md5').update(word).digest('hex');
   return `${hash}.mp3`;
 }
@@ -76,9 +77,52 @@ async function generatePronunciation(word: string, outputPath: string): Promise<
   }
 }
 
-// Main function to generate all pronunciations
-async function generateAllPronunciations() {
+// Get new or changed words from git diff
+function getNewOrChangedWords(): string[] {
   try {
+    // Get the diff of words.json in the last commit
+    const diff = execSync('git diff HEAD~1 HEAD -- public/data/words.json', {
+      encoding: 'utf-8',
+    });
+
+    if (!diff) {
+      console.log('No changes to words.json detected');
+      return [];
+    }
+
+    // Parse the diff to find new or changed words
+    const newOrChangedWords: Set<string> = new Set();
+    const lines = diff.split('\n');
+
+    for (const line of lines) {
+      // Look for added lines with "word" field (new or changed entries)
+      if (line.startsWith('+') && line.includes('"word"')) {
+        const match = line.match(/"word":\s*"([^"]+)"/);
+        if (match && match[1]) {
+          newOrChangedWords.add(match[1]);
+        }
+      }
+    }
+
+    return Array.from(newOrChangedWords);
+  } catch (error) {
+    console.error('Error getting git diff:', error);
+    return [];
+  }
+}
+
+// Main function to generate pronunciations for new or changed words
+async function generatePronunciationsForChangedWords() {
+  try {
+    const changedWords = getNewOrChangedWords();
+
+    if (changedWords.length === 0) {
+      console.log('No new or changed words detected, skipping pronunciation generation.');
+      return;
+    }
+
+    console.log(`\nDetected ${changedWords.length} new/changed words:\n${changedWords.join(', ')}\n`);
+
     // Read words from JSON
     const wordsPath = path.join(process.cwd(), 'public/data/words.json');
     const wordsContent = await fs.readFile(wordsPath, 'utf-8');
@@ -88,22 +132,25 @@ async function generateAllPronunciations() {
     const pronunciationsDir = path.join(process.cwd(), 'public/pronunciations');
     await fs.mkdir(pronunciationsDir, { recursive: true });
 
-    console.log(`\nGenerating pronunciations for ${words.length} words...\n`);
-
     let updatedCount = 0;
     let skippedCount = 0;
 
-    // Generate pronunciations for each word
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      const fileName = generateAudioFileName(word.word);
+    // Generate pronunciations for changed words
+    for (const changedWord of changedWords) {
+      const wordObj = words.find(w => w.word === changedWord);
+      if (!wordObj) {
+        console.log(`⚠️  Word "${changedWord}" not found in words.json`);
+        continue;
+      }
+
+      const fileName = generateAudioFileName(changedWord);
       const outputPath = path.join(pronunciationsDir, fileName);
 
-      // Check if pronunciation field already exists and file exists
-      if (word.pronunciation && word.pronunciation === fileName) {
+      // Check if pronunciation already exists and is up to date
+      if (wordObj.pronunciation === fileName) {
         try {
           await fs.access(outputPath);
-          console.log(`⊘ Skipping "${word.word}" (already exists)`);
+          console.log(`⊘ Skipping "${changedWord}" (pronunciation already exists)`);
           skippedCount++;
           continue;
         } catch {
@@ -111,22 +158,24 @@ async function generateAllPronunciations() {
         }
       }
 
-      await generatePronunciation(word.word, outputPath);
-      word.pronunciation = fileName;
+      await generatePronunciation(changedWord, outputPath);
+      wordObj.pronunciation = fileName;
       updatedCount++;
 
-      // Add a small delay to avoid rate limiting
-      if (i < words.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
+      // Small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    // Write updated words back to JSON
-    await fs.writeFile(wordsPath, JSON.stringify(words, null, 2));
-    console.log(`\n✓ Updated words.json with pronunciation fields`);
+    if (updatedCount > 0) {
+      // Write updated words back to JSON
+      await fs.writeFile(wordsPath, JSON.stringify(words, null, 2));
+      console.log(`\n✓ Updated words.json with pronunciation fields`);
+    }
 
     console.log(`\n✅ Successfully generated ${updatedCount} pronunciations`);
-    console.log(`♻️  Skipped ${skippedCount} existing pronunciations`);
+    if (skippedCount > 0) {
+      console.log(`♻️  Skipped ${skippedCount} existing pronunciations`);
+    }
   } catch (error) {
     console.error('Error generating pronunciations:', error);
     process.exit(1);
@@ -134,4 +183,4 @@ async function generateAllPronunciations() {
 }
 
 // Run the script
-generateAllPronunciations();
+generatePronunciationsForChangedWords();
