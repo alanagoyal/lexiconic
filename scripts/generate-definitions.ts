@@ -100,11 +100,11 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
   const newWords = getNewWords();
 
   if (newWords.length === 0) {
-    console.log('No new words detected, skipping definition generation.');
+    console.log('→ No new or changed words detected');
     return { updated: 0, definitions: {} };
   }
 
-  console.log(`🤖 Generating definitions for ${newWords.length} new words using Braintrust...\n`);
+  console.log(`→ Processing ${newWords.length} definition(s)`);
 
   const wordsPath = path.join(__dirname, '../public/data/words.json');
   const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
@@ -115,7 +115,7 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
   for (const newWord of newWords) {
     const wordData = words.find(w => w.word === newWord);
     if (!wordData) {
-      console.log(`⚠️  Word "${newWord}" not found in words.json`);
+      console.log(`   Warning: "${newWord}" not found in words.json`);
       continue;
     }
 
@@ -126,19 +126,18 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
         !wordData.definition.startsWith('TODO:') &&
         !wordData.definition.includes('[placeholder]') &&
         !wordData.definition.includes('Literally, "—"')) {
-      console.log(`⊘ Skipping "${newWord}" (already has definition)`);
+      console.log(`  ✓ Using existing: ${newWord}`);
       continue;
     }
 
-    console.log(`Processing: ${wordData.word} (${wordData.language})`);
+    console.log(`  • Generating: ${wordData.word}`);
 
     const definition = await getDefinition(wordData.word, wordData.language);
 
     if (definition) {
       definitions[wordData.word] = definition;
-      console.log(`✓ ${definition.substring(0, 100)}${definition.length > 100 ? '...' : ''}\n`);
     } else {
-      console.log(`✗ Failed\n`);
+      console.log(`   Error generating definition for "${wordData.word}"`);
     }
 
     // Rate limiting - be respectful to the API
@@ -157,7 +156,12 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
   if (updatedCount > 0) {
     // Write updated data back
     fs.writeFileSync(wordsPath, JSON.stringify(words, null, 2));
-    console.log(`✅ Successfully updated ${updatedCount} words with definitions`);
+    const skippedCount = newWords.length - updatedCount;
+    if (skippedCount > 0) {
+      console.log(`→ Generated ${updatedCount} definition(s), used ${skippedCount} existing`);
+    } else {
+      console.log(`→ Generated ${updatedCount} definition(s)`);
+    }
   }
 
   return { updated: updatedCount, definitions };
@@ -169,14 +173,9 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
 async function main(): Promise<GenerationResult> {
   try {
     const result = await generateDefinitionsForNewWords();
-
-    if (result.updated > 0) {
-      console.log(`\n📝 Updated ${result.updated} definitions in words.json`);
-    }
-
     return result;
   } catch (error) {
-    console.error('❌ Error:', (error as Error).message);
+    console.error('   Error:', (error as Error).message);
     process.exit(1);
   }
 }
