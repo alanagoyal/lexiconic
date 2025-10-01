@@ -3,28 +3,7 @@
 import { ExternalLink, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
-interface WordData {
-  word: string;
-  native_script: string;
-  phonetic: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  example_native: string;
-  example_gloss: string;
-  english_approx: string;
-  loanword_in_english: string;
-  disputed: string;
-  region: string;
-  closest_english_paraphrase: string;
-  sources: string;
-  needs_citation: string;
-  pronunciation?: string;
-}
+import type { WordData } from "@/components/words-client";
 
 interface WordRowProps {
   word: WordData;
@@ -101,11 +80,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
               {word.category && word.category !== "—" && (
                 <div className="text-muted-foreground">{word.category}</div>
               )}
-              {word.region && word.region !== "—" && (
-                <div className="text-muted-foreground text-xs">
-                  {word.region}
-                </div>
-              )}
             </div>
           </div>
 
@@ -170,9 +144,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
             {word.category && word.category !== "—" && (
               <div className="text-muted-foreground">{word.category}</div>
             )}
-            {word.region && word.region !== "—" && (
-              <div className="text-muted-foreground text-xs">{word.region}</div>
-            )}
           </div>
         </div>
       </div>
@@ -203,21 +174,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               )}
 
-              {word.example_native && word.example_native !== "—" && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
-                    Example
-                  </h4>
-                  <p className="native-script text-sm text-foreground">
-                    {word.example_native.toLowerCase()}
-                  </p>
-                  {word.example_gloss && word.example_gloss !== "—" && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {word.example_gloss}
-                    </p>
-                  )}
-                </div>
-              )}
 
               {word.usage_notes && word.usage_notes !== "—" && (
                 <div>
@@ -228,18 +184,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               )}
 
-              <div className="space-y-2">
-                {word.disputed === "True" && (
-                  <div className="text-xs text-foreground border-l-2 border-border pl-2">
-                    Note: This translation is disputed
-                  </div>
-                )}
-                {word.loanword_in_english === "True" && (
-                  <div className="text-xs text-muted-foreground">
-                    This word exists as a loanword in English
-                  </div>
-                )}
-              </div>
 
               {word.sources && word.sources !== "—" && (
                 <div>
@@ -297,21 +241,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                     </div>
                   )}
 
-                  {word.example_native && word.example_native !== "—" && (
-                    <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
-                        Example
-                      </h4>
-                      <p className="native-script text-sm text-foreground">
-                        {word.example_native.toLowerCase()}
-                      </p>
-                      {word.example_gloss && word.example_gloss !== "—" && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {word.example_gloss}
-                        </p>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -330,18 +259,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       </a>
                     </div>
                   )}
-                  <div className="space-y-2">
-                    {word.disputed === "True" && (
-                      <div className="text-xs text-foreground border-l-2 border-border pl-2">
-                        Note: This translation is disputed
-                      </div>
-                    )}
-                    {word.loanword_in_english === "True" && (
-                      <div className="text-xs text-muted-foreground">
-                        This word exists as a loanword in English
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>

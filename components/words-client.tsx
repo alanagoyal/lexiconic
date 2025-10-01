@@ -20,22 +20,18 @@ const MapView = dynamic(() => import("@/components/map-view").then(mod => ({ def
 export interface WordData {
   word: string
   native_script: string
-  transliteration: string
   language: string
   family: string
   category: string
   definition: string
   literal: string
   usage_notes: string
-  example_native: string
-  example_gloss: string
   english_approx: string
-  loanword_in_english: string
-  disputed: string
-  region: string
-  closest_english_paraphrase: string
   sources: string
-  needs_citation: string
+  pronunciation: string
+  phonetic: string
+  embedding: number[]
+  embeddingHash: string
 }
 
 
@@ -61,9 +57,9 @@ export function WordsClient({ words }: WordsClientProps) {
       word.native_script.toLowerCase().includes(searchLower) ||
       word.definition.toLowerCase().includes(searchLower) ||
       word.language.toLowerCase().includes(searchLower) ||
-      (word.transliteration && word.transliteration.toLowerCase().includes(searchLower)) ||
-      (word.closest_english_paraphrase && word.closest_english_paraphrase.toLowerCase().includes(searchLower)) ||
-      (word.english_approx && word.english_approx.toLowerCase().includes(searchLower))
+      word.phonetic.toLowerCase().includes(searchLower) ||
+      (word.english_approx && word.english_approx.toLowerCase().includes(searchLower)) ||
+      (word.literal && word.literal.toLowerCase().includes(searchLower))
     )
   }
 
