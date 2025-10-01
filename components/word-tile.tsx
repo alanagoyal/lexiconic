@@ -3,27 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink, BookOpen, Globe } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-interface WordData {
-  word: string
-  native_script: string
-  transliteration: string
-  language: string
-  family: string
-  category: string
-  definition: string
-  literal: string
-  usage_notes: string
-  example_native: string
-  example_gloss: string
-  english_approx: string
-  loanword_in_english: string
-  disputed: string
-  region: string
-  closest_english_paraphrase: string
-  sources: string
-  needs_citation: string
-}
+import type { WordData } from "@/components/words-client"
 
 interface WordTileProps {
   word: WordData
@@ -48,8 +28,8 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
             <div className="native-script text-2xl md:text-3xl font-medium text-card-foreground truncate w-full">
               {word.word.toLowerCase()}
             </div>
-            {word.transliteration && word.transliteration.trim() !== "" && (
-              <div className="text-sm text-muted-foreground italic">{word.transliteration}</div>
+            {word.phonetic && word.phonetic.trim() !== "" && (
+              <div className="text-sm text-muted-foreground italic">{word.phonetic}</div>
             )}
             <div className="text-xs text-muted-foreground font-medium">{word.language}</div>
           </div>
@@ -61,29 +41,20 @@ export function WordTile({ word, isExpanded, onToggle }: WordTileProps) {
                 <h3 className="native-script text-3xl md:text-4xl font-medium text-card-foreground mb-2 truncate w-full">
                   {word.word.toLowerCase()}
                 </h3>
-                {word.transliteration && word.transliteration.trim() !== "" && (
-                  <p className="text-lg text-muted-foreground italic mb-1">{word.transliteration}</p>
+                {word.phonetic && word.phonetic.trim() !== "" && (
+                  <p className="text-lg text-muted-foreground italic mb-1">{word.phonetic}</p>
                 )}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Globe className="w-4 h-4" />
                   <span>{word.language}</span>
-                  {word.region && word.region !== "—" && (
-                    <>
-                      <span>•</span>
-                      <span>{word.region}</span>
-                    </>
-                  )}
+                  <span>•</span>
+                  <span>{word.family}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 {word.category && word.category !== "—" && (
                   <Badge variant="secondary" className="text-xs">
                     {word.category}
-                  </Badge>
-                )}
-                {word.disputed === "True" && (
-                  <Badge variant="outline" className="text-xs border-amber-500 text-amber-700">
-                    Disputed
                   </Badge>
                 )}
               </div>
