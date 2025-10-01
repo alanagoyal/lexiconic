@@ -37,7 +37,7 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
         echo "⚠️  BRAINTRUST_API_KEY not found. Skipping definition generation."
         echo "   Add BRAINTRUST_API_KEY to your .env.local file to enable automatic definition generation."
     else
-        if node scripts/generate-definitions.js; then
+        if npx tsx scripts/generate-definitions.ts; then
             echo "✅ Definitions generated successfully"
 
             # Check if words.json was updated
