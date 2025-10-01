@@ -4,76 +4,76 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Possible Monuments inspired minimal aesthetic */
+  /* Teal color scheme */
   --background: #134e4a; /* Teal background */
   --foreground: #ccfbf1; /* Light teal text */
-  --card: #ffffff; /* Clean white for content areas */
-  --card-foreground: #1a1a1a; /* Dark text on cards */
-  --popover: #ffffff; /* White popover */
-  --popover-foreground: #1a1a1a; /* Dark text in popover */
-  --primary: #1a1a1a; /* Black for primary elements */
-  --primary-foreground: #ffffff; /* White text on primary */
-  --secondary: #666666; /* Mid gray for secondary elements */
-  --secondary-foreground: #ffffff; /* White text on secondary */
-  --muted: #f5f5f5; /* Very light gray for muted sections */
-  --muted-foreground: #666666; /* Medium gray for muted text */
-  --accent: #1a1a1a; /* Black accent */
-  --accent-foreground: #ffffff; /* White text on accent */
-  --destructive: #dc2626; /* Red for destructive actions */
-  --destructive-foreground: #ffffff; /* White text on destructive */
-  --border: #e5e5e5; /* Light gray borders */
-  --input: #ffffff; /* White inputs */
-  --ring: #1a1a1a; /* Black focus rings */
-  --chart-1: #1a1a1a;
-  --chart-2: #666666;
-  --chart-3: #999999;
-  --chart-4: #cccccc;
-  --chart-5: #e5e5e5;
+  --card: #134e4a; /* Same as background */
+  --card-foreground: #ccfbf1; /* Same as foreground */
+  --popover: #134e4a; /* Same as background */
+  --popover-foreground: #ccfbf1; /* Same as foreground */
+  --primary: #134e4a; /* Same as background */
+  --primary-foreground: #ccfbf1; /* Same as foreground */
+  --secondary: #134e4a; /* Same as background */
+  --secondary-foreground: #ccfbf1; /* Same as foreground */
+  --muted: #134e4a; /* Same as background */
+  --muted-foreground: #ccfbf1; /* Same as foreground */
+  --accent: #134e4a; /* Same as background */
+  --accent-foreground: #ccfbf1; /* Same as foreground */
+  --destructive: #134e4a; /* Same as background */
+  --destructive-foreground: #ccfbf1; /* Same as foreground */
+  --border: #ccfbf1; /* Same as foreground */
+  --input: #134e4a; /* Same as background */
+  --ring: #ccfbf1; /* Same as foreground */
+  --chart-1: #ccfbf1;
+  --chart-2: #ccfbf1;
+  --chart-3: #ccfbf1;
+  --chart-4: #ccfbf1;
+  --chart-5: #ccfbf1;
   --radius: 0; /* No rounding for minimal aesthetic */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #1a1a1a;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #666666;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e5e5e5;
-  --sidebar-ring: #1a1a1a;
+  --sidebar: #134e4a;
+  --sidebar-foreground: #ccfbf1;
+  --sidebar-primary: #134e4a;
+  --sidebar-primary-foreground: #ccfbf1;
+  --sidebar-accent: #134e4a;
+  --sidebar-accent-foreground: #ccfbf1;
+  --sidebar-border: #ccfbf1;
+  --sidebar-ring: #ccfbf1;
 }
 
 .dark {
-  /* Dark mode minimal aesthetic */
-  --background: #0a0a0a; /* Very dark background */
-  --foreground: #fafafa; /* Light text */
-  --card: #1a1a1a; /* Dark cards */
-  --card-foreground: #fafafa; /* Light text on cards */
-  --popover: #1a1a1a; /* Dark popover */
-  --popover-foreground: #fafafa; /* Light popover text */
-  --primary: #fafafa; /* Light for primary elements */
-  --primary-foreground: #0a0a0a; /* Dark text on primary */
-  --secondary: #999999; /* Light gray for secondary */
-  --secondary-foreground: #0a0a0a; /* Dark text on secondary */
-  --muted: #1a1a1a; /* Dark muted */
-  --muted-foreground: #999999; /* Light gray muted text */
-  --accent: #fafafa; /* Light accent */
-  --accent-foreground: #0a0a0a; /* Dark text on accent */
-  --destructive: #ef4444; /* Brighter red for dark mode */
-  --destructive-foreground: #fafafa; /* Light text on destructive */
-  --border: #333333; /* Dark borders */
-  --input: #1a1a1a; /* Dark inputs */
-  --ring: #fafafa; /* Light focus rings */
-  --chart-1: #fafafa;
-  --chart-2: #999999;
-  --chart-3: #666666;
-  --chart-4: #333333;
-  --chart-5: #1a1a1a;
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #fafafa;
-  --sidebar-primary-foreground: #0a0a0a;
-  --sidebar-accent: #999999;
-  --sidebar-accent-foreground: #0a0a0a;
-  --sidebar-border: #333333;
-  --sidebar-ring: #fafafa;
+  /* Dark mode - same as light mode */
+  --background: #134e4a;
+  --foreground: #ccfbf1;
+  --card: #134e4a;
+  --card-foreground: #ccfbf1;
+  --popover: #134e4a;
+  --popover-foreground: #ccfbf1;
+  --primary: #134e4a;
+  --primary-foreground: #ccfbf1;
+  --secondary: #134e4a;
+  --secondary-foreground: #ccfbf1;
+  --muted: #134e4a;
+  --muted-foreground: #ccfbf1;
+  --accent: #134e4a;
+  --accent-foreground: #ccfbf1;
+  --destructive: #134e4a;
+  --destructive-foreground: #ccfbf1;
+  --border: #ccfbf1;
+  --input: #134e4a;
+  --ring: #ccfbf1;
+  --chart-1: #ccfbf1;
+  --chart-2: #ccfbf1;
+  --chart-3: #ccfbf1;
+  --chart-4: #ccfbf1;
+  --chart-5: #ccfbf1;
+  --sidebar: #134e4a;
+  --sidebar-foreground: #ccfbf1;
+  --sidebar-primary: #134e4a;
+  --sidebar-primary-foreground: #ccfbf1;
+  --sidebar-accent: #134e4a;
+  --sidebar-accent-foreground: #ccfbf1;
+  --sidebar-border: #ccfbf1;
+  --sidebar-ring: #ccfbf1;
 }
 
 @theme inline {
