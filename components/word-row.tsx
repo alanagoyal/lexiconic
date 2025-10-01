@@ -110,20 +110,21 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
 
           <div className="text-left space-y-2 py-4">
-            <div className="flex items-center gap-2">
-              <div
-                className="native-script text-3xl text-foreground truncate flex-1 cursor-pointer hover:opacity-70 transition-opacity"
-                onClick={handleWordClick}
-                title="Pronounce"
-              >
-                {word.word.toLowerCase()}
-              </div>
+            <div className="native-script text-3xl text-foreground truncate">
+              {word.word.toLowerCase()}
             </div>
             {word.transliteration &&
               word.transliteration.trim() !== "" &&
               word.transliteration !== "—" && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   {word.transliteration}
+                  <span
+                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                    onClick={handleWordClick}
+                    title="Pronounce"
+                  >
+                    🔈
+                  </span>
                 </div>
               )}
           </div>
@@ -138,20 +139,21 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           {/* Left Column - Native Word */}
           <div className="col-span-4 p-4 flex items-center justify-start">
             <div className="text-left space-y-2 w-full max-w-full">
-              <div className="flex items-center gap-3">
-                <div
-                  className="native-script text-4xl md:text-5xl text-foreground truncate flex-1 cursor-pointer hover:opacity-70 transition-opacity"
-                  onClick={handleWordClick}
-                  title="Pronounce"
-                >
-                  {word.word.toLowerCase()}
-                </div>
+              <div className="native-script text-4xl md:text-5xl text-foreground truncate">
+                {word.word.toLowerCase()}
               </div>
               {word.transliteration &&
                 word.transliteration.trim() !== "" &&
                 word.transliteration !== "—" && (
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
                     {word.transliteration}
+                    <span
+                      className="cursor-pointer hover:opacity-70 transition-opacity"
+                      onClick={handleWordClick}
+                      title="Pronounce"
+                    >
+                      🔈
+                    </span>
                   </div>
                 )}
             </div>
