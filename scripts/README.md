@@ -52,13 +52,13 @@ npx tsx scripts/generate-pronunciations.ts
 
 ---
 
-### `generate-definitions.js`
+### `generate-definitions.ts`
 
 Generates definitions for new words using Braintrust AI.
 
 **Usage:**
 ```bash
-node scripts/generate-definitions.js
+npx tsx scripts/generate-definitions.ts
 ```
 
 **When to run:**
@@ -93,7 +93,7 @@ chmod +x .git/hooks/post-commit
 **What it does:**
 1. Detects if `public/data/words.json` was modified in the last commit
 2. Runs `generate-pronunciations.ts` for new/changed words
-3. Runs `generate-definitions.js` for new words
+3. Runs `generate-definitions.ts` for new words
 4. Runs `generate-embeddings.ts` to regenerate embeddings for words with changed semantic fields
 5. Automatically stages all updated files
 
