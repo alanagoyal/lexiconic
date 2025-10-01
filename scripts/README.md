@@ -52,6 +52,31 @@ npx tsx scripts/generate-pronunciations.ts
 
 ---
 
+### `generate-phonetics.ts`
+
+Generates phonetic spellings for new words using Braintrust AI.
+
+**Usage:**
+```bash
+npx tsx scripts/generate-phonetics.ts
+```
+
+**When to run:**
+- Automatically runs via post-commit hook when `public/data/words.json` changes
+- Can also be run manually
+
+**Behavior:**
+- Detects new words from the last git commit
+- Only generates phonetic spellings for words that don't have one
+- Skips words with existing valid phonetic spellings
+- Creates a backup of `words.json` before making changes
+- Updates `public/data/words.json` with new phonetic spellings
+
+**Requirements:**
+- `BRAINTRUST_API_KEY` in `.env.local`
+
+---
+
 ### `generate-definitions.ts`
 
 Generates definitions for new words using Braintrust AI.
@@ -80,7 +105,7 @@ npx tsx scripts/generate-definitions.ts
 
 ### `post-commit`
 
-Post-commit hook that automatically runs pronunciation, definition, and embedding generation when `public/data/words.json` is modified.
+Post-commit hook that automatically runs pronunciation, phonetic spelling, definition, and embedding generation when `public/data/words.json` is modified.
 
 **Setup:**
 
@@ -93,9 +118,10 @@ chmod +x .git/hooks/post-commit
 **What it does:**
 1. Detects if `public/data/words.json` was modified in the last commit
 2. Runs `generate-pronunciations.ts` for new/changed words
-3. Runs `generate-definitions.ts` for new words
-4. Runs `generate-embeddings.ts` to regenerate embeddings for words with changed semantic fields
-5. Automatically stages all updated files
+3. Runs `generate-phonetics.ts` for new words
+4. Runs `generate-definitions.ts` for new words
+5. Runs `generate-embeddings.ts` to regenerate embeddings for words with changed semantic fields
+6. Automatically stages all updated files
 
 **Note:** The hook will skip steps if API keys are not configured.
 
@@ -120,6 +146,7 @@ BRAINTRUST_API_KEY=your_braintrust_key_here
 2. Commit your changes: `git add public/data/words.json && git commit -m "add new words"`
 3. The post-commit hook automatically:
    - Generates pronunciations for new/changed words
+   - Generates phonetic spellings for new words without phonetic spellings
    - Generates definitions for new words without definitions
    - Regenerates embeddings for words with changed semantic fields
    - Stages all updated files (words.json, pronunciations/, words-with-embeddings.json)
@@ -142,5 +169,6 @@ BRAINTRUST_API_KEY=your_braintrust_key_here
 - **All scripts** run automatically via the post-commit hook when `public/data/words.json` changes
 - **Embeddings** are intelligently regenerated only when semantic fields change
 - **Pronunciations** are generated for new or changed words
+- **Phonetic spellings** are generated only for new words without existing phonetic spellings
 - **Definitions** are generated only for new words without existing definitions
 - All scripts gracefully handle missing API keys

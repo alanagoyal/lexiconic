@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Post-commit hook to generate pronunciations and definitions when words.json is modified
+# Post-commit hook to generate pronunciations, phonetics, and definitions when words.json is modified
 
 # Get the list of files changed in the last commit
 changed_files=$(git diff-tree --no-commit-id --name-only -r HEAD)
@@ -28,6 +28,25 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
             fi
         else
             echo "⚠️  Failed to generate pronunciations (continuing anyway)"
+        fi
+    fi
+
+    # Generate phonetic spellings for new words
+    echo "🔤 Generating phonetic spellings for new words..."
+    if [ -z "$BRAINTRUST_API_KEY" ] && [ ! -f ".env.local" ]; then
+        echo "⚠️  BRAINTRUST_API_KEY not found. Skipping phonetic spelling generation."
+        echo "   Add BRAINTRUST_API_KEY to your .env.local file to enable automatic phonetic spelling generation."
+    else
+        if npx tsx scripts/generate-phonetics.ts; then
+            echo "✅ Phonetic spellings generated successfully"
+
+            # Check if words.json was updated
+            if ! git diff --quiet public/data/words.json; then
+                echo "📝 Staging updated phonetic spellings..."
+                git add public/data/words.json
+            fi
+        else
+            echo "⚠️  Failed to generate phonetic spellings (continuing anyway)"
         fi
     fi
 

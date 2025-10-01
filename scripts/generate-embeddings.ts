@@ -31,7 +31,7 @@ loadEnvLocal();
 interface Word {
   word: string;
   native_script: string;
-  transliteration: string;
+  phonetic: string;
   language: string;
   family: string;
   category: string;
@@ -75,7 +75,7 @@ function createEmbeddingText(word: Word): string {
   // Create comprehensive text for embedding that includes all semantic information
   const parts = [
     `Word: ${word.word}`,
-    word.transliteration && word.transliteration !== word.word ? `Transliteration: ${word.transliteration}` : '',
+    word.phonetic && word.phonetic !== word.word ? `Phonetic: ${word.phonetic}` : '',
     `Language: ${word.language}`,
     `Category: ${word.category}`,
     `Definition: ${word.definition}`,
