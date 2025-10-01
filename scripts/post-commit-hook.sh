@@ -68,6 +68,49 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
         echo "❌ Failed to generate embeddings"
         exit 1
     fi
+
+    # Run the pronunciation regeneration script
+    echo "🔊 Regenerating pronunciations for changed words..."
+    if npx tsx scripts/regenerate-changed-pronunciations.ts; then
+        echo "✅ Pronunciations regenerated successfully"
+
+        # Check if words.json was updated with pronunciation fields
+        if git diff --quiet public/data/words.json; then
+            echo "📄 No changes to words.json"
+        else
+            echo "📝 words.json has been updated with pronunciation fields"
+            echo "   Staging the changes..."
+            git add public/data/words.json
+
+            # Regenerate embeddings since words.json was updated
+            echo "🔄 words.json was updated, regenerating embeddings..."
+            if npx tsx scripts/generate-embeddings.ts; then
+                echo "✅ Embeddings regenerated after pronunciation update"
+
+                # Check if there are changes to words-with-embeddings.json
+                if git diff --quiet public/data/words-with-embeddings.json; then
+                    echo "📄 No changes to embeddings file"
+                else
+                    echo "📝 words-with-embeddings.json has been updated"
+                    echo "   Staging the changes..."
+                    git add public/data/words-with-embeddings.json
+                fi
+            else
+                echo "⚠️  Failed to regenerate embeddings (continuing anyway)"
+            fi
+        fi
+
+        # Check if there are new pronunciation files
+        if git diff --quiet public/pronunciations/; then
+            echo "📄 No changes to pronunciation files"
+        else
+            echo "📝 Pronunciation files have been updated"
+            echo "   Staging the changes..."
+            git add public/pronunciations/
+        fi
+    else
+        echo "⚠️  Failed to regenerate pronunciations (continuing anyway)"
+    fi
 else
     echo "📄 words.json was not modified, skipping embedding generation"
 fi

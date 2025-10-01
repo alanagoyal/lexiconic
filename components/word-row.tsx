@@ -1,6 +1,8 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Volume2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface WordData {
   word: string;
@@ -21,6 +23,7 @@ interface WordData {
   closest_english_paraphrase: string;
   sources: string;
   needs_citation: string;
+  pronunciation?: string;
 }
 
 interface WordRowProps {
@@ -30,16 +33,59 @@ interface WordRowProps {
 }
 
 export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePronounce = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isPlaying) return;
+
+    if (!word.pronunciation) {
+      console.error('No pronunciation file available for word:', word.word);
+      return;
+    }
+
+    try {
+      setIsPlaying(true);
+
+      const audioUrl = `/lexiconic/pronunciations/${word.pronunciation}`;
+      const audio = new Audio(audioUrl);
+
+      audio.onended = () => {
+        setIsPlaying(false);
+      };
+
+      audio.onerror = () => {
+        console.error('Failed to load pronunciation audio');
+        setIsPlaying(false);
+      };
+
+      await audio.play();
+    } catch (error) {
+      console.error('Pronunciation error:', error);
+      setIsPlaying(false);
+    }
+  };
 
   return (
-    <button
-      className="word-row cursor-pointer border-b border-border w-full text-left"
-      onClick={onToggleExpand}
-      aria-expanded={isExpanded}
-      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+    <div
+      className="word-row border-b border-border w-full"
     >
       {/* Main Grid Layout - responsive design */}
-      <div className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px]">
+      <div
+        className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer"
+        onClick={onToggleExpand}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggleExpand();
+          }
+        }}
+        aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+      >
         {/* Mobile Layout - stacked */}
         <div className="md:hidden p-4 space-y-4">
           <div className="flex justify-between items-start">
@@ -57,8 +103,21 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
 
           <div className="text-left space-y-2 py-4">
-            <div className="native-script text-3xl text-foreground truncate w-full">
-              {word.word.toLowerCase()}
+            <div className="flex items-center gap-2">
+              <div className="native-script text-3xl text-foreground truncate flex-1">
+                {word.word.toLowerCase()}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePronounce}
+                disabled={isPlaying}
+                className="shrink-0"
+                title="Pronounce word"
+                aria-label="Pronounce word"
+              >
+                <Volume2 className={`h-5 w-5 ${isPlaying ? 'animate-pulse' : ''}`} />
+              </Button>
             </div>
             {word.transliteration &&
               word.transliteration.trim() !== "" &&
@@ -79,8 +138,21 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           {/* Left Column - Native Word */}
           <div className="col-span-4 p-4 flex items-center justify-start">
             <div className="text-left space-y-2 w-full max-w-full">
-              <div className="native-script text-4xl md:text-5xl text-foreground truncate w-full">
-                {word.word.toLowerCase()}
+              <div className="flex items-center gap-3">
+                <div className="native-script text-4xl md:text-5xl text-foreground truncate flex-1">
+                  {word.word.toLowerCase()}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handlePronounce}
+                  disabled={isPlaying}
+                  className="shrink-0"
+                  title="Pronounce word"
+                  aria-label="Pronounce word"
+                >
+                  <Volume2 className={`h-6 w-6 ${isPlaying ? 'animate-pulse' : ''}`} />
+                </Button>
               </div>
               {word.transliteration &&
                 word.transliteration.trim() !== "" &&
@@ -279,6 +351,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
         </div>
       )}
-    </button>
+    </div>
   );
 }
