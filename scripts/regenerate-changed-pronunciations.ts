@@ -122,37 +122,41 @@ async function regenerateChangedPronunciations() {
 
     console.log(`\nDetected ${changedWords.length} changed words:\n${changedWords.join(', ')}\n`);
 
+    // Read words from JSON
+    const wordsPath = path.join(process.cwd(), 'public/data/words.json');
+    const wordsContent = await fs.readFile(wordsPath, 'utf-8');
+    const words: Word[] = JSON.parse(wordsContent);
+
     // Create pronunciations directory if it doesn't exist
     const pronunciationsDir = path.join(process.cwd(), 'public/pronunciations');
     await fs.mkdir(pronunciationsDir, { recursive: true });
 
-    // Load existing mapping
-    const mappingPath = path.join(pronunciationsDir, 'mapping.json');
-    let mapping: Record<string, string> = {};
-    try {
-      const mappingContent = await fs.readFile(mappingPath, 'utf-8');
-      mapping = JSON.parse(mappingContent);
-    } catch {
-      console.log('No existing mapping found, will create new one');
-    }
+    let updatedCount = 0;
 
     // Regenerate pronunciations for changed words
-    for (const word of changedWords) {
-      const fileName = generateAudioFileName(word);
+    for (const changedWord of changedWords) {
+      const wordObj = words.find(w => w.word === changedWord);
+      if (!wordObj) {
+        console.log(`⚠️  Word "${changedWord}" not found in words.json`);
+        continue;
+      }
+
+      const fileName = generateAudioFileName(changedWord);
       const outputPath = path.join(pronunciationsDir, fileName);
 
-      await generatePronunciation(word, outputPath);
-      mapping[word] = fileName;
+      await generatePronunciation(changedWord, outputPath);
+      wordObj.pronunciation = fileName;
+      updatedCount++;
 
       // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    // Save updated mapping
-    await fs.writeFile(mappingPath, JSON.stringify(mapping, null, 2));
-    console.log(`\n✓ Updated pronunciation mapping`);
+    // Write updated words back to JSON
+    await fs.writeFile(wordsPath, JSON.stringify(words, null, 2));
+    console.log(`\n✓ Updated words.json with pronunciation fields`);
 
-    console.log(`\n✅ Successfully regenerated ${changedWords.length} pronunciations`);
+    console.log(`\n✅ Successfully regenerated ${updatedCount} pronunciations`);
   } catch (error) {
     console.error('Error regenerating pronunciations:', error);
     process.exit(1);

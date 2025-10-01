@@ -88,10 +88,10 @@ async function generateAllPronunciations() {
     const pronunciationsDir = path.join(process.cwd(), 'public/pronunciations');
     await fs.mkdir(pronunciationsDir, { recursive: true });
 
-    // Create a mapping file to link words to their audio files
-    const mapping: Record<string, string> = {};
-
     console.log(`\nGenerating pronunciations for ${words.length} words...\n`);
+
+    let updatedCount = 0;
+    let skippedCount = 0;
 
     // Generate pronunciations for each word
     for (let i = 0; i < words.length; i++) {
@@ -99,18 +99,21 @@ async function generateAllPronunciations() {
       const fileName = generateAudioFileName(word.word);
       const outputPath = path.join(pronunciationsDir, fileName);
 
-      // Skip if file already exists
-      try {
-        await fs.access(outputPath);
-        console.log(`⊘ Skipping "${word.word}" (already exists)`);
-        mapping[word.word] = fileName;
-        continue;
-      } catch {
-        // File doesn't exist, generate it
+      // Check if pronunciation field already exists and file exists
+      if (word.pronunciation && word.pronunciation === fileName) {
+        try {
+          await fs.access(outputPath);
+          console.log(`⊘ Skipping "${word.word}" (already exists)`);
+          skippedCount++;
+          continue;
+        } catch {
+          // File doesn't exist, regenerate it
+        }
       }
 
       await generatePronunciation(word.word, outputPath);
-      mapping[word.word] = fileName;
+      word.pronunciation = fileName;
+      updatedCount++;
 
       // Add a small delay to avoid rate limiting
       if (i < words.length - 1) {
@@ -118,12 +121,12 @@ async function generateAllPronunciations() {
       }
     }
 
-    // Save the mapping file
-    const mappingPath = path.join(pronunciationsDir, 'mapping.json');
-    await fs.writeFile(mappingPath, JSON.stringify(mapping, null, 2));
-    console.log(`\n✓ Saved pronunciation mapping to: ${mappingPath}`);
+    // Write updated words back to JSON
+    await fs.writeFile(wordsPath, JSON.stringify(words, null, 2));
+    console.log(`\n✓ Updated words.json with pronunciation fields`);
 
-    console.log(`\n✅ Successfully generated ${Object.keys(mapping).length} pronunciations`);
+    console.log(`\n✅ Successfully generated ${updatedCount} pronunciations`);
+    console.log(`♻️  Skipped ${skippedCount} existing pronunciations`);
   } catch (error) {
     console.error('Error generating pronunciations:', error);
     process.exit(1);
