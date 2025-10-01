@@ -118,13 +118,11 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
               word.transliteration !== "—" && (
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
                   {word.transliteration}
-                  <span
-                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                  <Volume2
+                    className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
                     onClick={handleWordClick}
                     title="Pronounce"
-                  >
-                    🔈
-                  </span>
+                  />
                 </div>
               )}
           </div>
@@ -147,13 +145,11 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 word.transliteration !== "—" && (
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
                     {word.transliteration}
-                    <span
-                      className="cursor-pointer hover:opacity-70 transition-opacity"
+                    <Volume2
+                      className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
                       onClick={handleWordClick}
                       title="Pronounce"
-                    >
-                      🔈
-                    </span>
+                    />
                   </div>
                 )}
             </div>
