@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
-const { initLogger, invoke } = require('braintrust');
-const { z } = require('zod');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { initLogger, invoke } from 'braintrust';
+import { z } from 'zod';
+import dotenv from 'dotenv';
 
 // Load environment variables from .env.local
-require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
+dotenv.config({ path: path.join(__dirname, '../.env.local') });
 
 // Initialize Braintrust logger
 initLogger({
@@ -15,8 +16,19 @@ initLogger({
   apiKey: process.env.BRAINTRUST_API_KEY,
 });
 
+interface WordData {
+  word: string;
+  language: string;
+  definition?: string;
+}
+
+interface GenerationResult {
+  updated: number;
+  definitions: Record<string, string>;
+}
+
 // Helper function to get definition using braintrust
-async function getDefinitionFromBraintrust(word, language) {
+async function getDefinitionFromBraintrust(word: string, language: string): Promise<string> {
   const result = await invoke({
     projectName: "lexiconic",
     slug: "translate-3bf0",
@@ -29,12 +41,12 @@ async function getDefinitionFromBraintrust(word, language) {
 /**
  * Get definition for a single word using Braintrust
  */
-async function getDefinition(word, language) {
+async function getDefinition(word: string, language: string): Promise<string | null> {
   try {
     const definition = await getDefinitionFromBraintrust(word, language);
     return definition;
   } catch (error) {
-    console.error(`Error getting definition for ${word} (${language}):`, error.message);
+    console.error(`Error getting definition for ${word} (${language}):`, (error as Error).message);
     return null;
   }
 }
@@ -42,7 +54,7 @@ async function getDefinition(word, language) {
 /**
  * Get new words from git diff
  */
-function getNewWords() {
+function getNewWords(): string[] {
   try {
     // Get the diff of words.json in the last commit
     const diff = execSync('git diff HEAD~1 HEAD -- public/data/words.json', {
@@ -55,7 +67,7 @@ function getNewWords() {
     }
 
     // Parse the diff to find new words (added entries)
-    const newWords = new Set();
+    const newWords = new Set<string>();
     const lines = diff.split('\n');
 
     for (const line of lines) {
@@ -78,7 +90,7 @@ function getNewWords() {
 /**
  * Generate definitions for new words detected in the last commit
  */
-async function generateDefinitionsForNewWords() {
+async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
   // Check if Braintrust API key is set
   if (!process.env.BRAINTRUST_API_KEY) {
     console.error('❌ BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
@@ -95,9 +107,9 @@ async function generateDefinitionsForNewWords() {
   console.log(`🤖 Generating definitions for ${newWords.length} new words using Braintrust...\n`);
 
   const wordsPath = path.join(__dirname, '../public/data/words.json');
-  const words = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
+  const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
-  const definitions = {};
+  const definitions: Record<string, string> = {};
 
   // Process each new word
   for (const newWord of newWords) {
@@ -154,7 +166,7 @@ async function generateDefinitionsForNewWords() {
 /**
  * Main function
  */
-async function main() {
+async function main(): Promise<GenerationResult> {
   try {
     const result = await generateDefinitionsForNewWords();
 
@@ -164,13 +176,13 @@ async function main() {
 
     return result;
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('❌ Error:', (error as Error).message);
     process.exit(1);
   }
 }
 
 // Export for use in other scripts
-module.exports = { getDefinition, generateDefinitionsForNewWords };
+export { getDefinition, generateDefinitionsForNewWords };
 
 // Run if called directly
 if (require.main === module) {
