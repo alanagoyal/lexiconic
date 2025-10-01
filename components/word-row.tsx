@@ -35,8 +35,10 @@ interface WordRowProps {
 export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handlePronounce = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePronounce = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
 
     if (isPlaying) return;
 
@@ -65,6 +67,11 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
       console.error('Pronunciation error:', error);
       setIsPlaying(false);
     }
+  };
+
+  const handleWordClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handlePronounce();
   };
 
   return (
@@ -103,27 +110,19 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           </div>
 
           <div className="text-left space-y-2 py-4">
-            <div className="flex items-center gap-2">
-              <div className="native-script text-3xl text-foreground truncate flex-1">
-                {word.word.toLowerCase()}
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handlePronounce}
-                disabled={isPlaying}
-                className="shrink-0"
-                title="Pronounce word"
-                aria-label="Pronounce word"
-              >
-                <Volume2 className={`h-5 w-5 ${isPlaying ? 'animate-pulse' : ''}`} />
-              </Button>
+            <div className="native-script text-3xl text-foreground truncate">
+              {word.word.toLowerCase()}
             </div>
             {word.transliteration &&
               word.transliteration.trim() !== "" &&
               word.transliteration !== "—" && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   {word.transliteration}
+                  <Volume2
+                    className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
+                    onClick={handleWordClick}
+                    title="Pronounce"
+                  />
                 </div>
               )}
           </div>
@@ -138,27 +137,19 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
           {/* Left Column - Native Word */}
           <div className="col-span-4 p-4 flex items-center justify-start">
             <div className="text-left space-y-2 w-full max-w-full">
-              <div className="flex items-center gap-3">
-                <div className="native-script text-4xl md:text-5xl text-foreground truncate flex-1">
-                  {word.word.toLowerCase()}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handlePronounce}
-                  disabled={isPlaying}
-                  className="shrink-0"
-                  title="Pronounce word"
-                  aria-label="Pronounce word"
-                >
-                  <Volume2 className={`h-6 w-6 ${isPlaying ? 'animate-pulse' : ''}`} />
-                </Button>
+              <div className="native-script text-4xl md:text-5xl text-foreground truncate">
+                {word.word.toLowerCase()}
               </div>
               {word.transliteration &&
                 word.transliteration.trim() !== "" &&
                 word.transliteration !== "—" && (
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
                     {word.transliteration}
+                    <Volume2
+                      className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
+                      onClick={handleWordClick}
+                      title="Pronounce"
+                    />
                   </div>
                 )}
             </div>
