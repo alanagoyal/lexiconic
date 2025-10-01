@@ -7,7 +7,7 @@ import { useState } from "react";
 interface WordData {
   word: string;
   native_script: string;
-  transliteration: string;
+  phonetic: string;
   language: string;
   family: string;
   category: string;
@@ -43,7 +43,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
     if (isPlaying) return;
 
     if (!word.pronunciation) {
-      console.error('No pronunciation file available for word:', word.word);
+      console.error("No pronunciation file available for word:", word.word);
       return;
     }
 
@@ -58,13 +58,13 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
       };
 
       audio.onerror = () => {
-        console.error('Failed to load pronunciation audio');
+        console.error("Failed to load pronunciation audio");
         setIsPlaying(false);
       };
 
       await audio.play();
     } catch (error) {
-      console.error('Pronunciation error:', error);
+      console.error("Pronunciation error:", error);
       setIsPlaying(false);
     }
   };
@@ -75,9 +75,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
   };
 
   return (
-    <div
-      className="word-row border-b border-border w-full"
-    >
+    <div className="word-row border-b border-border w-full">
       {/* Main Grid Layout - responsive design */}
       <div
         className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer"
@@ -85,13 +83,15 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             onToggleExpand();
           }
         }}
         aria-expanded={isExpanded}
-        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${word.word}`}
+        aria-label={`${isExpanded ? "Collapse" : "Expand"} details for ${
+          word.word
+        }`}
       >
         {/* Mobile Layout - stacked */}
         <div className="md:hidden p-4 space-y-4">
@@ -113,15 +113,16 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
             <div className="native-script text-3xl text-foreground truncate">
               {word.word.toLowerCase()}
             </div>
-            {word.transliteration &&
-              word.transliteration.trim() !== "" &&
-              word.transliteration !== "—" && (
+            {word.phonetic &&
+              word.phonetic.trim() !== "" &&
+              word.phonetic !== "—" && (
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  {word.transliteration}
+                  {word.phonetic}
                   <Volume2
-                    className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
+                    className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${
+                      isPlaying ? "animate-pulse" : ""
+                    }`}
                     onClick={handleWordClick}
-                    title="Pronounce"
                   />
                 </div>
               )}
@@ -140,15 +141,16 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
               <div className="native-script text-4xl md:text-5xl text-foreground truncate">
                 {word.word.toLowerCase()}
               </div>
-              {word.transliteration &&
-                word.transliteration.trim() !== "" &&
-                word.transliteration !== "—" && (
+              {word.phonetic &&
+                word.phonetic.trim() !== "" &&
+                word.phonetic !== "—" && (
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    {word.transliteration}
+                    {word.phonetic}
                     <Volume2
-                      className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${isPlaying ? 'animate-pulse' : ''}`}
+                      className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${
+                        isPlaying ? "animate-pulse" : ""
+                      }`}
                       onClick={handleWordClick}
-                      title="Pronounce"
                     />
                   </div>
                 )}
@@ -195,7 +197,9 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
                     English Approximation
                   </h4>
-                  <p className="text-sm text-foreground">{word.english_approx}</p>
+                  <p className="text-sm text-foreground">
+                    {word.english_approx}
+                  </p>
                 </div>
               )}
 
@@ -272,7 +276,9 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
                         English Approximation
                       </h4>
-                      <p className="text-sm text-foreground">{word.english_approx}</p>
+                      <p className="text-sm text-foreground">
+                        {word.english_approx}
+                      </p>
                     </div>
                   )}
                 </div>
