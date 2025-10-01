@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useDeferredValue } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { Button } from "@/components/ui/button"
 import { Shuffle, ArrowUpAZ, ArrowDownZA } from "lucide-react"
-import { 
+import {
   searchWordsBySimilarity,
-  type WordWithEmbedding 
+  type WordWithEmbedding
 } from "@/lib/semantic-search"
 
 export interface WordData {
@@ -38,6 +38,7 @@ interface WordsClientProps {
 
 export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
+  const deferredSearchTerm = useDeferredValue(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
@@ -89,7 +90,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
   // Simple search effect with debouncing
   useEffect(() => {
-    if (!searchTerm.trim()) {
+    if (!deferredSearchTerm.trim()) {
       setIsSearching(false)
       setDisplayedWords(words)
       return
@@ -99,7 +100,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
     const timeoutId = setTimeout(async () => {
       try {
-        const results = await performSemanticSearch(searchTerm)
+        const results = await performSemanticSearch(deferredSearchTerm)
         setDisplayedWords(results)
       } finally {
         setIsSearching(false)
@@ -107,7 +108,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }, 300)
 
     return () => clearTimeout(timeoutId)
-  }, [searchTerm, words])
+  }, [deferredSearchTerm, words])
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term)
