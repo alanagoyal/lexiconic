@@ -5,8 +5,8 @@
 
 :root {
   /* Possible Monuments inspired minimal aesthetic */
-  --background: #fafafa; /* Off-white background like reference site */
-  --foreground: #1a1a1a; /* Near black for strong contrast */
+  --background: #134e4a; /* Teal background */
+  --foreground: #ccfbf1; /* Light teal text */
   --card: #ffffff; /* Clean white for content areas */
   --card-foreground: #1a1a1a; /* Dark text on cards */
   --popover: #ffffff; /* White popover */
