@@ -170,30 +170,7 @@ export function WordsClient({ words }: WordsClientProps) {
                 LEXICONIC
               </h1>
               <div className="flex items-center gap-2">
-                {/* View toggle buttons */}
-                <div className="flex items-center gap-1 border border-border rounded-md p-1">
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                    title="List view"
-                    aria-label="List view"
-                    className="h-7 w-7"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "map" ? "default" : "ghost"}
-                    size="icon"
-                    onClick={() => setViewMode("map")}
-                    title="Map view"
-                    aria-label="Map view"
-                    className="h-7 w-7"
-                  >
-                    <MapIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-
+                {/* Sorting buttons - only show in list view */}
                 {viewMode === "list" && (
                   <>
                     <Button
@@ -226,6 +203,30 @@ export function WordsClient({ words }: WordsClientProps) {
                     </Button>
                   </>
                 )}
+
+                {/* View toggle buttons - always on the right */}
+                <div className="flex items-center gap-1 border border-border rounded-md p-1">
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                    title="List view"
+                    aria-label="List view"
+                    className="h-7 w-7"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "map" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setViewMode("map")}
+                    title="Map view"
+                    aria-label="Map view"
+                    className="h-7 w-7"
+                  >
+                    <MapIcon className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
