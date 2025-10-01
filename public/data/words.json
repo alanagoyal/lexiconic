@@ -336,6 +336,20 @@
     "pronunciation": "b1d1ac6b09fa66139462d2f14078d438.mp3"
   },
   {
+    "word": "ceilidh",
+    "native_script": "céilidh",
+    "transliteration": "",
+    "language": "Scottish Gaelic",
+    "family": "Celtic",
+    "category": "custom/music",
+    "definition": "A social gathering, typically with traditional music and dancing, held for communal entertainment and celebration, where people participate in ceilidh dances and share songs, stories, and refreshments.",
+    "literal": "visit",
+    "usage_notes": "Gaelic cultures.",
+    "english_approx": "folk social dance",
+    "sources": "https://en.wiktionary.org/wiki/ceilidh",
+    "pronunciation": "081375d65409f6d8d58fe6cf67b48319.mp3"
+  },
+  {
     "word": "चाय पानी",
     "native_script": "चाय पानी",
     "transliteration": "chai pani",
@@ -3360,19 +3374,19 @@
     "pronunciation": "3ffed7de3c5c863c78a0c89cffdefd6b.mp3"
   },
   {
-    "word": "ceilidh",
-    "native_script": "céilidh",
-    "transliteration": "",
-    "language": "Scottish Gaelic",
-    "family": "Celtic",
-    "category": "custom/music",
-    "definition": "A social gathering, typically with traditional music and dancing, held for communal entertainment and celebration, where people participate in ceilidh dances and share songs, stories, and refreshments.",
-    "literal": "visit",
-    "usage_notes": "Gaelic cultures.",
-    "english_approx": "folk social dance",
-    "sources": "https://en.wiktionary.org/wiki/ceilidh",
-    "pronunciation": "081375d65409f6d8d58fe6cf67b48319.mp3"
-  },
+    "word": "totei",
+    "native_script": "徒弟",
+    "transliteration": "totei",
+    "language": "Japanese",
+    "family": "Japonic",
+    "category": "social role",
+    "definition": "An apprentice or disciple working under a master, especially in a craft or trade; now somewhat archaic.",
+    "literal": "disciple-apprentice",
+    "usage_notes": "Rare in modern Japanese; more common in historical or formal texts. The everyday word is 弟子 (deshi).",
+    "english_approx": "apprentice",
+    "sources": "https://jisho.org/word/%E5%BE%92%E5%BC%9F; https://kotobank.jp/word/%E5%BE%92%E5%BC%9F-583038",
+    "pronunciation": "toh-teh-ee"
+  },  
   {
     "word": "treppenwitz",
     "native_script": "treppenwitz",
