@@ -34,33 +34,37 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
 
         <div className="space-y-4">
           {/* Phonetic and language info */}
-          <div className="flex items-center gap-3 flex-wrap">
-            {word.phonetic && (
-              <button
-                onClick={playAudio}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer flex items-center gap-1"
-                title="Click to play pronunciation"
-              >
-                <span>{word.phonetic}</span>
-                {word.pronunciation && (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                    />
-                  </svg>
-                )}
-              </button>
-            )}
-            <Badge variant="secondary">{word.language}</Badge>
-            {word.category && <Badge variant="outline">{word.category}</Badge>}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3">
+              {word.phonetic && (
+                <button
+                  onClick={playAudio}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer flex items-center gap-1"
+                  title="Click to play pronunciation"
+                >
+                  <span>{word.phonetic}</span>
+                  {word.pronunciation && (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                      />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">{word.language}</Badge>
+              {word.category && <Badge variant="outline">{word.category}</Badge>}
+            </div>
           </div>
 
           {/* Definition */}
