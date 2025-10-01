@@ -117,6 +117,28 @@ async function generateEmbeddingsForWords() {
       embeddingMap.set(item.word, item);
     });
 
+    // First pass: check which embeddings need regeneration
+    const wordsNeedingNewEmbeddings: Word[] = [];
+
+    for (const word of wordsData) {
+      const existing = embeddingMap.get(word.word);
+      const embeddingText = createEmbeddingText(word);
+      const currentHash = createTextHash(embeddingText);
+      const needsRegeneration = !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
+
+      if (needsRegeneration) {
+        wordsNeedingNewEmbeddings.push(word);
+      }
+    }
+
+    const reusedCount = wordsData.length - wordsNeedingNewEmbeddings.length;
+
+    if (wordsNeedingNewEmbeddings.length === 0) {
+      console.log(`♻️  Reusing ${reusedCount} existing embeddings (no changes detected)`);
+    } else {
+      console.log(`📊 Processing: ${wordsNeedingNewEmbeddings.length} new/modified, ${reusedCount} reused`);
+    }
+
     const wordsWithEmbeddings: WordWithEmbedding[] = [];
     let processedCount = 0;
     let newEmbeddingsCount = 0;
@@ -136,12 +158,11 @@ async function generateEmbeddingsForWords() {
           embedding: existing.embedding,
           embeddingHash: currentHash
         });
-        console.log(`Using existing embedding for: ${word.word}`);
       } else {
         // Generate new embedding (new word or content changed)
         const action = existing ? 'Regenerating' : 'Generating';
         console.log(`${action} embedding for: ${word.word}...`);
-        
+
         const embedding = await generateEmbedding(embeddingText);
 
         wordsWithEmbeddings.push({
@@ -157,7 +178,7 @@ async function generateEmbeddingsForWords() {
       }
 
       processedCount++;
-      if (processedCount % 10 === 0) {
+      if (newEmbeddingsCount > 0 && processedCount % 10 === 0) {
         console.log(`Processed ${processedCount}/${wordsData.length} words`);
       }
     }
