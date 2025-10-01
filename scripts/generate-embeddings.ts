@@ -117,9 +117,9 @@ async function generateEmbeddingsForWords() {
       embeddingMap.set(item.word, item);
     });
 
-    const wordsWithEmbeddings: WordWithEmbedding[] = [];
-    let processedCount = 0;
-    let newEmbeddingsCount = 0;
+    // First pass: determine what needs to be regenerated
+    const wordsNeedingGeneration: Word[] = [];
+    const wordsToReuse: Array<{ word: Word; existing: WordWithEmbedding }> = [];
 
     for (const word of wordsData) {
       const existing = embeddingMap.get(word.word);
@@ -130,37 +130,62 @@ async function generateEmbeddingsForWords() {
       const needsRegeneration = !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
 
       if (existing && !needsRegeneration) {
-        // Use existing embedding - content hasn't changed
-        wordsWithEmbeddings.push({
-          ...word,
-          embedding: existing.embedding,
-          embeddingHash: currentHash
-        });
-        console.log(`Using existing embedding for: ${word.word}`);
+        wordsToReuse.push({ word, existing });
       } else {
-        // Generate new embedding (new word or content changed)
-        const action = existing ? 'Regenerating' : 'Generating';
-        console.log(`${action} embedding for: ${word.word}...`);
-        
-        const embedding = await generateEmbedding(embeddingText);
-
-        wordsWithEmbeddings.push({
-          ...word,
-          embedding,
-          embeddingHash: currentHash
-        });
-
-        newEmbeddingsCount++;
-
-        // Add a small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
+        wordsNeedingGeneration.push(word);
       }
+    }
+
+    // Show summary upfront
+    if (wordsNeedingGeneration.length === 0) {
+      console.log(`♻️ Reusing ${wordsToReuse.length} existing embeddings (no changes detected)`);
+    } else {
+      console.log(`📊 Generating ${wordsNeedingGeneration.length} new/updated embeddings`);
+      console.log(`♻️ Reusing ${wordsToReuse.length} existing embeddings`);
+    }
+
+    const wordsWithEmbeddings: WordWithEmbedding[] = [];
+    let processedCount = 0;
+
+    // Process words that need generation
+    for (const word of wordsNeedingGeneration) {
+      const existing = embeddingMap.get(word.word);
+      const embeddingText = createEmbeddingText(word);
+      const currentHash = createTextHash(embeddingText);
+
+      const action = existing ? 'Regenerating' : 'Generating';
+      console.log(`${action} embedding for: ${word.word}...`);
+
+      const embedding = await generateEmbedding(embeddingText);
+
+      wordsWithEmbeddings.push({
+        ...word,
+        embedding,
+        embeddingHash: currentHash
+      });
 
       processedCount++;
       if (processedCount % 10 === 0) {
-        console.log(`Processed ${processedCount}/${wordsData.length} words`);
+        console.log(`Processed ${processedCount}/${wordsNeedingGeneration.length} new embeddings`);
       }
+
+      // Add a small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
+
+    // Add reused embeddings
+    for (const { word, existing } of wordsToReuse) {
+      const embeddingText = createEmbeddingText(word);
+      const currentHash = createTextHash(embeddingText);
+
+      wordsWithEmbeddings.push({
+        ...word,
+        embedding: existing.embedding,
+        embeddingHash: currentHash
+      });
+    }
+
+    const newEmbeddingsCount = wordsNeedingGeneration.length;
 
     console.log('Writing embeddings to file...');
     writeFileSync(embeddingsPath, JSON.stringify(wordsWithEmbeddings, null, 2));
