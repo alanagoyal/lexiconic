@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import { ExternalLink } from "lucide-react"
 import type { WordWithEmbedding } from "@/lib/semantic-search"
 
 interface WordDetailDialogProps {
@@ -26,7 +27,7 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-playfair mb-2">
+          <DialogTitle className="native-script text-3xl md:text-4xl font-medium text-foreground mb-2">
             {word.native_script}
           </DialogTitle>
         </DialogHeader>
@@ -64,55 +65,52 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
 
           {/* Definition */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">
               Definition
             </h3>
-            <p className="text-base leading-relaxed">{word.definition}</p>
+            <p className="text-sm leading-relaxed text-foreground">{word.definition}</p>
           </div>
 
           {/* Literal translation */}
           {word.literal && (
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">
                 Literal Translation
               </h3>
-              <p className="text-base">{word.literal}</p>
+              <p className="text-sm text-foreground">{word.literal}</p>
             </div>
           )}
 
           {/* English approximation */}
           {word.english_approx && (
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">
                 English Approximation
               </h3>
-              <p className="text-base">{word.english_approx}</p>
+              <p className="text-sm text-foreground">{word.english_approx}</p>
             </div>
           )}
 
           {/* Usage notes */}
           {word.usage_notes && (
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">
                 Usage Notes
               </h3>
-              <p className="text-base text-muted-foreground">{word.usage_notes}</p>
+              <p className="text-sm text-foreground">{word.usage_notes}</p>
             </div>
           )}
 
           {/* Sources */}
           {word.sources && (
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                Source
-              </h3>
               <a
                 href={word.sources}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
               >
-                {word.sources}
+                Source <ExternalLink className="w-3 h-3" />
               </a>
             </div>
           )}
