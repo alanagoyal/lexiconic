@@ -1,14 +1,21 @@
 "use client"
 
-import { useState, useEffect, useDeferredValue } from "react"
+import { useState, useEffect, useDeferredValue, Suspense } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { Button } from "@/components/ui/button"
-import { Shuffle, ArrowUpAZ, ArrowDownZA } from "lucide-react"
+import { Shuffle, ArrowUpAZ, ArrowDownZA, List, Map as MapIcon } from "lucide-react"
 import {
   searchWordsBySimilarity,
   type WordWithEmbedding
 } from "@/lib/semantic-search"
+import dynamic from "next/dynamic"
+import { WordDetailDialog } from "@/components/word-detail-dialog"
+
+const MapView = dynamic(() => import("@/components/map-view").then(mod => ({ default: mod.MapView })), {
+  ssr: false,
+  loading: () => <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center">Loading map...</div>
+})
 
 export interface WordData {
   word: string
@@ -43,6 +50,8 @@ export function WordsClient({ words }: WordsClientProps) {
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
+  const [viewMode, setViewMode] = useState<"list" | "map">("list")
+  const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -165,34 +174,62 @@ export function WordsClient({ words }: WordsClientProps) {
                 LEXICONIC
               </h1>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleRandomize}
-                  title="Randomize order"
-                  aria-label="Randomize order"
-                  disabled={isShuffling}
-                >
-                  <Shuffle className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleSortAscending}
-                  title="Sort A-Z"
-                  aria-label="Sort A-Z"
-                >
-                  <ArrowUpAZ className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleSortDescending}
-                  title="Sort Z-A"
-                  aria-label="Sort Z-A"
-                >
-                  <ArrowDownZA className="h-4 w-4" />
-                </Button>
+                {/* View toggle buttons */}
+                <div className="flex items-center gap-1 border border-border rounded-md p-1">
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                    title="List view"
+                    aria-label="List view"
+                    className="h-7 w-7"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "map" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setViewMode("map")}
+                    title="Map view"
+                    aria-label="Map view"
+                    className="h-7 w-7"
+                  >
+                    <MapIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {viewMode === "list" && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleRandomize}
+                      title="Randomize order"
+                      aria-label="Randomize order"
+                      disabled={isShuffling}
+                    >
+                      <Shuffle className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleSortAscending}
+                      title="Sort A-Z"
+                      aria-label="Sort A-Z"
+                    >
+                      <ArrowUpAZ className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleSortDescending}
+                      title="Sort Z-A"
+                      aria-label="Sort Z-A"
+                    >
+                      <ArrowDownZA className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -211,36 +248,50 @@ export function WordsClient({ words }: WordsClientProps) {
         </div>
       </div>
 
-      {/* Words List - full width grid layout with lightweight virtualization */}
+      {/* Content - either list or map view */}
       <main>
-        {displayedWords.length > 0 ? (
-          <div>
-            {displayedWords.map((word, index) => {
-              const wordId = `${word.word}-${index}`
-              return (
-                <div
-                  key={wordId}
-                  id={`word-${word.word}`}
-                  className="virtualized-item"
-                >
-                  <WordRow 
-                    word={word} 
-                    isExpanded={expandedRowId === wordId}
-                    onToggleExpand={() => handleRowExpand(wordId)}
-                  />
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="p-16 text-center">
-            <div className="text-muted-foreground text-sm">No words found</div>
-            <div className="text-muted-foreground text-xs mt-2">
-              Try adjusting your search terms or filters
+        {viewMode === "list" ? (
+          displayedWords.length > 0 ? (
+            <div>
+              {displayedWords.map((word, index) => {
+                const wordId = `${word.word}-${index}`
+                return (
+                  <div
+                    key={wordId}
+                    id={`word-${word.word}`}
+                    className="virtualized-item"
+                  >
+                    <WordRow
+                      word={word}
+                      isExpanded={expandedRowId === wordId}
+                      onToggleExpand={() => handleRowExpand(wordId)}
+                    />
+                  </div>
+                )
+              })}
             </div>
-          </div>
+          ) : (
+            <div className="p-16 text-center">
+              <div className="text-muted-foreground text-sm">No words found</div>
+              <div className="text-muted-foreground text-xs mt-2">
+                Try adjusting your search terms or filters
+              </div>
+            </div>
+          )
+        ) : (
+          <MapView
+            words={displayedWords}
+            onWordClick={(word) => setSelectedWord(word)}
+          />
         )}
       </main>
+
+      {/* Word detail dialog for map view */}
+      <WordDetailDialog
+        word={selectedWord}
+        open={selectedWord !== null}
+        onClose={() => setSelectedWord(null)}
+      />
 
       {/* Footer */}
       <footer className="bg-background">
