@@ -173,7 +173,7 @@ export function WordsClient({ words }: WordsClientProps) {
                   aria-label="Randomize order"
                   disabled={isShuffling}
                 >
-                  <Shuffle className={`h-4 w-4 ${isShuffling ? 'animate-spin' : ''}`} />
+                  <Shuffle className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
