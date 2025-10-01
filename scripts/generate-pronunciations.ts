@@ -59,8 +59,6 @@ function generateAudioFileName(word: string): string {
 // Generate pronunciation for a single word
 async function generatePronunciation(word: string, outputPath: string): Promise<void> {
   try {
-    console.log(`Generating pronunciation for: ${word}`);
-
     const mp3 = await openai.audio.speech.create({
       model: 'gpt-4o-mini-tts',
       voice: 'alloy',
@@ -69,10 +67,8 @@ async function generatePronunciation(word: string, outputPath: string): Promise<
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
     await fs.writeFile(outputPath, buffer);
-
-    console.log(`✓ Saved pronunciation to: ${outputPath}`);
   } catch (error) {
-    console.error(`✗ Failed to generate pronunciation for "${word}":`, error);
+    console.error(`   Error generating pronunciation for "${word}":`, error);
     throw error;
   }
 }
@@ -117,11 +113,11 @@ async function generatePronunciationsForChangedWords() {
     const changedWords = getNewOrChangedWords();
 
     if (changedWords.length === 0) {
-      console.log('No new or changed words detected, skipping pronunciation generation.');
+      console.log('→ No new or changed words detected');
       return;
     }
 
-    console.log(`\nDetected ${changedWords.length} new/changed words:\n${changedWords.join(', ')}\n`);
+    console.log(`→ Processing ${changedWords.length} pronunciation(s)`);
 
     // Read words from JSON
     const wordsPath = path.join(process.cwd(), 'public/data/words.json');
@@ -139,7 +135,7 @@ async function generatePronunciationsForChangedWords() {
     for (const changedWord of changedWords) {
       const wordObj = words.find(w => w.word === changedWord);
       if (!wordObj) {
-        console.log(`⚠️  Word "${changedWord}" not found in words.json`);
+        console.log(`   Warning: "${changedWord}" not found in words.json`);
         continue;
       }
 
@@ -150,7 +146,7 @@ async function generatePronunciationsForChangedWords() {
       if (wordObj.pronunciation === fileName) {
         try {
           await fs.access(outputPath);
-          console.log(`⊘ Skipping "${changedWord}" (pronunciation already exists)`);
+          console.log(`  ✓ Using existing: ${changedWord}`);
           skippedCount++;
           continue;
         } catch {
@@ -158,6 +154,7 @@ async function generatePronunciationsForChangedWords() {
         }
       }
 
+      console.log(`  • Generating: ${changedWord}`);
       await generatePronunciation(changedWord, outputPath);
       wordObj.pronunciation = fileName;
       updatedCount++;
@@ -169,12 +166,9 @@ async function generatePronunciationsForChangedWords() {
     if (updatedCount > 0) {
       // Write updated words back to JSON
       await fs.writeFile(wordsPath, JSON.stringify(words, null, 2));
-      console.log(`\n✓ Updated words.json with pronunciation fields`);
-    }
-
-    console.log(`\n✅ Successfully generated ${updatedCount} pronunciations`);
-    if (skippedCount > 0) {
-      console.log(`♻️  Skipped ${skippedCount} existing pronunciations`);
+      console.log(`→ Generated ${updatedCount} pronunciation(s), used ${skippedCount} existing`);
+    } else if (skippedCount > 0) {
+      console.log(`→ Used ${skippedCount} existing pronunciation(s)`);
     }
   } catch (error) {
     console.error('Error generating pronunciations:', error);

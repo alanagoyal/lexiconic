@@ -95,20 +95,17 @@ function createTextHash(text: string): string {
 
 async function generateEmbeddingsForWords() {
   try {
-    console.log('Reading words.json...');
     const wordsPath = join(process.cwd(), 'public', 'data', 'words.json');
     const embeddingsPath = join(process.cwd(), 'public', 'data', 'words-with-embeddings.json');
 
     const wordsData = JSON.parse(readFileSync(wordsPath, 'utf8')) as Word[];
-    console.log(`Found ${wordsData.length} words to process`);
 
     // Load existing embeddings if they exist
     let existingEmbeddings: WordWithEmbedding[] = [];
     try {
       existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as WordWithEmbedding[];
-      console.log(`Found ${existingEmbeddings.length} existing embeddings`);
     } catch (error) {
-      console.log('No existing embeddings file found, creating new one');
+      // No existing embeddings file
     }
 
     // Create a map of existing embeddings by word
@@ -138,10 +135,9 @@ async function generateEmbeddingsForWords() {
 
     // Show summary upfront
     if (wordsNeedingGeneration.length === 0) {
-      console.log(`♻️ Reusing ${wordsToReuse.length} existing embeddings (no changes detected)`);
+      console.log(`→ No new or changed words detected`);
     } else {
-      console.log(`📊 Generating ${wordsNeedingGeneration.length} new/updated embeddings`);
-      console.log(`♻️ Reusing ${wordsToReuse.length} existing embeddings`);
+      console.log(`→ Processing ${wordsNeedingGeneration.length} embedding(s)`);
     }
 
     const wordsWithEmbeddings: WordWithEmbedding[] = [];
@@ -153,8 +149,7 @@ async function generateEmbeddingsForWords() {
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
-      const action = existing ? 'Regenerating' : 'Generating';
-      console.log(`${action} embedding for: ${word.word}...`);
+      console.log(`  • Generating: ${word.word}`);
 
       const embedding = await generateEmbedding(embeddingText);
 
@@ -165,9 +160,6 @@ async function generateEmbeddingsForWords() {
       });
 
       processedCount++;
-      if (processedCount % 10 === 0) {
-        console.log(`Processed ${processedCount}/${wordsNeedingGeneration.length} new embeddings`);
-      }
 
       // Add a small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -178,6 +170,8 @@ async function generateEmbeddingsForWords() {
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
+      console.log(`  ✓ Using existing: ${word.word}`);
+
       wordsWithEmbeddings.push({
         ...word,
         embedding: existing.embedding,
@@ -186,13 +180,15 @@ async function generateEmbeddingsForWords() {
     }
 
     const newEmbeddingsCount = wordsNeedingGeneration.length;
+    const reusedCount = wordsData.length - newEmbeddingsCount;
 
-    console.log('Writing embeddings to file...');
     writeFileSync(embeddingsPath, JSON.stringify(wordsWithEmbeddings, null, 2));
 
-    console.log(`✅ Successfully processed ${wordsData.length} words`);
-    console.log(`📊 Generated ${newEmbeddingsCount} new embeddings`);
-    console.log(`♻️ Reused ${wordsData.length - newEmbeddingsCount} existing embeddings`);
+    if (newEmbeddingsCount > 0) {
+      console.log(`→ Generated ${newEmbeddingsCount} embedding(s), used ${reusedCount} existing`);
+    } else {
+      console.log(`→ Used ${reusedCount} existing embedding(s)`);
+    }
 
   } catch (error) {
     console.error('❌ Error generating embeddings:', error);
