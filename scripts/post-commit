@@ -70,6 +70,13 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
     fi
 
     echo "✨ Post-commit processing complete"
+
+    # Check if there are any staged files to commit
+    if ! git diff --cached --quiet; then
+        echo ""
+        echo "📝 Generated files have been staged. Please commit them:"
+        echo "   git commit -m 'chore: update embeddings, pronunciations, and definitions'"
+    fi
 else
     echo "📄 words.json was not modified, skipping post-commit scripts"
 fi
