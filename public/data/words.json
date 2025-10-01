@@ -938,6 +938,20 @@
     "pronunciation": "cfc3bd8846e0d7d9ba397e9836127cd0.mp3"
   },
   {
+    "word": "fingerspitzengefühl",
+    "native_script": "fingerspitzengefühl",
+    "transliteration": "",
+    "language": "German",
+    "family": "Germanic",
+    "category": "concept/intuition",
+    "definition": "An intuitive flair or instinct — the ability to respond with tact and sensitivity; a kind of on-the-spot feel for a complex situation.",
+    "literal": "finger tips feeling",
+    "usage_notes": "Used figuratively in contexts like diplomacy, leadership, or art; sometimes used in English as a loanword. :contentReference[oaicite:0]{index=0}",
+    "english_approx": "instinctive sensitivity / intuitive tact",
+    "sources": "https://en.wikipedia.org/wiki/Fingerspitzengef%C3%BChl",
+    "pronunciation": "ˈfɪŋɐˌʃpɪtsənɡəˌfyːl"
+  },
+  {
     "word": "fisselig",
     "native_script": "fisselig",
     "transliteration": "",
