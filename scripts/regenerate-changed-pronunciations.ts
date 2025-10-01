@@ -61,7 +61,7 @@ async function generatePronunciation(word: string, outputPath: string): Promise<
     console.log(`Regenerating pronunciation for: ${word}`);
 
     const mp3 = await openai.audio.speech.create({
-      model: 'tts-1',
+      model: 'gpt-4o-mini-tts',
       voice: 'alloy',
       input: word,
     });
