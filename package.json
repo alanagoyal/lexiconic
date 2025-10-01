@@ -59,7 +59,7 @@
     "react-day-picker": "9.8.0",
     "react-dom": "^19",
     "react-hook-form": "^7.60.0",
-    "react-map-gl": "^8.0.4",
+    "react-map-gl": "^7.1.9",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.4",
     "sonner": "^1.7.4",
