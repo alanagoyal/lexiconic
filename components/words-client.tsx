@@ -242,9 +242,7 @@ export function WordsClient({ words }: WordsClientProps) {
           </header>
           <div className="border-b border-border bg-background">
             <div className="w-full relative">
-              <div className="w-full border-none bg-background px-4 py-2">
-                <div className="h-9" />
-              </div>
+              <div className="h-9 w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none" />
             </div>
           </div>
         </div>
