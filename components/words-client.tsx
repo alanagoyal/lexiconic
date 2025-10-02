@@ -272,9 +272,7 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Content - either list or map view */}
       <main className="min-h-[calc(100vh-120px)]">
         {!isMounted ? (
-          <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center">
-            <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider"></div>
-          </div>
+          <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center"></div>
         ) : viewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
