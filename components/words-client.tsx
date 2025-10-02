@@ -381,7 +381,7 @@ export function WordsClient({ words }: WordsClientProps) {
       />
 
       {/* Footer */}
-      <footer className="bg-background">
+      <footer className="sticky bottom-0 bg-background border-t border-border z-10">
         <div className="px-6 py-8 text-center">
           <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
             A digital exploration of linguistic untranslatability
