@@ -55,9 +55,8 @@ function WordsClientInner({ words }: WordsClientProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  // Read view from URL params - this will be available immediately in client component
-  const viewFromUrl = searchParams.get('view')
-  const initialView = (viewFromUrl === 'map' ? 'map' : 'list') as "list" | "map"
+  // Read view mode directly from URL - no state needed
+  const viewMode = (searchParams.get('view') === 'map' ? 'map' : 'list') as "list" | "map"
 
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
@@ -68,7 +67,6 @@ function WordsClientInner({ words }: WordsClientProps) {
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
-  const [viewMode, setViewMode] = useState<"list" | "map">(initialView)
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
 
@@ -159,9 +157,7 @@ function WordsClientInner({ words }: WordsClientProps) {
 
 
   const handleViewModeChange = (newViewMode: "list" | "map") => {
-    setViewMode(newViewMode)
-
-    // Update URL params
+    // Update URL params - this will cause a re-render with the new viewMode
     const params = new URLSearchParams(searchParams.toString())
     if (newViewMode === 'map') {
       params.set('view', 'map')
