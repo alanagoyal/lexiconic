@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useDeferredValue, Suspense } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { LexiconicHeader } from "@/components/header"
@@ -51,6 +52,12 @@ interface WordsClientProps {
 }
 
 export function WordsClient({ words }: WordsClientProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  // Initialize view mode from URL params, default to "list"
+  const initialView = (searchParams.get('view') === 'map' ? 'map' : 'list') as "list" | "map"
+
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
@@ -60,7 +67,7 @@ export function WordsClient({ words }: WordsClientProps) {
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
-  const [viewMode, setViewMode] = useState<"list" | "map">("list")
+  const [viewMode, setViewMode] = useState<"list" | "map">(initialView)
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
 
@@ -150,6 +157,19 @@ export function WordsClient({ words }: WordsClientProps) {
   }
 
 
+  const handleViewModeChange = (newViewMode: "list" | "map") => {
+    setViewMode(newViewMode)
+
+    // Update URL params
+    const params = new URLSearchParams(searchParams.toString())
+    if (newViewMode === 'map') {
+      params.set('view', 'map')
+    } else {
+      params.delete('view') // Default is list, so we don't need the param
+    }
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
   const handleSortModeChange = (newSortMode: "none" | "asc" | "desc" | "random") => {
     setSortMode(newSortMode)
     
@@ -194,7 +214,7 @@ export function WordsClient({ words }: WordsClientProps) {
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={handleViewModeChange}
           sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
