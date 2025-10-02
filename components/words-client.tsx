@@ -219,42 +219,6 @@ export function WordsClient({ words }: WordsClientProps) {
     router.replace(`?${params.toString()}`, { scroll: false })
   }
 
-  // Show loading state until mounted to prevent flash
-  // Match the exact layout of the actual content to prevent layout shift
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="sticky top-0 z-10 bg-background">
-          <header className="border-b border-border bg-background">
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
-                  LEXICONIC
-                </h1>
-                <div className="flex items-center gap-2">
-                  <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
-                    <div className="h-7 w-7" />
-                    <div className="h-7 w-7" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-          <div className="border-b border-border bg-background">
-            <div className="w-full relative">
-              <div className="h-9 w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none" />
-            </div>
-          </div>
-        </div>
-        <main className="min-h-[calc(100vh-120px)] flex items-center justify-center">
-          <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider">
-            Loading...
-          </div>
-        </main>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header and Search - sticky together */}
@@ -282,7 +246,13 @@ export function WordsClient({ words }: WordsClientProps) {
 
       {/* Content - either list or map view */}
       <main className="min-h-[calc(100vh-120px)]">
-        {viewMode === "list" ? (
+        {!isMounted ? (
+          <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center">
+            <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider">
+              Loading...
+            </div>
+          </div>
+        ) : viewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
               {displayedWords.map((word, index) => {
