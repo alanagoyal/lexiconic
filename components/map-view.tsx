@@ -31,6 +31,7 @@ function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
 
 export function MapView({ words, onWordClick }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [viewport, setViewport] = useState({
     latitude: 20,
     longitude: 0,
@@ -181,10 +182,17 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         </div>
       )}
 
+      {!isLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background">
+          <div className="text-muted-foreground">Loading map...</div>
+        </div>
+      )}
+
       <Map
         ref={mapRef}
         {...viewport}
         onMove={(evt) => setViewport(evt.viewState)}
+        onLoad={() => setIsLoaded(true)}
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
