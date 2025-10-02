@@ -152,7 +152,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
   return (
-    <div className="w-full h-[calc(100vh-120px)] relative">
+    <div className="w-full h-[calc(100vh-120px)] relative bg-background">
       {!MAPBOX_TOKEN && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="max-w-md p-6 bg-background border border-border rounded-lg shadow-lg text-center">

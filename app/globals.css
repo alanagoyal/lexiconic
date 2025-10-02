@@ -179,13 +179,22 @@
 
 /* Progress bar animation for map loading */
 @keyframes progress-bar {
-  0% { 
-    transform: scaleX(0); 
+  0% {
+    transform: scaleX(0);
   }
-  50% { 
-    transform: scaleX(0.7); 
+  50% {
+    transform: scaleX(0.7);
   }
-  100% { 
-    transform: scaleX(1); 
+  100% {
+    transform: scaleX(1);
   }
+}
+
+/* Override Mapbox map background to match app background */
+.mapboxgl-map {
+  background-color: #fafafa !important;
+}
+
+.mapboxgl-canvas-container {
+  background-color: #fafafa !important;
 }
