@@ -16,7 +16,7 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
 
   const playAudio = () => {
     if (word.pronunciation) {
-      const audio = new Audio(`/lexiconic/audio/${word.pronunciation}`)
+      const audio = new Audio(`/lexiconic/pronunciations/${word.pronunciation}`)
       audio.play().catch(() => {
         console.warn("Could not play audio")
       })
