@@ -11,6 +11,7 @@ import {
 } from "@/lib/semantic-search";
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
+import useSWR from "swr";
 
 const MapView = dynamic(
   () =>
@@ -56,9 +57,24 @@ interface WordsClientProps {
   words: WordWithEmbedding[];
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function WordsClient({ words }: WordsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Load embeddings in the background with SWR
+  const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
+    "/lexiconic/api/words-with-embeddings",
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  // Use words with embeddings if available, otherwise use initial words
+  const activeWords = wordsWithEmbeddings || words;
 
   // Initialize viewMode to "list" by default to match server rendering
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
@@ -95,7 +111,7 @@ export function WordsClient({ words }: WordsClientProps) {
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase();
-    return words.filter(
+    return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
         word.native_script.toLowerCase().includes(searchLower) ||
@@ -123,7 +139,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
       const { embedding } = await response.json();
       const semanticResults = searchWordsBySimilarity(
-        words,
+        activeWords,
         embedding,
         0.25,
         30
@@ -150,7 +166,7 @@ export function WordsClient({ words }: WordsClientProps) {
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
       // Reset to alphabetically sorted words
-      const sortedWords = [...words].sort((a, b) =>
+      const sortedWords = [...activeWords].sort((a, b) =>
         a.word.localeCompare(b.word)
       );
       setDisplayedWords(sortedWords);
@@ -175,7 +191,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, words]);
+  }, [deferredSearchTerm, activeWords]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
