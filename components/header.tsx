@@ -1,14 +1,20 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Shuffle, ArrowUpAZ, ArrowDownZA, List, Map as MapIcon } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Shuffle,
+  ArrowUpAZ,
+  ArrowDownZA,
+  List,
+  Map as MapIcon,
+} from "lucide-react";
 
 interface LexiconicHeaderProps {
-  viewMode: "list" | "map"
-  onViewModeChange: (mode: "list" | "map") => void
-  sortMode: "none" | "asc" | "desc" | "random"
-  onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void
-  isShuffling: boolean
+  viewMode: "list" | "map";
+  onViewModeChange: (mode: "list" | "map") => void;
+  sortMode: "none" | "asc" | "desc" | "random";
+  onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void;
+  isShuffling: boolean;
 }
 
 export function LexiconicHeader({
@@ -16,7 +22,7 @@ export function LexiconicHeader({
   onViewModeChange,
   sortMode,
   onSortModeChange,
-  isShuffling
+  isShuffling,
 }: LexiconicHeaderProps) {
   return (
     <header className="border-b border-border bg-background">
@@ -39,21 +45,25 @@ export function LexiconicHeader({
                   <Shuffle className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={sortMode === "asc" || sortMode === "desc" ? "default" : "ghost"}
+                  variant={
+                    sortMode === "asc" || sortMode === "desc"
+                      ? "default"
+                      : "ghost"
+                  }
                   size="icon"
                   onClick={() => {
                     if (sortMode === "none") {
-                      onSortModeChange("asc")
+                      onSortModeChange("asc");
                     } else if (sortMode === "asc") {
-                      onSortModeChange("desc")
+                      onSortModeChange("desc");
                     } else if (sortMode === "desc") {
-                      onSortModeChange("none")
+                      onSortModeChange("none");
                     } else {
-                      onSortModeChange("asc")
+                      onSortModeChange("asc");
                     }
                   }}
-                  title={sortMode === "desc" ? "Sort Z-A (click to clear)" : "Sort A-Z"}
-                  aria-label={sortMode === "desc" ? "Sort Z-A (click to clear)" : "Sort A-Z"}
+                  title={sortMode === "desc" ? "Sort A-Z" : "Sort Z-A"}
+                  aria-label={sortMode === "desc" ? "Sort A-Z" : "Sort Z-A"}
                   className="h-7 w-7"
                 >
                   {sortMode === "desc" ? (
@@ -92,5 +102,5 @@ export function LexiconicHeader({
         </div>
       </div>
     </header>
-  )
+  );
 }

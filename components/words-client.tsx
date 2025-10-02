@@ -106,7 +106,27 @@ export function WordsClient({ words }: WordsClientProps) {
     if (viewParam === "map" || viewParam === "list") {
       setViewMode(viewParam);
     }
-  }, [searchParams]);
+    
+    // Read sort parameter from URL
+    const sortParam = searchParams.get("sort");
+    if (sortParam === "asc" || sortParam === "desc" || sortParam === "random" || sortParam === "none") {
+      setSortMode(sortParam);
+      
+      // Apply the sort immediately if we have words
+      if (activeWords.length > 0) {
+        let sortedWords = [...activeWords];
+        if (sortParam === "asc") {
+          sortedWords.sort((a, b) => a.word.localeCompare(b.word));
+        } else if (sortParam === "desc") {
+          sortedWords.sort((a, b) => b.word.localeCompare(a.word));
+        } else if (sortParam === "random") {
+          sortedWords.sort(() => Math.random() - 0.5);
+        }
+        // For "none", keep the original order (which is already alphabetical)
+        setDisplayedWords(sortedWords);
+      }
+    }
+  }, [searchParams, activeWords]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -165,25 +185,41 @@ export function WordsClient({ words }: WordsClientProps) {
   useEffect(() => {
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
-      // Reset to alphabetically sorted words
-      const sortedWords = [...activeWords].sort((a, b) =>
-        a.word.localeCompare(b.word)
-      );
+      // Reset to words with current sort mode from URL
+      const currentSortMode = searchParams.get("sort") || "asc";
+      let sortedWords = [...activeWords];
+      
+      if (currentSortMode === "asc") {
+        sortedWords.sort((a, b) => a.word.localeCompare(b.word));
+      } else if (currentSortMode === "desc") {
+        sortedWords.sort((a, b) => b.word.localeCompare(a.word));
+      } else if (currentSortMode === "random") {
+        sortedWords.sort(() => Math.random() - 0.5);
+      }
+      
       setDisplayedWords(sortedWords);
-      setSortMode("asc"); // Reset to ascending sort when clearing search
+      setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
       return;
     }
 
     setIsSearching(true);
-    setSortMode("asc"); // Reset to ascending sort when performing new search
+    // Don't reset sort mode when performing search - preserve current setting
 
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Sort search results alphabetically by default
-        const sortedResults = [...results].sort((a, b) =>
-          a.word.localeCompare(b.word)
-        );
+        // Apply current sort mode to search results
+        const currentSortMode = searchParams.get("sort") || "asc";
+        let sortedResults = [...results];
+        
+        if (currentSortMode === "asc") {
+          sortedResults.sort((a, b) => a.word.localeCompare(b.word));
+        } else if (currentSortMode === "desc") {
+          sortedResults.sort((a, b) => b.word.localeCompare(a.word));
+        } else if (currentSortMode === "random") {
+          sortedResults.sort(() => Math.random() - 0.5);
+        }
+        
         setDisplayedWords(sortedResults);
       } finally {
         setIsSearching(false);
@@ -191,7 +227,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords]);
+  }, [deferredSearchTerm, activeWords, searchParams]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -209,6 +245,16 @@ export function WordsClient({ words }: WordsClientProps) {
     newSortMode: "none" | "asc" | "desc" | "random"
   ) => {
     setSortMode(newSortMode);
+
+    // Update URL params
+    const params = new URLSearchParams(searchParams.toString());
+    if (newSortMode === "none") {
+      // For "none", we'll actually set to "asc" as the default
+      params.set("sort", "asc");
+    } else {
+      params.set("sort", newSortMode);
+    }
+    router.replace(`?${params.toString()}`, { scroll: false });
 
     if (newSortMode === "none") {
       // Reset to ascending sort (default state)
