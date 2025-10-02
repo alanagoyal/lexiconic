@@ -204,8 +204,8 @@ export function WordsClient({ words }: WordsClientProps) {
                   </>
                 )}
 
-                {/* View toggle buttons - always on the right */}
-                <div className="flex items-center gap-1 border border-border rounded-md p-1">
+                {/* View toggle buttons - always on the right, hidden on mobile */}
+                <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
                   <Button
                     variant={viewMode === "list" ? "default" : "ghost"}
                     size="icon"
