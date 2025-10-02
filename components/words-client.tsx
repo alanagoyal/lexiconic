@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue, Suspense } from "react";
+import { useState, useEffect, useDeferredValue, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchFilter } from "@/components/search-filter";
 import { WordRow } from "@/components/word-row";
@@ -97,6 +97,7 @@ export function WordsClient({ words }: WordsClientProps) {
     null
   );
   const [isMounted, setIsMounted] = useState(false);
+  const hasAppliedInitialSort = useRef(false);
 
   // Track mounted state and sync with URL changes on initial mount only
   useEffect(() => {
@@ -109,17 +110,21 @@ export function WordsClient({ words }: WordsClientProps) {
     const sortParam = searchParams.get("sort");
     if (sortParam === "asc" || sortParam === "desc" || sortParam === "random") {
       setSortMode(sortParam);
-      // Apply the sort from URL without scrolling
-      setDisplayedWords((current) => {
-        if (sortParam === "asc") {
-          return [...current].sort((a, b) => a.word.localeCompare(b.word));
-        } else if (sortParam === "desc") {
-          return [...current].sort((a, b) => b.word.localeCompare(a.word));
-        } else if (sortParam === "random") {
-          return [...current].sort(() => Math.random() - 0.5);
-        }
-        return current;
-      });
+
+      // Apply the sort only if we haven't done it yet
+      if (!hasAppliedInitialSort.current) {
+        hasAppliedInitialSort.current = true;
+        setDisplayedWords((current) => {
+          if (sortParam === "asc") {
+            return [...current].sort((a, b) => a.word.localeCompare(b.word));
+          } else if (sortParam === "desc") {
+            return [...current].sort((a, b) => b.word.localeCompare(a.word));
+          } else if (sortParam === "random") {
+            return [...current].sort(() => Math.random() - 0.5);
+          }
+          return current;
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
