@@ -51,12 +51,13 @@ interface WordsClientProps {
   words: WordWithEmbedding[]
 }
 
-export function WordsClient({ words }: WordsClientProps) {
+function WordsClientInner({ words }: WordsClientProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  // Initialize view mode from URL params, default to "list"
-  const initialView = (searchParams.get('view') === 'map' ? 'map' : 'list') as "list" | "map"
+  // Read view from URL params - this will be available immediately in client component
+  const viewFromUrl = searchParams.get('view')
+  const initialView = (viewFromUrl === 'map' ? 'map' : 'list') as "list" | "map"
 
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
@@ -287,5 +288,13 @@ export function WordsClient({ words }: WordsClientProps) {
         </div>
       </footer>
     </div>
+  )
+}
+
+export function WordsClient({ words }: WordsClientProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <WordsClientInner words={words} />
+    </Suspense>
   )
 }
