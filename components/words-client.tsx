@@ -51,13 +51,17 @@ export function WordsClient({ words }: WordsClientProps) {
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
-  const [viewMode, setViewMode] = useState<"list" | "map">(() => {
-    // Initialize from URL param, default to "list"
-    const view = searchParams.get("view")
-    return view === "map" ? "map" : "list"
-  })
+  const [viewMode, setViewMode] = useState<"list" | "map">("list")
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
+
+  // Initialize view mode from URL on mount
+  useEffect(() => {
+    const view = searchParams.get("view")
+    if (view === "map") {
+      setViewMode("map")
+    }
+  }, [searchParams])
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
