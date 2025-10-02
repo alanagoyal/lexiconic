@@ -12,7 +12,20 @@ import dynamic from "next/dynamic"
 import { WordDetailDialog } from "@/components/word-detail-dialog"
 
 const MapView = dynamic(() => import("@/components/map-view").then(mod => ({ default: mod.MapView })), {
-  ssr: false
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[calc(100vh-120px)] relative bg-muted/20 flex flex-col items-center justify-center">
+      <div className="text-muted-foreground text-sm mb-6 font-playfair uppercase tracking-wider">
+        Loading Map
+      </div>
+      <div className="w-64 h-px bg-border relative overflow-hidden">
+        <div className="absolute inset-0 bg-foreground origin-left animate-pulse" 
+             style={{
+               animation: 'progress-bar 2s ease-in-out infinite'
+             }} />
+      </div>
+    </div>
+  )
 })
 
 export interface WordData {

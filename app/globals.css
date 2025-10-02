@@ -176,3 +176,16 @@
   content-visibility: auto;
   contain-intrinsic-size: 160px; /* reasonable fallback height for rows */
 }
+
+/* Progress bar animation for map loading */
+@keyframes progress-bar {
+  0% { 
+    transform: scaleX(0); 
+  }
+  50% { 
+    transform: scaleX(0.7); 
+  }
+  100% { 
+    transform: scaleX(1); 
+  }
+}

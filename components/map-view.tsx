@@ -201,7 +201,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
               anchor="center"
             >
               <button
-                className="flex items-center justify-center rounded-full bg-[#7F8081] opacity-80 text-black font-semibold hover:bg-[#282828] transition-colors shadow-lg"
+                className="flex items-center justify-center bg-[#E7E7E8] text-foreground font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all border border-border"
                 style={{
                   width: `${size}px`,
                   height: `${size}px`,
@@ -223,7 +223,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
             anchor="center"
           >
             <button
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-[#7F8081] opacity-80 text-black text-xs font-semibold hover:bg-[#282828] transition-colors shadow-md hover:scale-110"
+              className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all duration-200 border border-border hover:scale-110"
               onClick={() => onWordClick(point.word)}
               title={point.word.word}
             ></button>
