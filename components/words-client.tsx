@@ -106,6 +106,10 @@ export function WordsClient({ words }: WordsClientProps) {
     if (viewParam === "map" || viewParam === "list") {
       setViewMode(viewParam);
     }
+    const sortParam = searchParams.get("sort");
+    if (sortParam === "asc" || sortParam === "desc" || sortParam === "random") {
+      setSortMode(sortParam);
+    }
   }, [searchParams]);
 
   // Perform keyword search
@@ -217,6 +221,11 @@ export function WordsClient({ words }: WordsClientProps) {
       );
       setDisplayedWords(sorted);
       setSortMode("asc"); // Immediately set to asc since that's our default
+
+      // Update URL
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("sort", "asc");
+      router.replace(`?${params.toString()}`, { scroll: false });
       return;
     } else if (newSortMode === "asc") {
       const sorted = [...displayedWords].sort((a, b) =>
@@ -248,6 +257,13 @@ export function WordsClient({ words }: WordsClientProps) {
         setIsShuffling(false);
         // sortMode is already set to "random" at the beginning of this function
       }, 1000);
+    }
+
+    // Update URL for non-none sort modes
+    if (newSortMode !== "none") {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("sort", newSortMode);
+      router.replace(`?${params.toString()}`, { scroll: false });
     }
   };
 
