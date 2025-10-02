@@ -98,7 +98,7 @@ export function WordsClient({ words }: WordsClientProps) {
   );
   const [isMounted, setIsMounted] = useState(false);
 
-  // Track mounted state and sync with URL changes
+  // Track mounted state and sync with URL changes on initial mount only
   useEffect(() => {
     setIsMounted(true);
     // Only read URL parameters after component has mounted to avoid hydration issues
@@ -121,7 +121,8 @@ export function WordsClient({ words }: WordsClientProps) {
         return current;
       });
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
