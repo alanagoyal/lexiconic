@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useDeferredValue, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
 import { LexiconicHeader } from "@/components/header"
@@ -51,6 +52,9 @@ interface WordsClientProps {
 }
 
 export function WordsClient({ words }: WordsClientProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
@@ -60,9 +64,22 @@ export function WordsClient({ words }: WordsClientProps) {
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
+
+  // Initialize viewMode from URL, default to "list", with client-only hydration
   const [viewMode, setViewMode] = useState<"list" | "map">("list")
+  const [isClient, setIsClient] = useState(false)
+
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
+
+  // Handle hydration and URL param initialization
+  useEffect(() => {
+    setIsClient(true)
+    const viewParam = searchParams.get("view")
+    if (viewParam === "map" || viewParam === "list") {
+      setViewMode(viewParam)
+    }
+  }, [searchParams])
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -152,7 +169,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
   const handleSortModeChange = (newSortMode: "none" | "asc" | "desc" | "random") => {
     setSortMode(newSortMode)
-    
+
     if (newSortMode === "none") {
       // Reset to ascending sort (default state)
       const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
@@ -167,7 +184,7 @@ export function WordsClient({ words }: WordsClientProps) {
       setDisplayedWords(sorted)
     } else if (newSortMode === "random") {
       if (isShuffling) return
-      
+
       setIsShuffling(true)
       const originalWords = [...displayedWords]
       const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
@@ -188,13 +205,22 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   }
 
+  const handleViewModeChange = (newViewMode: "list" | "map") => {
+    setViewMode(newViewMode)
+
+    // Update URL without navigation or scroll
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("view", newViewMode)
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={handleViewModeChange}
           sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
@@ -214,7 +240,7 @@ export function WordsClient({ words }: WordsClientProps) {
       </div>
 
       {/* Content - either list or map view */}
-      <main>
+      <main className="min-h-[calc(100vh-120px)]">
         {viewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
