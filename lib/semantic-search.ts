@@ -1,7 +1,6 @@
 import type { WordData } from '@/components/words-client'
 
 export interface WordWithEmbedding extends WordData {
-  embedding?: number[]
   searchableText?: string
 }
 
@@ -31,9 +30,9 @@ export function createSearchableText(word: WordData): string {
     word.definition,
     word.language,
     word.category,
-    word.transliteration,
-    word.closest_english_paraphrase,
     word.english_approx,
+    word.literal,
+    word.phonetic,
   ].filter(Boolean)
   
   return parts.join(' ')
