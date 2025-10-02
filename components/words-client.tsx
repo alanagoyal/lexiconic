@@ -3,8 +3,7 @@
 import { useState, useEffect, useDeferredValue, Suspense } from "react"
 import { SearchFilter } from "@/components/search-filter"
 import { WordRow } from "@/components/word-row"
-import { Button } from "@/components/ui/button"
-import { Shuffle, ArrowUpAZ, ArrowDownZA, List, Map as MapIcon } from "lucide-react"
+import { LexiconicHeader } from "@/components/header"
 import {
   searchWordsBySimilarity,
   type WordWithEmbedding
@@ -42,10 +41,14 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words)
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
+    // Sort words alphabetically by default
+    return [...words].sort((a, b) => a.word.localeCompare(b.word))
+  })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
   const [viewMode, setViewMode] = useState<"list" | "map">("list")
+  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
 
   // Perform keyword search
@@ -96,16 +99,22 @@ export function WordsClient({ words }: WordsClientProps) {
   useEffect(() => {
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false)
-      setDisplayedWords(words)
+      // Reset to alphabetically sorted words
+      const sortedWords = [...words].sort((a, b) => a.word.localeCompare(b.word))
+      setDisplayedWords(sortedWords)
+      setSortMode("asc") // Reset to ascending sort when clearing search
       return
     }
 
     setIsSearching(true)
+    setSortMode("asc") // Reset to ascending sort when performing new search
 
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm)
-        setDisplayedWords(results)
+        // Sort search results alphabetically by default
+        const sortedResults = [...results].sort((a, b) => a.word.localeCompare(b.word))
+        setDisplayedWords(sortedResults)
       } finally {
         setIsSearching(false)
       }
@@ -127,109 +136,56 @@ export function WordsClient({ words }: WordsClientProps) {
     setExpandedRowId(expandedRowId === wordId ? null : wordId)
   }
 
-  const handleRandomize = () => {
-    if (isShuffling) return
 
-    setIsShuffling(true)
-    const originalWords = [...displayedWords]
-    const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
+  const handleSortModeChange = (newSortMode: "none" | "asc" | "desc" | "random") => {
+    setSortMode(newSortMode)
+    
+    if (newSortMode === "none") {
+      // Reset to ascending sort (default state)
+      const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
+      setDisplayedWords(sorted)
+      setSortMode("asc") // Immediately set to asc since that's our default
+      return
+    } else if (newSortMode === "asc") {
+      const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
+      setDisplayedWords(sorted)
+    } else if (newSortMode === "desc") {
+      const sorted = [...displayedWords].sort((a, b) => b.word.localeCompare(a.word))
+      setDisplayedWords(sorted)
+    } else if (newSortMode === "random") {
+      if (isShuffling) return
+      
+      setIsShuffling(true)
+      const originalWords = [...displayedWords]
+      const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
 
-    // Shuffle animation: rapidly change order for 1 second
-    const shuffleInterval = setInterval(() => {
-      const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
-      setDisplayedWords(tempShuffled)
-    }, 100) // Shuffle every 100ms for a fast animation
+      // Shuffle animation: rapidly change order for 1 second
+      const shuffleInterval = setInterval(() => {
+        const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
+        setDisplayedWords(tempShuffled)
+      }, 100) // Shuffle every 100ms for a fast animation
 
-    // After 1 second, settle on the final random order
-    setTimeout(() => {
-      clearInterval(shuffleInterval)
-      setDisplayedWords(finalShuffled)
-      setIsShuffling(false)
-    }, 1000)
-  }
-
-  const handleSortAscending = () => {
-    const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
-    setDisplayedWords(sorted)
-  }
-
-  const handleSortDescending = () => {
-    const sorted = [...displayedWords].sort((a, b) => b.word.localeCompare(a.word))
-    setDisplayedWords(sorted)
+      // After 1 second, settle on the final random order and keep random mode active
+      setTimeout(() => {
+        clearInterval(shuffleInterval)
+        setDisplayedWords(finalShuffled)
+        setIsShuffling(false)
+        // sortMode is already set to "random" at the beginning of this function
+      }, 1000)
+    }
   }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
-        <header className="border-b border-border bg-background">
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
-                LEXICONIC
-              </h1>
-              <div className="flex items-center gap-2">
-                {/* Sorting buttons - only show in list view */}
-                {viewMode === "list" && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleRandomize}
-                      title="Randomize order"
-                      aria-label="Randomize order"
-                      disabled={isShuffling}
-                    >
-                      <Shuffle className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleSortAscending}
-                      title="Sort A-Z"
-                      aria-label="Sort A-Z"
-                    >
-                      <ArrowUpAZ className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleSortDescending}
-                      title="Sort Z-A"
-                      aria-label="Sort Z-A"
-                    >
-                      <ArrowDownZA className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-
-                {/* View toggle buttons - always on the right, hidden on mobile */}
-                <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                    title="List view"
-                    aria-label="List view"
-                    className="h-7 w-7"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "map" ? "default" : "ghost"}
-                    size="icon"
-                    onClick={() => setViewMode("map")}
-                    title="Map view"
-                    aria-label="Map view"
-                    className="h-7 w-7"
-                  >
-                    <MapIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <LexiconicHeader
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          sortMode={sortMode}
+          onSortModeChange={handleSortModeChange}
+          isShuffling={isShuffling}
+        />
 
         {/* Search - full width */}
         <div className="border-b border-border bg-background">
