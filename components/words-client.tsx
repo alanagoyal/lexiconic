@@ -1,223 +1,248 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useDeferredValue, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { SearchFilter } from "@/components/search-filter"
-import { WordRow } from "@/components/word-row"
-import { LexiconicHeader } from "@/components/header"
+import { useState, useEffect, useDeferredValue, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SearchFilter } from "@/components/search-filter";
+import { WordRow } from "@/components/word-row";
+import { LexiconicHeader } from "@/components/header";
 import {
   searchWordsBySimilarity,
-  type WordWithEmbedding
-} from "@/lib/semantic-search"
-import dynamic from "next/dynamic"
-import { WordDetailDialog } from "@/components/word-detail-dialog"
+  type WordWithEmbedding,
+} from "@/lib/semantic-search";
+import dynamic from "next/dynamic";
+import { WordDetailDialog } from "@/components/word-detail-dialog";
 
-const MapView = dynamic(() => import("@/components/map-view").then(mod => ({ default: mod.MapView })), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[calc(100vh-120px)] relative bg-muted/20 flex flex-col items-center justify-center">
-      <div className="text-muted-foreground text-sm mb-6 font-playfair uppercase tracking-wider">
-        Loading Map
+const MapView = dynamic(
+  () =>
+    import("@/components/map-view").then((mod) => ({ default: mod.MapView })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[calc(100vh-120px)] relative bg-muted/20 flex flex-col items-center justify-center">
+        <div className="text-muted-foreground text-sm mb-6 font-playfair uppercase tracking-wider">
+          Loading Map
+        </div>
+        <div className="w-64 h-px bg-border relative overflow-hidden">
+          <div
+            className="absolute inset-0 bg-foreground origin-left animate-pulse"
+            style={{
+              animation: "progress-bar 2s ease-in-out infinite",
+            }}
+          />
+        </div>
       </div>
-      <div className="w-64 h-px bg-border relative overflow-hidden">
-        <div className="absolute inset-0 bg-foreground origin-left animate-pulse" 
-             style={{
-               animation: 'progress-bar 2s ease-in-out infinite'
-             }} />
-      </div>
-    </div>
-  )
-})
+    ),
+  }
+);
 
 export interface WordData {
-  word: string
-  native_script: string
-  language: string
-  family: string
-  category: string
-  definition: string
-  literal: string
-  usage_notes: string
-  english_approx: string
-  sources: string
-  pronunciation: string
-  phonetic: string
-  embedding: number[]
-  embeddingHash: string
+  word: string;
+  native_script: string;
+  language: string;
+  family: string;
+  category: string;
+  definition: string;
+  literal: string;
+  usage_notes: string;
+  english_approx: string;
+  sources: string;
+  pronunciation: string;
+  phonetic: string;
+  embedding: number[];
+  embeddingHash: string;
 }
 
-
 interface WordsClientProps {
-  words: WordWithEmbedding[]
+  words: WordWithEmbedding[];
 }
 
 export function WordsClient({ words }: WordsClientProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Initialize viewMode from URL before first render to prevent flash
-  const [viewMode, setViewMode] = useState<"list" | "map">(() => {
-    // This runs only once on mount, on the client
-    if (typeof window === 'undefined') return "list"
-    const params = new URLSearchParams(window.location.search)
-    const viewParam = params.get("view")
-    return viewParam === "map" ? "map" : "list"
-  })
+  // Initialize viewMode to "list" by default to match server rendering
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const deferredSearchTerm = useDeferredValue(searchTerm)
-  const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
-    // Sort words alphabetically by default
-    return [...words].sort((a, b) => a.word.localeCompare(b.word))
-  })
-  const [isSearching, setIsSearching] = useState(false)
-  const [isShuffling, setIsShuffling] = useState(false)
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
-  const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
-  const [isMounted, setIsMounted] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(
+    () => {
+      // Sort words alphabetically by default
+      return [...words].sort((a, b) => a.word.localeCompare(b.word));
+    }
+  );
+  const [isSearching, setIsSearching] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">(
+    "asc"
+  );
+  const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(
+    null
+  );
+  const [isMounted, setIsMounted] = useState(false);
 
   // Track mounted state and sync with URL changes
   useEffect(() => {
-    setIsMounted(true)
-    const viewParam = searchParams.get("view")
+    setIsMounted(true);
+    // Only read URL parameters after component has mounted to avoid hydration issues
+    const viewParam = searchParams.get("view");
     if (viewParam === "map" || viewParam === "list") {
-      setViewMode(viewParam)
+      setViewMode(viewParam);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
-    const searchLower = query.toLowerCase()
-    return words.filter((word) => 
-      word.word.toLowerCase().includes(searchLower) ||
-      word.native_script.toLowerCase().includes(searchLower) ||
-      word.definition.toLowerCase().includes(searchLower) ||
-      word.language.toLowerCase().includes(searchLower) ||
-      word.phonetic.toLowerCase().includes(searchLower) ||
-      (word.english_approx && word.english_approx.toLowerCase().includes(searchLower)) ||
-      (word.literal && word.literal.toLowerCase().includes(searchLower))
-    )
-  }
+    const searchLower = query.toLowerCase();
+    return words.filter(
+      (word) =>
+        word.word.toLowerCase().includes(searchLower) ||
+        word.native_script.toLowerCase().includes(searchLower) ||
+        word.definition.toLowerCase().includes(searchLower) ||
+        word.language.toLowerCase().includes(searchLower) ||
+        word.phonetic.toLowerCase().includes(searchLower) ||
+        (word.english_approx &&
+          word.english_approx.toLowerCase().includes(searchLower)) ||
+        (word.literal && word.literal.toLowerCase().includes(searchLower))
+    );
+  };
 
   // Perform semantic search
-  const performSemanticSearch = async (query: string): Promise<WordWithEmbedding[]> => {
+  const performSemanticSearch = async (
+    query: string
+  ): Promise<WordWithEmbedding[]> => {
     try {
-      const response = await fetch('/lexiconic/api/search-embedding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/lexiconic/api/search-embedding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
-      })
+      });
 
-      if (!response.ok) throw new Error('Search API failed')
+      if (!response.ok) throw new Error("Search API failed");
 
-      const { embedding } = await response.json()
-      const semanticResults = searchWordsBySimilarity(words, embedding, 0.25, 30)
-      const keywordResults = performKeywordSearch(query)
+      const { embedding } = await response.json();
+      const semanticResults = searchWordsBySimilarity(
+        words,
+        embedding,
+        0.25,
+        30
+      );
+      const keywordResults = performKeywordSearch(query);
 
       // Combine results (semantic first, then keyword)
-      const combined = [...semanticResults]
-      keywordResults.forEach(kwResult => {
-        if (!combined.some(semResult => semResult.word === kwResult.word)) {
-          combined.push(kwResult)
+      const combined = [...semanticResults];
+      keywordResults.forEach((kwResult) => {
+        if (!combined.some((semResult) => semResult.word === kwResult.word)) {
+          combined.push(kwResult);
         }
-      })
+      });
 
-      return combined
+      return combined;
     } catch (error) {
-      console.error('Semantic search failed, using keyword only:', error)
-      return performKeywordSearch(query)
+      console.error("Semantic search failed, using keyword only:", error);
+      return performKeywordSearch(query);
     }
-  }
+  };
 
   // Simple search effect with debouncing
   useEffect(() => {
     if (!deferredSearchTerm.trim()) {
-      setIsSearching(false)
+      setIsSearching(false);
       // Reset to alphabetically sorted words
-      const sortedWords = [...words].sort((a, b) => a.word.localeCompare(b.word))
-      setDisplayedWords(sortedWords)
-      setSortMode("asc") // Reset to ascending sort when clearing search
-      return
+      const sortedWords = [...words].sort((a, b) =>
+        a.word.localeCompare(b.word)
+      );
+      setDisplayedWords(sortedWords);
+      setSortMode("asc"); // Reset to ascending sort when clearing search
+      return;
     }
 
-    setIsSearching(true)
-    setSortMode("asc") // Reset to ascending sort when performing new search
+    setIsSearching(true);
+    setSortMode("asc"); // Reset to ascending sort when performing new search
 
     const timeoutId = setTimeout(async () => {
       try {
-        const results = await performSemanticSearch(deferredSearchTerm)
+        const results = await performSemanticSearch(deferredSearchTerm);
         // Sort search results alphabetically by default
-        const sortedResults = [...results].sort((a, b) => a.word.localeCompare(b.word))
-        setDisplayedWords(sortedResults)
+        const sortedResults = [...results].sort((a, b) =>
+          a.word.localeCompare(b.word)
+        );
+        setDisplayedWords(sortedResults);
       } finally {
-        setIsSearching(false)
+        setIsSearching(false);
       }
-    }, 300)
+    }, 300);
 
-    return () => clearTimeout(timeoutId)
-  }, [deferredSearchTerm, words])
+    return () => clearTimeout(timeoutId);
+  }, [deferredSearchTerm, words]);
 
   const handleSearchChange = (term: string) => {
-    setSearchTerm(term)
-  }
+    setSearchTerm(term);
+  };
 
   const handleClear = () => {
-    setSearchTerm("")
-  }
-
+    setSearchTerm("");
+  };
 
   const handleRowExpand = (wordId: string) => {
-    setExpandedRowId(expandedRowId === wordId ? null : wordId)
-  }
+    setExpandedRowId(expandedRowId === wordId ? null : wordId);
+  };
 
-
-  const handleSortModeChange = (newSortMode: "none" | "asc" | "desc" | "random") => {
-    setSortMode(newSortMode)
+  const handleSortModeChange = (
+    newSortMode: "none" | "asc" | "desc" | "random"
+  ) => {
+    setSortMode(newSortMode);
 
     if (newSortMode === "none") {
       // Reset to ascending sort (default state)
-      const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
-      setDisplayedWords(sorted)
-      setSortMode("asc") // Immediately set to asc since that's our default
-      return
+      const sorted = [...displayedWords].sort((a, b) =>
+        a.word.localeCompare(b.word)
+      );
+      setDisplayedWords(sorted);
+      setSortMode("asc"); // Immediately set to asc since that's our default
+      return;
     } else if (newSortMode === "asc") {
-      const sorted = [...displayedWords].sort((a, b) => a.word.localeCompare(b.word))
-      setDisplayedWords(sorted)
+      const sorted = [...displayedWords].sort((a, b) =>
+        a.word.localeCompare(b.word)
+      );
+      setDisplayedWords(sorted);
     } else if (newSortMode === "desc") {
-      const sorted = [...displayedWords].sort((a, b) => b.word.localeCompare(a.word))
-      setDisplayedWords(sorted)
+      const sorted = [...displayedWords].sort((a, b) =>
+        b.word.localeCompare(a.word)
+      );
+      setDisplayedWords(sorted);
     } else if (newSortMode === "random") {
-      if (isShuffling) return
+      if (isShuffling) return;
 
-      setIsShuffling(true)
-      const originalWords = [...displayedWords]
-      const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5)
+      setIsShuffling(true);
+      const originalWords = [...displayedWords];
+      const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5);
 
       // Shuffle animation: rapidly change order for 1 second
       const shuffleInterval = setInterval(() => {
-        const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5)
-        setDisplayedWords(tempShuffled)
-      }, 100) // Shuffle every 100ms for a fast animation
+        const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5);
+        setDisplayedWords(tempShuffled);
+      }, 100); // Shuffle every 100ms for a fast animation
 
       // After 1 second, settle on the final random order and keep random mode active
       setTimeout(() => {
-        clearInterval(shuffleInterval)
-        setDisplayedWords(finalShuffled)
-        setIsShuffling(false)
+        clearInterval(shuffleInterval);
+        setDisplayedWords(finalShuffled);
+        setIsShuffling(false);
         // sortMode is already set to "random" at the beginning of this function
-      }, 1000)
+      }, 1000);
     }
-  }
+  };
 
   const handleViewModeChange = (newViewMode: "list" | "map") => {
-    setViewMode(newViewMode)
+    setViewMode(newViewMode);
 
     // Update URL without navigation or scroll
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("view", newViewMode)
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", newViewMode);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -248,15 +273,13 @@ export function WordsClient({ words }: WordsClientProps) {
       <main className="min-h-[calc(100vh-120px)]">
         {!isMounted ? (
           <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center">
-            <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider">
-              Loading...
-            </div>
+            <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider"></div>
           </div>
         ) : viewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
               {displayedWords.map((word, index) => {
-                const wordId = `${word.word}-${index}`
+                const wordId = `${word.word}-${index}`;
                 return (
                   <div
                     key={wordId}
@@ -269,12 +292,14 @@ export function WordsClient({ words }: WordsClientProps) {
                       onToggleExpand={() => handleRowExpand(wordId)}
                     />
                   </div>
-                )
+                );
               })}
             </div>
           ) : (
             <div className="p-16 text-center">
-              <div className="text-muted-foreground text-sm">No words found</div>
+              <div className="text-muted-foreground text-sm">
+                No words found
+              </div>
               <div className="text-muted-foreground text-xs mt-2">
                 Try adjusting your search terms or filters
               </div>
@@ -304,5 +329,5 @@ export function WordsClient({ words }: WordsClientProps) {
         </div>
       </footer>
     </div>
-  )
+  );
 }
