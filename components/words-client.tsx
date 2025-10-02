@@ -109,6 +109,17 @@ export function WordsClient({ words }: WordsClientProps) {
     const sortParam = searchParams.get("sort");
     if (sortParam === "asc" || sortParam === "desc" || sortParam === "random") {
       setSortMode(sortParam);
+      // Apply the sort from URL without scrolling
+      setDisplayedWords((current) => {
+        if (sortParam === "asc") {
+          return [...current].sort((a, b) => a.word.localeCompare(b.word));
+        } else if (sortParam === "desc") {
+          return [...current].sort((a, b) => b.word.localeCompare(a.word));
+        } else if (sortParam === "random") {
+          return [...current].sort(() => Math.random() - 0.5);
+        }
+        return current;
+      });
     }
   }, [searchParams]);
 
