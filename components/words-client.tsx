@@ -13,8 +13,7 @@ import dynamic from "next/dynamic"
 import { WordDetailDialog } from "@/components/word-detail-dialog"
 
 const MapView = dynamic(() => import("@/components/map-view").then(mod => ({ default: mod.MapView })), {
-  ssr: false,
-  loading: () => <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center">Loading map...</div>
+  ssr: false
 })
 
 export interface WordData {
