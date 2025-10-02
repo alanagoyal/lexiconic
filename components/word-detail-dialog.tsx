@@ -25,7 +25,10 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent 
+        className="max-w-2xl max-h-[85vh] overflow-y-auto"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className="native-script text-3xl md:text-4xl font-medium text-foreground mb-2">
             {word.native_script}

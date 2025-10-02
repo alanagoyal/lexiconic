@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import Map, { Marker, type MapRef } from "react-map-gl";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
 import { LANGUAGE_COORDINATES } from "@/lib/language-coordinates";
@@ -104,6 +104,41 @@ export function MapView({ words, onWordClick }: MapViewProps) {
 
     return { clusters: clustered, points: unclustered };
   }, [wordPoints, viewport.zoom]);
+
+  // Auto-fit map bounds when words change
+  useEffect(() => {
+    if (!mapRef.current || wordPoints.length === 0) return;
+
+    // Calculate bounds from all word points
+    const lats = wordPoints.map(p => p.lat);
+    const lngs = wordPoints.map(p => p.lng);
+    
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+
+    // Handle single point case - add some padding
+    if (wordPoints.length === 1) {
+      const padding = 5; // degrees
+      mapRef.current.fitBounds([
+        [minLng - padding, minLat - padding],
+        [maxLng + padding, maxLat + padding]
+      ], {
+        padding: 50,
+        duration: 1000
+      });
+    } else {
+      // Multiple points - fit to bounds with padding
+      mapRef.current.fitBounds([
+        [minLng, minLat],
+        [maxLng, maxLat]
+      ], {
+        padding: 100,
+        duration: 1000
+      });
+    }
+  }, [wordPoints]);
 
   const handleClusterClick = (cluster: Cluster) => {
     // Zoom in on the cluster
