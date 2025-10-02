@@ -55,6 +55,15 @@ export function WordsClient({ words }: WordsClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // Initialize viewMode from URL before first render to prevent flash
+  const [viewMode, setViewMode] = useState<"list" | "map">(() => {
+    // This runs only once on mount, on the client
+    if (typeof window === 'undefined') return "list"
+    const params = new URLSearchParams(window.location.search)
+    const viewParam = params.get("view")
+    return viewParam === "map" ? "map" : "list"
+  })
+
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null)
@@ -64,17 +73,13 @@ export function WordsClient({ words }: WordsClientProps) {
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isShuffling, setIsShuffling] = useState(false)
-
-  // Initialize viewMode from URL, default to "list", with client-only hydration
-  const [viewMode, setViewMode] = useState<"list" | "map">("list")
-  const [isClient, setIsClient] = useState(false)
-
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc")
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Handle hydration and URL param initialization
+  // Track mounted state and sync with URL changes
   useEffect(() => {
-    setIsClient(true)
+    setIsMounted(true)
     const viewParam = searchParams.get("view")
     if (viewParam === "map" || viewParam === "list") {
       setViewMode(viewParam)
@@ -212,6 +217,26 @@ export function WordsClient({ words }: WordsClientProps) {
     const params = new URLSearchParams(searchParams.toString())
     params.set("view", newViewMode)
     router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
+  // Show loading state until mounted to prevent flash
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-10 bg-background">
+          <div className="border-b border-border bg-background p-4">
+            <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
+              LEXICONIC
+            </h1>
+          </div>
+        </div>
+        <main className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+          <div className="text-muted-foreground text-sm font-playfair uppercase tracking-wider">
+            Loading...
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
