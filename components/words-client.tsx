@@ -11,6 +11,7 @@ import {
 } from "@/lib/semantic-search";
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
+import { useWords } from "@/hooks/use-words";
 
 const MapView = dynamic(
   () =>
@@ -53,12 +54,15 @@ export interface WordData {
 }
 
 interface WordsClientProps {
-  words: WordWithEmbedding[];
+  initialWords: WordWithEmbedding[];
 }
 
-export function WordsClient({ words }: WordsClientProps) {
+export function WordsClient({ initialWords }: WordsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Load words progressively: fast initial load, then embeddings
+  const { words, isLoadingEmbeddings } = useWords(initialWords);
 
   // Initialize viewMode to "list" by default to match server rendering
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
