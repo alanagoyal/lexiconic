@@ -220,14 +220,32 @@ export function WordsClient({ words }: WordsClientProps) {
   }
 
   // Show loading state until mounted to prevent flash
+  // Match the exact layout of the actual content to prevent layout shift
   if (!isMounted) {
     return (
       <div className="min-h-screen bg-background">
         <div className="sticky top-0 z-10 bg-background">
-          <div className="border-b border-border bg-background p-4">
-            <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
-              LEXICONIC
-            </h1>
+          <header className="border-b border-border bg-background">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
+                  LEXICONIC
+                </h1>
+                <div className="flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
+                    <div className="h-7 w-7" />
+                    <div className="h-7 w-7" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+          <div className="border-b border-border bg-background">
+            <div className="w-full relative">
+              <div className="w-full border-none bg-background px-4 py-2">
+                <div className="h-9" />
+              </div>
+            </div>
           </div>
         </div>
         <main className="min-h-[calc(100vh-120px)] flex items-center justify-center">
