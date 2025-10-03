@@ -114,6 +114,9 @@ export function WordsClient({ words }: WordsClientProps) {
       
       // Apply the sort immediately if we have words
       if (activeWords.length > 0) {
+        // Store current scroll position before applying sort
+        const currentScrollY = window.scrollY;
+        
         let sortedWords = [...activeWords];
         if (sortParam === "asc") {
           sortedWords.sort((a, b) => a.word.localeCompare(b.word));
@@ -124,6 +127,11 @@ export function WordsClient({ words }: WordsClientProps) {
         }
         // For "none", keep the original order (which is already alphabetical)
         setDisplayedWords(sortedWords);
+        
+        // Restore scroll position after a brief delay to allow DOM to update
+        setTimeout(() => {
+          window.scrollTo(0, currentScrollY);
+        }, 0);
       }
     }
   }, [searchParams, activeWords]);
@@ -187,6 +195,7 @@ export function WordsClient({ words }: WordsClientProps) {
       setIsSearching(false);
       // Reset to words with current sort mode from URL
       const currentSortMode = searchParams.get("sort") || "asc";
+      const currentScrollY = window.scrollY;
       let sortedWords = [...activeWords];
       
       if (currentSortMode === "asc") {
@@ -199,6 +208,13 @@ export function WordsClient({ words }: WordsClientProps) {
       
       setDisplayedWords(sortedWords);
       setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
+      
+      // Restore scroll position after clearing search
+      if (currentSortMode === "random") {
+        setTimeout(() => {
+          window.scrollTo(0, currentScrollY);
+        }, 0);
+      }
       return;
     }
 
@@ -210,6 +226,7 @@ export function WordsClient({ words }: WordsClientProps) {
         const results = await performSemanticSearch(deferredSearchTerm);
         // Apply current sort mode to search results
         const currentSortMode = searchParams.get("sort") || "asc";
+        const currentScrollY = window.scrollY;
         let sortedResults = [...results];
         
         if (currentSortMode === "asc") {
@@ -221,6 +238,13 @@ export function WordsClient({ words }: WordsClientProps) {
         }
         
         setDisplayedWords(sortedResults);
+        
+        // Restore scroll position after search with random sort
+        if (currentSortMode === "random") {
+          setTimeout(() => {
+            window.scrollTo(0, currentScrollY);
+          }, 0);
+        }
       } finally {
         setIsSearching(false);
       }
@@ -277,6 +301,9 @@ export function WordsClient({ words }: WordsClientProps) {
     } else if (newSortMode === "random") {
       if (isShuffling) return;
 
+      // Store current scroll position before starting shuffle animation
+      const currentScrollY = window.scrollY;
+      
       setIsShuffling(true);
       const originalWords = [...displayedWords];
       const finalShuffled = [...displayedWords].sort(() => Math.random() - 0.5);
@@ -285,6 +312,8 @@ export function WordsClient({ words }: WordsClientProps) {
       const shuffleInterval = setInterval(() => {
         const tempShuffled = [...originalWords].sort(() => Math.random() - 0.5);
         setDisplayedWords(tempShuffled);
+        // Maintain scroll position during animation
+        window.scrollTo(0, currentScrollY);
       }, 100); // Shuffle every 100ms for a fast animation
 
       // After 1 second, settle on the final random order and keep random mode active
@@ -292,6 +321,8 @@ export function WordsClient({ words }: WordsClientProps) {
         clearInterval(shuffleInterval);
         setDisplayedWords(finalShuffled);
         setIsShuffling(false);
+        // Restore scroll position after final shuffle
+        window.scrollTo(0, currentScrollY);
         // sortMode is already set to "random" at the beginning of this function
       }, 1000);
     }
