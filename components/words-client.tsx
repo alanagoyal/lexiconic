@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SearchFilter } from "@/components/search-filter";
 import { WordRow } from "@/components/word-row";
 import { LexiconicHeader } from "@/components/header";
+import { Footer } from "@/components/footer";
 import {
   searchWordsBySimilarity,
   type WordWithEmbedding,
@@ -381,13 +382,7 @@ export function WordsClient({ words }: WordsClientProps) {
       />
 
       {/* Footer */}
-      <footer className="sticky bottom-0 bg-background border-t border-border z-10">
-        <div className="px-6 py-8 text-center">
-          <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
-            A digital exploration of linguistic untranslatability
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
