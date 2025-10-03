@@ -8,6 +8,7 @@ import {
   List,
   Map as MapIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 interface LexiconicHeaderProps {
   viewMode: "list" | "map";
@@ -28,9 +29,9 @@ export function LexiconicHeader({
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
+          <Link href="/" className="native-script text-3xl font-bold text-foreground font-playfair">
             LEXICONIC
-          </h1>
+          </Link>
           <div className="flex items-center gap-2">
             {viewMode === "list" && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
