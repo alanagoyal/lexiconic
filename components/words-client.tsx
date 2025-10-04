@@ -305,7 +305,6 @@ export function WordsClient({ words }: WordsClientProps) {
                 return (
                   <div
                     key={wordId}
-                    className="virtualized-item"
                   >
                     <WordRow
                       word={word}
