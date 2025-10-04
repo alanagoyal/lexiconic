@@ -94,6 +94,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">(
     "asc"
   );
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(
     null
   );
@@ -104,7 +105,7 @@ export function WordsClient({ words }: WordsClientProps) {
     setIsMounted(true);
     // Only read URL parameters after component has mounted to avoid hydration issues
     const viewParam = searchParams.get("view");
-    if (viewParam === "map" || viewParam === "list") {
+    if (viewParam === "map" || viewParam === "list" || viewParam === "grid") {
       setViewMode(viewParam);
     }
     
@@ -197,24 +198,41 @@ export function WordsClient({ words }: WordsClientProps) {
       // Reset to words with current sort mode from URL
       const currentSortMode = searchParams.get("sort") || "asc";
       const currentScrollY = window.scrollY;
-      let sortedWords = [...activeWords];
       
-      if (currentSortMode === "asc") {
-        sortedWords.sort((a, b) => a.word.localeCompare(b.word));
-      } else if (currentSortMode === "desc") {
-        sortedWords.sort((a, b) => b.word.localeCompare(a.word));
-      } else if (currentSortMode === "random") {
-        sortedWords.sort(() => Math.random() - 0.5);
-      }
-      
-      setDisplayedWords(sortedWords);
-      setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
-      
-      // Restore scroll position after clearing search
-      if (currentSortMode === "random") {
-        setTimeout(() => {
-          window.scrollTo(0, currentScrollY);
-        }, 0);
+      // Only re-sort if the sort mode has actually changed, or if we don't have displayed words yet
+      if (sortMode !== currentSortMode || displayedWords.length === 0) {
+        let sortedWords = [...activeWords];
+        
+        if (currentSortMode === "asc") {
+          sortedWords.sort((a, b) => a.word.localeCompare(b.word));
+        } else if (currentSortMode === "desc") {
+          sortedWords.sort((a, b) => b.word.localeCompare(a.word));
+        } else if (currentSortMode === "random") {
+          // Use stored random order if available, otherwise create new one
+          if (randomOrder.length > 0 && randomOrder.length === activeWords.length) {
+            sortedWords = [...randomOrder];
+          } else {
+            sortedWords.sort(() => Math.random() - 0.5);
+            setRandomOrder([...sortedWords]);
+          }
+        }
+        
+        setDisplayedWords(sortedWords);
+        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
+        
+        // Restore scroll position after clearing search
+        if (currentSortMode === "random") {
+          setTimeout(() => {
+            window.scrollTo(0, currentScrollY);
+          }, 0);
+        }
+      } else if (currentSortMode === "random" && randomOrder.length > 0) {
+        // If we're already in random mode and have a stored order, use it
+        setDisplayedWords([...randomOrder]);
+        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
+      } else {
+        // Just update the sort mode state without re-sorting
+        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
       }
       return;
     }
@@ -294,11 +312,13 @@ export function WordsClient({ words }: WordsClientProps) {
         a.word.localeCompare(b.word)
       );
       setDisplayedWords(sorted);
+      setRandomOrder([]); // Clear stored random order
     } else if (newSortMode === "desc") {
       const sorted = [...displayedWords].sort((a, b) =>
         b.word.localeCompare(a.word)
       );
       setDisplayedWords(sorted);
+      setRandomOrder([]); // Clear stored random order
     } else if (newSortMode === "random") {
       if (isShuffling) return;
 
@@ -321,6 +341,7 @@ export function WordsClient({ words }: WordsClientProps) {
       setTimeout(() => {
         clearInterval(shuffleInterval);
         setDisplayedWords(finalShuffled);
+        setRandomOrder([...finalShuffled]); // Store the random order
         setIsShuffling(false);
         // Restore scroll position after final shuffle
         window.scrollTo(0, currentScrollY);
