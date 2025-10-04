@@ -305,7 +305,6 @@ export function WordsClient({ words }: WordsClientProps) {
                 return (
                   <div
                     key={wordId}
-                    id={`word-${word.word}`}
                     className="virtualized-item"
                   >
                     <WordRow
@@ -337,7 +336,6 @@ export function WordsClient({ words }: WordsClientProps) {
                   return (
                     <div
                       key={wordId}
-                      id={`word-${word.word}`}
                       className="word-grid-item"
                     >
                       <WordRow
