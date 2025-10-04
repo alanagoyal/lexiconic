@@ -7,12 +7,13 @@ import {
   ArrowDownZA,
   List,
   Map as MapIcon,
+  Grid3X3,
 } from "lucide-react";
 import Link from "next/link";
 
 interface LexiconicHeaderProps {
-  viewMode: "list" | "map";
-  onViewModeChange: (mode: "list" | "map") => void;
+  viewMode: "list" | "map" | "grid";
+  onViewModeChange: (mode: "list" | "map" | "grid") => void;
   sortMode: "none" | "asc" | "desc" | "random";
   onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void;
   isShuffling: boolean;
@@ -33,7 +34,7 @@ export function LexiconicHeader({
             LEXICONIC
           </Link>
           <div className="flex items-center gap-2">
-            {viewMode === "list" && (
+            {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
                 <Button
                   variant={sortMode === "random" ? "default" : "ghost"}
@@ -87,6 +88,16 @@ export function LexiconicHeader({
                 className="h-7 w-7"
               >
                 <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="icon"
+                onClick={() => onViewModeChange("grid")}
+                title="Grid view"
+                aria-label="Grid view"
+                className="h-7 w-7"
+              >
+                <Grid3X3 className="h-4 w-4" />
               </Button>
               <Button
                 variant={viewMode === "map" ? "default" : "ghost"}

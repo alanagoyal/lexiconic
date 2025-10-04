@@ -78,7 +78,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const activeWords = wordsWithEmbeddings || words;
 
   // Initialize viewMode to "list" by default to match server rendering
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">("list");
 
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
@@ -329,7 +329,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  const handleViewModeChange = (newViewMode: "list" | "map") => {
+  const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
     setViewMode(newViewMode);
 
     // Update URL without navigation or scroll
@@ -362,8 +362,7 @@ export function WordsClient({ words }: WordsClientProps) {
           />
         </div>
       </div>
-
-      {/* Content - either list or map view */}
+      {/* Content - list, grid, or map view */}
       <main className="min-h-[calc(100vh-120px)]">
         {!isMounted ? (
           <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center"></div>
@@ -382,6 +381,7 @@ export function WordsClient({ words }: WordsClientProps) {
                       word={word}
                       isExpanded={expandedRowId === wordId}
                       onToggleExpand={() => handleRowExpand(wordId)}
+                      viewMode="list"
                     />
                   </div>
                 );
@@ -397,12 +397,45 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             </div>
           )
-        ) : (
+        ) : viewMode === "grid" ? (
+          displayedWords.length > 0 ? (
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
+                {displayedWords.map((word, index) => {
+                  const wordId = `${word.word}-${index}`;
+                  return (
+                    <div
+                      key={wordId}
+                      id={`word-${word.word}`}
+                      className="word-grid-item"
+                    >
+                      <WordRow
+                        word={word}
+                        isExpanded={expandedRowId === wordId}
+                        onToggleExpand={() => handleRowExpand(wordId)}
+                        viewMode="grid"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="p-16 text-center">
+              <div className="text-muted-foreground text-sm">
+                No words found
+              </div>
+              <div className="text-muted-foreground text-xs mt-2">
+                Try adjusting your search terms or filters
+              </div>
+            </div>
+          )
+        ) : viewMode === "map" ? (
           <MapView
             words={displayedWords}
             onWordClick={(word) => setSelectedWord(word)}
           />
-        )}
+        ) : null}
       </main>
 
       {/* Word detail dialog for map view */}
