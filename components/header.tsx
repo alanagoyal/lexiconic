@@ -47,32 +47,24 @@ export function LexiconicHeader({
                   <Shuffle className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={
-                    sortMode === "asc" || sortMode === "desc"
-                      ? "default"
-                      : "ghost"
-                  }
+                  variant={sortMode === "asc" ? "default" : "ghost"}
                   size="icon"
-                  onClick={() => {
-                    if (sortMode === "none") {
-                      onSortModeChange("asc");
-                    } else if (sortMode === "asc") {
-                      onSortModeChange("desc");
-                    } else if (sortMode === "desc") {
-                      onSortModeChange("none");
-                    } else {
-                      onSortModeChange("asc");
-                    }
-                  }}
-                  title={sortMode === "desc" ? "Sort A-Z" : "Sort Z-A"}
-                  aria-label={sortMode === "desc" ? "Sort A-Z" : "Sort Z-A"}
+                  onClick={() => onSortModeChange("asc")}
+                  title="Sort A-Z"
+                  aria-label="Sort A-Z"
                   className="h-7 w-7"
                 >
-                  {sortMode === "desc" ? (
-                    <ArrowDownZA className="h-4 w-4" />
-                  ) : (
-                    <ArrowUpAZ className="h-4 w-4" />
-                  )}
+                  <ArrowUpAZ className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={sortMode === "desc" ? "default" : "ghost"}
+                  size="icon"
+                  onClick={() => onSortModeChange("desc")}
+                  title="Sort Z-A"
+                  aria-label="Sort Z-A"
+                  className="h-7 w-7"
+                >
+                  <ArrowDownZA className="h-4 w-4" />
                 </Button>
               </div>
             )}
