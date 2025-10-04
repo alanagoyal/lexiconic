@@ -77,65 +77,57 @@ export function WordsClient({ words }: WordsClientProps) {
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  // Initialize viewMode to "list" by default to match server rendering
-  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">("list");
+  // Initialize viewMode from URL params to avoid flash
+  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">(() => {
+    const viewParam = searchParams.get("view");
+    if (viewParam === "map" || viewParam === "list" || viewParam === "grid") {
+      return viewParam;
+    }
+    return "list";
+  });
 
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(
-    () => {
-      // Sort words alphabetically by default
-      return [...words].sort((a, b) => a.word.localeCompare(b.word));
+  // Initialize displayedWords and randomOrder together to ensure consistency
+  const initializeWordsAndRandomOrder = () => {
+    const sortParam = searchParams.get("sort") || "asc";
+    let sortedWords = [...words];
+    let randomOrderValue: WordWithEmbedding[] = [];
+    
+    if (sortParam === "asc") {
+      sortedWords.sort((a, b) => a.word.localeCompare(b.word));
+    } else if (sortParam === "desc") {
+      sortedWords.sort((a, b) => b.word.localeCompare(a.word));
+    } else if (sortParam === "random") {
+      sortedWords.sort(() => Math.random() - 0.5);
+      randomOrderValue = [...sortedWords]; // Store the same random order
     }
-  );
+    
+    return { displayedWords: sortedWords, randomOrder: randomOrderValue };
+  };
+
+  const initialState = initializeWordsAndRandomOrder();
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(initialState.displayedWords);
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(initialState.randomOrder);
+  
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">(
-    "asc"
-  );
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
+  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">(() => {
+    const sortParam = searchParams.get("sort");
+    if (sortParam === "asc" || sortParam === "desc" || sortParam === "random" || sortParam === "none") {
+      return sortParam;
+    }
+    return "asc";
+  });
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(
     null
   );
   const [isMounted, setIsMounted] = useState(false);
 
-  // Track mounted state and sync with URL changes
+  // Track mounted state
   useEffect(() => {
     setIsMounted(true);
-    // Only read URL parameters after component has mounted to avoid hydration issues
-    const viewParam = searchParams.get("view");
-    if (viewParam === "map" || viewParam === "list" || viewParam === "grid") {
-      setViewMode(viewParam);
-    }
-    
-    // Read sort parameter from URL
-    const sortParam = searchParams.get("sort");
-    if (sortParam === "asc" || sortParam === "desc" || sortParam === "random" || sortParam === "none") {
-      setSortMode(sortParam);
-      
-      // Apply the sort immediately if we have words
-      if (activeWords.length > 0) {
-        // Store current scroll position before applying sort
-        const currentScrollY = window.scrollY;
-        
-        let sortedWords = [...activeWords];
-        if (sortParam === "asc") {
-          sortedWords.sort((a, b) => a.word.localeCompare(b.word));
-        } else if (sortParam === "desc") {
-          sortedWords.sort((a, b) => b.word.localeCompare(a.word));
-        } else if (sortParam === "random") {
-          sortedWords.sort(() => Math.random() - 0.5);
-        }
-        // For "none", keep the original order (which is already alphabetical)
-        setDisplayedWords(sortedWords);
-        
-        // Restore scroll position after a brief delay to allow DOM to update
-        setTimeout(() => {
-          window.scrollTo(0, currentScrollY);
-        }, 0);
-      }
-    }
   }, [searchParams, activeWords]);
 
   // Perform keyword search
