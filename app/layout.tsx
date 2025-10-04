@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   title: "Lexiconic",
   description: "A digital exploration of linguistic untranslatability",
   openGraph: {
-    images: ['/og-image.png'],
+    images: ['/lexiconic/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/og-image.png'],
+    images: ['/lexiconic/og-image.png'],
   },
 }
 
