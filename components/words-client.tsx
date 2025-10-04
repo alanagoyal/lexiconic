@@ -77,7 +77,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"list" | "map" | "grid">("list");
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("asc");
+  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("random");
 
   // Helper function to sort words based on mode
   const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
@@ -96,7 +96,7 @@ export function WordsClient({ words }: WordsClientProps) {
   };
 
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
-    return sortWords(words, "asc");
+    return sortWords(words, "random");
   });
 
   const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
