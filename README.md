@@ -5,6 +5,12 @@
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/alanagoyals-projects/v0-untranslatable-words-website)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/F6Bxwfap95r)
 
+## Important Configuration Notes
+
+**Base Path:** This app uses `basePath: '/lexiconic'` in `next.config.mjs`. All public assets and routes must include this prefix:
+- ✅ Correct: `/lexiconic/og-image.png`
+- ❌ Wrong: `/og-image.png`
+
 ## Overview
 
 This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
