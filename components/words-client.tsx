@@ -136,7 +136,21 @@ export function WordsClient({ words }: WordsClientProps) {
   // Track mounted state
   useEffect(() => {
     setIsMounted(true);
-  }, [searchParams, activeWords]);
+  }, []);
+
+  // Sync state with URL parameters whenever URL changes
+  useEffect(() => {
+    const urlViewMode = getViewModeFromUrl();
+    const urlSortMode = getSortModeFromUrl();
+    
+    if (viewMode !== urlViewMode) {
+      setViewMode(urlViewMode);
+    }
+    
+    if (sortMode !== urlSortMode) {
+      setSortMode(urlSortMode);
+    }
+  }, [searchParams]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -346,9 +360,9 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
-          viewMode={getViewModeFromUrl()}
+          viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
-          sortMode={getSortModeFromUrl()}
+          sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
         />
