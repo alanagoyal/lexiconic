@@ -346,9 +346,9 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
-          viewMode={viewMode}
+          viewMode={getViewModeFromUrl()}
           onViewModeChange={handleViewModeChange}
-          sortMode={sortMode}
+          sortMode={getSortModeFromUrl()}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
         />
