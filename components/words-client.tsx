@@ -80,23 +80,16 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  // Helper function to get valid sort mode from URL
-  const getSortModeFromUrl = (): "none" | "asc" | "desc" | "random" => {
-    const sortParam = searchParams.get("sort");
-    if (sortParam === "asc" || sortParam === "desc" || sortParam === "random" || sortParam === "none") {
-      return sortParam;
-    }
-    return "asc";
-  };
-
-  // Helper function to get valid view mode from URL
-  const getViewModeFromUrl = (): "list" | "map" | "grid" => {
+  // Single source of truth: URL parameters
+  const currentViewMode = (() => {
     const viewParam = searchParams.get("view");
-    if (viewParam === "map" || viewParam === "list" || viewParam === "grid") {
-      return viewParam;
-    }
-    return "list";
-  };
+    return (viewParam === "map" || viewParam === "list" || viewParam === "grid") ? viewParam : "list";
+  })();
+
+  const currentSortMode = (() => {
+    const sortParam = searchParams.get("sort");
+    return (sortParam === "asc" || sortParam === "desc" || sortParam === "random" || sortParam === "none") ? sortParam : "asc";
+  })();
 
   // Helper function to sort words based on mode
   const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
@@ -114,17 +107,14 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  // Initialize state from URL parameters
-  const initialSortMode = getSortModeFromUrl();
-  const initialViewMode = getViewModeFromUrl();
-  const initialSortedWords = sortWords(words, initialSortMode);
-
-  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">(initialViewMode);
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">(initialSortMode);
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(initialSortedWords);
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(
-    initialSortMode === "random" ? [...initialSortedWords] : []
-  );
+  // Initialize displayed words based on current URL sort mode
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
+    return sortWords(words, currentSortMode);
+  });
+  
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(() => {
+    return currentSortMode === "random" ? sortWords(words, "random") : [];
+  });
   
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -137,20 +127,6 @@ export function WordsClient({ words }: WordsClientProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Sync state with URL parameters whenever URL changes
-  useEffect(() => {
-    const urlViewMode = getViewModeFromUrl();
-    const urlSortMode = getSortModeFromUrl();
-    
-    if (viewMode !== urlViewMode) {
-      setViewMode(urlViewMode);
-    }
-    
-    if (sortMode !== urlSortMode) {
-      setSortMode(urlSortMode);
-    }
-  }, [searchParams]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -214,7 +190,7 @@ export function WordsClient({ words }: WordsClientProps) {
       const currentScrollY = window.scrollY;
       
       // Only re-sort if the sort mode has actually changed, or if we don't have displayed words yet
-      if (sortMode !== currentSortMode || displayedWords.length === 0) {
+      if (currentSortMode !== searchParams.get("sort") || displayedWords.length === 0) {
         const currentSortModeTyped = currentSortMode as "none" | "asc" | "desc" | "random";
         let sortedWords: WordWithEmbedding[];
         
@@ -231,7 +207,6 @@ export function WordsClient({ words }: WordsClientProps) {
         }
         
         setDisplayedWords(sortedWords);
-        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
         
         // Restore scroll position after clearing search
         if (currentSortMode === "random") {
@@ -242,10 +217,6 @@ export function WordsClient({ words }: WordsClientProps) {
       } else if (currentSortMode === "random" && randomOrder.length > 0) {
         // If we're already in random mode and have a stored order, use it
         setDisplayedWords([...randomOrder]);
-        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
-      } else {
-        // Just update the sort mode state without re-sorting
-        setSortMode(currentSortMode as "none" | "asc" | "desc" | "random");
       }
       return;
     }
@@ -292,9 +263,7 @@ export function WordsClient({ words }: WordsClientProps) {
   const handleSortModeChange = (
     newSortMode: "none" | "asc" | "desc" | "random"
   ) => {
-    setSortMode(newSortMode);
-
-    // Update URL params
+    // Update URL params - this will trigger re-render with new currentSortMode
     const params = new URLSearchParams(searchParams.toString());
     if (newSortMode === "none") {
       // For "none", we'll actually set to "asc" as the default
@@ -308,7 +277,6 @@ export function WordsClient({ words }: WordsClientProps) {
       // Reset to ascending sort (default state)
       const sorted = sortWords(displayedWords, "asc");
       setDisplayedWords(sorted);
-      setSortMode("asc"); // Immediately set to asc since that's our default
       setRandomOrder([]); // Clear stored random order
       return;
     } else if (newSortMode === "asc" || newSortMode === "desc") {
@@ -347,9 +315,7 @@ export function WordsClient({ words }: WordsClientProps) {
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
-    setViewMode(newViewMode);
-
-    // Update URL without navigation or scroll
+    // Update URL without navigation or scroll - this will trigger re-render with new currentViewMode
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", newViewMode);
     router.replace(`?${params.toString()}`, { scroll: false });
@@ -360,9 +326,9 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
-          viewMode={viewMode}
+          viewMode={currentViewMode}
           onViewModeChange={handleViewModeChange}
-          sortMode={sortMode}
+          sortMode={currentSortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
         />
@@ -383,7 +349,7 @@ export function WordsClient({ words }: WordsClientProps) {
       <main className="min-h-[calc(100vh-120px)]">
         {!isMounted ? (
           <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center"></div>
-        ) : viewMode === "list" ? (
+        ) : currentViewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
               {displayedWords.map((word, index) => {
@@ -414,7 +380,7 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             </div>
           )
-        ) : viewMode === "grid" ? (
+        ) : currentViewMode === "grid" ? (
           displayedWords.length > 0 ? (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
@@ -447,7 +413,7 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             </div>
           )
-        ) : viewMode === "map" ? (
+        ) : currentViewMode === "map" ? (
           <MapView
             words={displayedWords}
             onWordClick={(word) => setSelectedWord(word)}
