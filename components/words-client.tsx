@@ -58,18 +58,16 @@ interface WordsClientProps {
   words: WordWithEmbedding[];
   initialViewMode: "list" | "map" | "grid";
   initialSortMode: "none" | "asc" | "desc" | "random";
-  randomSeed: number;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function WordsClient({ words, initialViewMode, initialSortMode, randomSeed }: WordsClientProps) {
+export function WordsClient({ words, initialViewMode, initialSortMode }: WordsClientProps) {
   const router = useRouter();
 
   // Use initial props from server
   const [viewMode, setViewMode] = useState(initialViewMode);
   const [sortMode, setSortMode] = useState(initialSortMode);
-  const [currentSeed, setCurrentSeed] = useState(randomSeed);
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
@@ -93,33 +91,18 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
-  const [ignoreNextSync, setIgnoreNextSync] = useState(false);
 
   // Sync displayedWords with words prop when it changes (e.g., after navigation)
   // This ensures server-rendered order is reflected in the client
   useEffect(() => {
-    // Skip sync if we just set the final order from shuffle animation
-    if (ignoreNextSync) {
-      setIgnoreNextSync(false);
-      return;
-    }
-
     // Only update if not currently searching or shuffling
     if (!searchTerm.trim() && !isShuffling) {
       setDisplayedWords(words);
     }
-  }, [words, searchTerm, isShuffling, ignoreNextSync]);
-
-  // Seeded random number generator for consistent random order
-  const seededRandom = (seed: number) => {
-    return function() {
-      seed = (seed * 9301 + 49297) % 233280;
-      return seed / 233280;
-    };
-  };
+  }, [words, searchTerm, isShuffling]);
 
   // Helper function to sort words based on mode
-  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random", seed?: number): WordWithEmbedding[] => {
+  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
     const sorted = [...wordsToSort];
     switch (mode) {
       case "asc":
@@ -127,10 +110,6 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       case "desc":
         return sorted.sort((a, b) => b.word.localeCompare(a.word));
       case "random":
-        if (seed !== undefined) {
-          const random = seededRandom(seed);
-          return sorted.sort(() => random() - 0.5);
-        }
         return sorted.sort(() => Math.random() - 0.5);
       case "none":
       default:
@@ -247,11 +226,6 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       setIsShuffling(true);
       const originalWords = [...displayedWords];
 
-      // Generate seed and calculate final order BEFORE animation
-      const newSeed = Date.now();
-      setCurrentSeed(newSeed);
-      const finalOrder = sortWords(originalWords, "random", newSeed);
-
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(originalWords, "random");
         setDisplayedWords(tempShuffled);
@@ -260,29 +234,24 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
-        // Set to final seeded order immediately so animation ends smoothly
+        // Calculate final random order and show it
+        const finalOrder = sortWords(originalWords, "random");
         setDisplayedWords(finalOrder);
         setIsShuffling(false);
-        setIgnoreNextSync(true); // Prevent sync effect from overwriting
         window.scrollTo(0, currentScrollY);
 
-        // Navigate in background to update URL and sync server state
-        // This happens after we've already shown the final order
-        setTimeout(() => {
-          router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
-        }, 0);
+        // Update URL (server will generate different random order on next navigation)
+        window.history.replaceState(null, '', `?view=${viewMode}&sort=${newSortMode}`);
       }, 1000);
     } else {
-      // Navigate immediately for non-random sorts (no seed needed)
+      // Navigate immediately for non-random sorts
       router.push(`?view=${viewMode}&sort=${newSortMode}`, { scroll: false });
     }
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
     setViewMode(newViewMode);
-    // Keep the same seed when changing views to maintain order
-    const seedParam = sortMode === "random" ? `&seed=${currentSeed}` : "";
-    router.push(`?view=${newViewMode}&sort=${sortMode}${seedParam}`, { scroll: false });
+    router.push(`?view=${newViewMode}&sort=${sortMode}`, { scroll: false });
   };
 
   return (
