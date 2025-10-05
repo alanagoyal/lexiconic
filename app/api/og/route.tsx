@@ -61,7 +61,7 @@ export async function GET() {
         {
           name: 'Playfair Display',
           data: await fetch(
-            new URL('https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff')
+            'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff'
           ).then((res) => res.arrayBuffer()),
           style: 'normal',
           weight: 400,
