@@ -111,22 +111,34 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  // Initialize displayed words with correct sort on first render
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() =>
-    sortWords(words, sortMode)
-  );
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(() =>
-    sortMode === "random" ? sortWords(words, "random") : []
-  );
+  // Initialize displayed words with server order (no sorting yet to avoid hydration mismatch)
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
   const [prevSortMode, setPrevSortMode] = useState(sortMode);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Handle initial client-side hydration and sorting
+  useEffect(() => {
+    setIsHydrated(true);
+
+    // Apply initial sort based on URL params (only on client after hydration)
+    if (sortMode === "random") {
+      const sorted = sortWords(activeWords, "random");
+      setDisplayedWords(sorted);
+      setRandomOrder([...sorted]);
+    } else {
+      const sorted = sortWords(activeWords, sortMode);
+      setDisplayedWords(sorted);
+    }
+  }, []); // Only run once on mount
 
   // Only update when sort mode actually changes (not on initial mount)
   useEffect(() => {
-    // Skip if sort mode hasn't changed
-    if (prevSortMode === sortMode) return;
+    // Skip if not hydrated yet or sort mode hasn't changed
+    if (!isHydrated || prevSortMode === sortMode) return;
 
     setPrevSortMode(sortMode);
 
@@ -138,7 +150,7 @@ export function WordsClient({ words }: WordsClientProps) {
         setRandomOrder([...sorted]);
       }
     }
-  }, [sortMode, activeWords, isShuffling, prevSortMode]);
+  }, [sortMode, activeWords, isShuffling, prevSortMode, isHydrated]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -279,6 +291,10 @@ export function WordsClient({ words }: WordsClientProps) {
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
+        // Generate final random order and save it
+        const finalRandomOrder = sortWords(activeWords, "random");
+        setDisplayedWords(finalRandomOrder);
+        setRandomOrder([...finalRandomOrder]);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
       }, 1000);
