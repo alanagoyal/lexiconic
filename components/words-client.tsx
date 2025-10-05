@@ -12,6 +12,7 @@ import {
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
+import { useURLState } from "@/hooks/use-url-state";
 
 const MapView = dynamic(
   () =>
@@ -60,6 +61,9 @@ interface WordsClientProps {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function WordsClient({ words }: WordsClientProps) {
+  // Use URL params as source of truth
+  const { view: viewMode, sort: sortMode, seed, updateURLState, isInitialized } = useURLState();
+
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
     "/lexiconic/api/words-with-embeddings",
@@ -76,11 +80,18 @@ export function WordsClient({ words }: WordsClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">("list");
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("random");
+
+  // Seeded random number generator for consistent random sorting
+  const seededRandom = (seed: number) => {
+    let state = seed;
+    return () => {
+      state = (state * 1103515245 + 12345) & 0x7fffffff;
+      return state / 0x7fffffff;
+    };
+  };
 
   // Helper function to sort words based on mode
-  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
+  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random", randomSeed?: string): WordWithEmbedding[] => {
     const sorted = [...wordsToSort];
     switch (mode) {
       case "asc":
@@ -88,6 +99,14 @@ export function WordsClient({ words }: WordsClientProps) {
       case "desc":
         return sorted.sort((a, b) => b.word.localeCompare(a.word));
       case "random":
+        if (randomSeed) {
+          // Use seeded random for consistent ordering
+          const rng = seededRandom(parseInt(randomSeed, 10));
+          return sorted
+            .map((word) => ({ word, sort: rng() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ word }) => word);
+        }
         return sorted.sort(() => Math.random() - 0.5);
       case "none":
       default:
@@ -95,23 +114,28 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
-    return sortWords(words, "random");
-  });
-
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
-  
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(
-    null
-  );
-  const [isMounted, setIsMounted] = useState(false);
+  const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
 
-  // Track mounted state
+  // Initialize displayed words based on URL params
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    if (!isInitialized) return;
+
+    let sortedWords: WordWithEmbedding[];
+
+    if (sortMode === "random") {
+      // Use seeded random for consistent ordering
+      sortedWords = sortWords(activeWords, "random", seed);
+      setRandomOrder([...sortedWords]);
+    } else {
+      sortedWords = sortWords(activeWords, sortMode);
+    }
+
+    setDisplayedWords(sortedWords);
+  }, [isInitialized, activeWords, sortMode, seed]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -178,7 +202,7 @@ export function WordsClient({ words }: WordsClientProps) {
         if (randomOrder.length > 0 && randomOrder.length === activeWords.length) {
           sortedWords = [...randomOrder];
         } else {
-          sortedWords = sortWords(activeWords, "random");
+          sortedWords = sortWords(activeWords, "random", seed);
           setRandomOrder([...sortedWords]);
         }
       } else {
@@ -195,7 +219,7 @@ export function WordsClient({ words }: WordsClientProps) {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
         // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
+        const sortedResults = sortWords(results, sortMode, seed);
         setDisplayedWords(sortedResults);
       } finally {
         setIsSearching(false);
@@ -203,7 +227,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, randomOrder]);
+  }, [deferredSearchTerm, activeWords, sortMode, randomOrder, seed]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -222,28 +246,23 @@ export function WordsClient({ words }: WordsClientProps) {
   ) => {
     if (newSortMode === "none") {
       // Reset to ascending sort (default state)
-      setSortMode("asc");
-      const sorted = sortWords(displayedWords, "asc");
-      setDisplayedWords(sorted);
-      setRandomOrder([]);
+      updateURLState({ sort: "asc" });
       return;
     }
 
-    setSortMode(newSortMode);
+    // Don't allow shuffle animation if already shuffling
+    if (newSortMode === "random" && isShuffling) return;
 
-    if (newSortMode === "asc" || newSortMode === "desc") {
-      const sorted = sortWords(displayedWords, newSortMode);
-      setDisplayedWords(sorted);
-      setRandomOrder([]);
-    } else if (newSortMode === "random") {
-      if (isShuffling) return;
+    // Update URL with new sort mode (this will trigger the useEffect to re-sort)
+    updateURLState({ sort: newSortMode });
 
+    // Only do shuffle animation for random mode
+    if (newSortMode === "random") {
       // Store current scroll position before starting shuffle animation
       const currentScrollY = window.scrollY;
 
       setIsShuffling(true);
       const originalWords = [...displayedWords];
-      const finalShuffled = sortWords(displayedWords, "random");
 
       // Shuffle animation: rapidly change order for 1 second
       const shuffleInterval = setInterval(() => {
@@ -253,11 +272,9 @@ export function WordsClient({ words }: WordsClientProps) {
         window.scrollTo(0, currentScrollY);
       }, 100);
 
-      // After 1 second, settle on the final random order
+      // After 1 second, stop animation (the actual sorting will be handled by the useEffect)
       setTimeout(() => {
         clearInterval(shuffleInterval);
-        setDisplayedWords(finalShuffled);
-        setRandomOrder([...finalShuffled]);
         setIsShuffling(false);
         // Restore scroll position after final shuffle
         window.scrollTo(0, currentScrollY);
@@ -266,7 +283,7 @@ export function WordsClient({ words }: WordsClientProps) {
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
-    setViewMode(newViewMode);
+    updateURLState({ view: newViewMode });
   };
 
   return (
@@ -296,7 +313,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
       {/* Content - either list or map view */}
       <main className="min-h-[calc(100vh-120px)] pb-16">
-        {!isMounted ? (
+        {!isInitialized ? (
           <div className="w-full h-[calc(100vh-120px)] flex items-center justify-center"></div>
         ) : viewMode === "list" ? (
           displayedWords.length > 0 ? (
