@@ -111,24 +111,34 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  // Compute sorted words based on URL params - no state needed
-  const sortedActiveWords = useMemo(() => {
-    return sortWords(activeWords, sortMode);
-  }, [activeWords, sortMode]);
-
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(sortedActiveWords);
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
+  // Initialize displayed words with correct sort on first render
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() =>
+    sortWords(words, sortMode)
+  );
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(() =>
+    sortMode === "random" ? sortWords(words, "random") : []
+  );
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  const [prevSortMode, setPrevSortMode] = useState(sortMode);
 
-  // Update displayed words when sorted words change
+  // Only update when sort mode actually changes (not on initial mount)
   useEffect(() => {
-    if (sortMode === "random") {
-      setRandomOrder([...sortedActiveWords]);
+    // Skip if sort mode hasn't changed
+    if (prevSortMode === sortMode) return;
+
+    setPrevSortMode(sortMode);
+
+    // Only sort if not shuffling (shuffle animation handles its own sorting)
+    if (!isShuffling) {
+      const sorted = sortWords(activeWords, sortMode);
+      setDisplayedWords(sorted);
+      if (sortMode === "random") {
+        setRandomOrder([...sorted]);
+      }
     }
-    setDisplayedWords(sortedActiveWords);
-  }, [sortedActiveWords, sortMode]);
+  }, [sortMode, activeWords, isShuffling, prevSortMode]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
