@@ -248,8 +248,8 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
         setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
-        // Navigate to update URL and trigger server re-render with same seed
-        router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
+        // Update URL without navigation to avoid re-render delay
+        window.history.replaceState(null, '', `?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`);
       }, 1000);
     } else {
       // Navigate immediately for non-random sorts (no seed needed)
