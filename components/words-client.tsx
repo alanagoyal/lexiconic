@@ -94,8 +94,16 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
 
+  // Seeded random number generator for consistent random order
+  const seededRandom = (seed: number) => {
+    return function() {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+  };
+
   // Helper function to sort words based on mode
-  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
+  const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random", seed?: number): WordWithEmbedding[] => {
     const sorted = [...wordsToSort];
     switch (mode) {
       case "asc":
@@ -103,6 +111,10 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       case "desc":
         return sorted.sort((a, b) => b.word.localeCompare(a.word));
       case "random":
+        if (seed !== undefined) {
+          const random = seededRandom(seed);
+          return sorted.sort(() => random() - 0.5);
+        }
         return sorted.sort(() => Math.random() - 0.5);
       case "none":
       default:
@@ -219,6 +231,11 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       setIsShuffling(true);
       const originalWords = [...displayedWords];
 
+      // Generate seed and final order BEFORE animation
+      const newSeed = Date.now();
+      setCurrentSeed(newSeed);
+      const finalOrder = sortWords(originalWords, "random", newSeed);
+
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(originalWords, "random");
         setDisplayedWords(tempShuffled);
@@ -227,12 +244,11 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
+        // Set to the final seeded order
+        setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
-        // Generate new seed for random mode
-        const newSeed = Date.now();
-        setCurrentSeed(newSeed);
-        // Navigate to update URL and trigger server re-render
+        // Navigate to update URL and trigger server re-render with same seed
         router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
       }, 1000);
     } else {
