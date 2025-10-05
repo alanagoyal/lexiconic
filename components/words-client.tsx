@@ -58,16 +58,18 @@ interface WordsClientProps {
   words: WordWithEmbedding[];
   initialViewMode: "list" | "map" | "grid";
   initialSortMode: "none" | "asc" | "desc" | "random";
+  randomSeed: number;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function WordsClient({ words, initialViewMode, initialSortMode }: WordsClientProps) {
+export function WordsClient({ words, initialViewMode, initialSortMode, randomSeed }: WordsClientProps) {
   const router = useRouter();
 
   // Use initial props from server
   const [viewMode, setViewMode] = useState(initialViewMode);
   const [sortMode, setSortMode] = useState(initialSortMode);
+  const [currentSeed, setCurrentSeed] = useState(randomSeed);
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
@@ -227,18 +229,23 @@ export function WordsClient({ words, initialViewMode, initialSortMode }: WordsCl
         clearInterval(shuffleInterval);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
+        // Generate new seed for random mode
+        const newSeed = Date.now();
+        setCurrentSeed(newSeed);
         // Navigate to update URL and trigger server re-render
-        router.push(`?view=${viewMode}&sort=${newSortMode}`, { scroll: false });
+        router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
       }, 1000);
     } else {
-      // Navigate immediately for non-random sorts
+      // Navigate immediately for non-random sorts (no seed needed)
       router.push(`?view=${viewMode}&sort=${newSortMode}`, { scroll: false });
     }
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
     setViewMode(newViewMode);
-    router.push(`?view=${newViewMode}&sort=${sortMode}`, { scroll: false });
+    // Keep the same seed when changing views to maintain order
+    const seedParam = sortMode === "random" ? `&seed=${currentSeed}` : "";
+    router.push(`?view=${newViewMode}&sort=${sortMode}${seedParam}`, { scroll: false });
   };
 
   return (
