@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: "A digital exploration of linguistic untranslatability",
     images: [
       {
-        url: "/api/og",
+        url: "/lexiconic/api/og",
         width: 1200,
         height: 630,
         alt: "Lexiconic",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lexiconic",
     description: "A digital exploration of linguistic untranslatability",
-    images: ["/api/og"],
+    images: ["/lexiconic/api/og"],
   },
 }
 
