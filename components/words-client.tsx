@@ -111,46 +111,34 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  // Initialize displayed words with server order (no sorting yet to avoid hydration mismatch)
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>([]);
   const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
-  const [prevSortMode, setPrevSortMode] = useState(sortMode);
-  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Handle initial client-side hydration and sorting
+  // Sort words when they load or sort mode changes
   useEffect(() => {
-    setIsHydrated(true);
+    if (activeWords.length === 0) return;
 
-    // Apply initial sort based on URL params (only on client after hydration)
+    // Don't update if shuffling - shuffle animation handles it
+    if (isShuffling) return;
+
+    // Use stored random order if we have it and we're in random mode
+    if (sortMode === "random" && randomOrder.length === activeWords.length) {
+      setDisplayedWords(randomOrder);
+      return;
+    }
+
+    // Otherwise sort the words
+    const sorted = sortWords(activeWords, sortMode);
+    setDisplayedWords(sorted);
+
+    // Store random order if in random mode
     if (sortMode === "random") {
-      const sorted = sortWords(activeWords, "random");
-      setDisplayedWords(sorted);
       setRandomOrder([...sorted]);
-    } else {
-      const sorted = sortWords(activeWords, sortMode);
-      setDisplayedWords(sorted);
     }
-  }, []); // Only run once on mount
-
-  // Only update when sort mode actually changes (not on initial mount)
-  useEffect(() => {
-    // Skip if not hydrated yet or sort mode hasn't changed
-    if (!isHydrated || prevSortMode === sortMode) return;
-
-    setPrevSortMode(sortMode);
-
-    // Only sort if not shuffling (shuffle animation handles its own sorting)
-    if (!isShuffling) {
-      const sorted = sortWords(activeWords, sortMode);
-      setDisplayedWords(sorted);
-      if (sortMode === "random") {
-        setRandomOrder([...sorted]);
-      }
-    }
-  }, [sortMode, activeWords, isShuffling, prevSortMode, isHydrated]);
+  }, [activeWords, sortMode, isShuffling]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
