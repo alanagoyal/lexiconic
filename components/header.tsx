@@ -30,7 +30,7 @@ export function LexiconicHeader({
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <Link href="/?view=list" className="native-script text-3xl font-bold text-foreground font-playfair">
+          <Link href="/" className="native-script text-3xl font-bold text-foreground font-playfair">
             LEXICONIC
           </Link>
           <div className="flex items-center gap-2">

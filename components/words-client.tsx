@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useDeferredValue, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { SearchFilter } from "@/components/search-filter";
 import { WordRow } from "@/components/word-row";
 import { LexiconicHeader } from "@/components/header";
@@ -60,6 +61,9 @@ interface WordsClientProps {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function WordsClient({ words }: WordsClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
     "/lexiconic/api/words-with-embeddings",
@@ -73,11 +77,13 @@ export function WordsClient({ words }: WordsClientProps) {
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
+  // Read view and sort from URL params, with defaults
+  const viewMode = (searchParams.get("view") as "list" | "map" | "grid") || "list";
+  const sortMode = (searchParams.get("sort") as "none" | "asc" | "desc" | "random") || "random";
+
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "map" | "grid">("list");
-  const [sortMode, setSortMode] = useState<"none" | "asc" | "desc" | "random">("random");
 
   // Helper function to sort words based on mode
   const sortWords = (wordsToSort: WordWithEmbedding[], mode: "none" | "asc" | "desc" | "random"): WordWithEmbedding[] => {
@@ -95,9 +101,7 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() => {
-    return sortWords(words, "random");
-  });
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
 
   const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
   
@@ -108,10 +112,51 @@ export function WordsClient({ words }: WordsClientProps) {
   );
   const [isMounted, setIsMounted] = useState(false);
 
-  // Track mounted state
+  // Track mounted state and set default URL params if missing
   useEffect(() => {
     setIsMounted(true);
+
+    // Set default URL params if they don't exist
+    const params = new URLSearchParams(searchParams.toString());
+    let needsUpdate = false;
+
+    if (!params.has("view")) {
+      params.set("view", "list");
+      needsUpdate = true;
+    }
+    if (!params.has("sort")) {
+      params.set("sort", "random");
+      needsUpdate = true;
+    }
+
+    if (needsUpdate) {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
   }, []);
+
+  // Initialize display based on URL params
+  useEffect(() => {
+    if (!isMounted) return;
+
+    // If there's a search term, don't reinitialize
+    if (searchTerm.trim()) return;
+
+    let sortedWords: WordWithEmbedding[];
+
+    if (sortMode === "random") {
+      // Use stored random order if available, otherwise create new one
+      if (randomOrder.length > 0 && randomOrder.length === activeWords.length) {
+        sortedWords = [...randomOrder];
+      } else {
+        sortedWords = sortWords(activeWords, "random");
+        setRandomOrder([...sortedWords]);
+      }
+    } else {
+      sortedWords = sortWords(activeWords, sortMode);
+    }
+
+    setDisplayedWords(sortedWords);
+  }, [sortMode, activeWords, isMounted]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -217,19 +262,33 @@ export function WordsClient({ words }: WordsClientProps) {
     setExpandedRowId(expandedRowId === wordId ? null : wordId);
   };
 
+  // Update URL params helper
+  const updateUrlParams = (updates: { view?: string; sort?: string }) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (updates.view !== undefined) {
+      params.set("view", updates.view);
+    }
+    if (updates.sort !== undefined) {
+      params.set("sort", updates.sort);
+    }
+
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
   const handleSortModeChange = (
     newSortMode: "none" | "asc" | "desc" | "random"
   ) => {
     if (newSortMode === "none") {
       // Reset to ascending sort (default state)
-      setSortMode("asc");
+      updateUrlParams({ sort: "asc" });
       const sorted = sortWords(displayedWords, "asc");
       setDisplayedWords(sorted);
       setRandomOrder([]);
       return;
     }
 
-    setSortMode(newSortMode);
+    updateUrlParams({ sort: newSortMode });
 
     if (newSortMode === "asc" || newSortMode === "desc") {
       const sorted = sortWords(displayedWords, newSortMode);
@@ -266,7 +325,7 @@ export function WordsClient({ words }: WordsClientProps) {
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
-    setViewMode(newViewMode);
+    updateUrlParams({ view: newViewMode });
   };
 
   return (
