@@ -94,6 +94,15 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
 
+  // Sync displayedWords with words prop when it changes (e.g., after navigation)
+  // This ensures server-rendered order is reflected in the client
+  useEffect(() => {
+    // Only update if not currently searching or shuffling
+    if (!searchTerm.trim() && !isShuffling) {
+      setDisplayedWords(words);
+    }
+  }, [words, searchTerm, isShuffling]);
+
   // Seeded random number generator for consistent random order
   const seededRandom = (seed: number) => {
     return function() {
@@ -231,10 +240,9 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       setIsShuffling(true);
       const originalWords = [...displayedWords];
 
-      // Generate seed and final order BEFORE animation
+      // Generate seed for consistent order
       const newSeed = Date.now();
       setCurrentSeed(newSeed);
-      const finalOrder = sortWords(originalWords, "random", newSeed);
 
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(originalWords, "random");
@@ -244,12 +252,11 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
-        // Set to the final seeded order
-        setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
-        // Update URL without navigation to avoid re-render delay
-        window.history.replaceState(null, '', `?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`);
+        // Navigate to trigger server re-render with the seed
+        // The server will provide the correct seeded order
+        router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
       }, 1000);
     } else {
       // Navigate immediately for non-random sorts (no seed needed)
