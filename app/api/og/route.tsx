@@ -3,6 +3,18 @@ import { ImageResponse } from '@vercel/og';
 export const runtime = 'edge';
 
 export async function GET() {
+  const fontData = await fetch(
+    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap'
+  ).then((res) => res.text());
+
+  // Extract the actual font URL from the CSS
+  const fontUrlMatch = fontData.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/);
+  const fontUrl = fontUrlMatch?.[1];
+
+  const playfairFont = fontUrl
+    ? await fetch(fontUrl).then((res) => res.arrayBuffer())
+    : undefined;
+
   return new ImageResponse(
     (
       <div
@@ -34,7 +46,7 @@ export async function GET() {
               textTransform: 'uppercase',
               color: '#1a1a1a',
               margin: 0,
-              fontFamily: 'Playfair Display',
+              fontFamily: playfairFont ? 'Playfair Display' : 'serif',
             }}
           >
             Lexiconic
@@ -45,7 +57,7 @@ export async function GET() {
               fontWeight: 400,
               color: '#666666',
               margin: 0,
-              fontFamily: 'Playfair Display',
+              fontFamily: playfairFont ? 'Playfair Display' : 'serif',
               letterSpacing: '0.02em',
             }}
           >
@@ -57,16 +69,16 @@ export async function GET() {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        {
-          name: 'Playfair Display',
-          data: await fetch(
-            'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff'
-          ).then((res) => res.arrayBuffer()),
-          style: 'normal',
-          weight: 400,
-        },
-      ],
+      fonts: playfairFont
+        ? [
+            {
+              name: 'Playfair Display',
+              data: playfairFont,
+              style: 'normal',
+              weight: 400,
+            },
+          ]
+        : [],
     }
   );
 }
