@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue, Suspense } from "react";
+import { useState, useEffect, useDeferredValue, useMemo } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordRow } from "@/components/word-row";
 import { LexiconicHeader } from "@/components/header";
@@ -12,7 +12,7 @@ import {
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
-import { useURLState } from "@/hooks/use-url-state";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const MapView = dynamic(
   () =>
@@ -56,15 +56,27 @@ export interface WordData {
 
 interface WordsClientProps {
   words: WordWithEmbedding[];
-  initialView: "list" | "map" | "grid";
-  initialSort: "none" | "asc" | "desc" | "random";
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function WordsClient({ words, initialView, initialSort }: WordsClientProps) {
-  // Use URL params as source of truth, with server-provided initial values
-  const { view: viewMode, sort: sortMode, updateURLState } = useURLState();
+export function WordsClient({ words }: WordsClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Read URL params directly - no state
+  const viewMode = (searchParams.get("view") as "list" | "map" | "grid") || "list";
+  const sortMode = (searchParams.get("sort") as "none" | "asc" | "desc" | "random") || "random";
+
+  // Initialize URL params if missing
+  useEffect(() => {
+    if (!searchParams.has("view") || !searchParams.has("sort")) {
+      const params = new URLSearchParams(searchParams.toString());
+      if (!params.has("view")) params.set("view", "list");
+      if (!params.has("sort")) params.set("sort", "random");
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, []);
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
@@ -99,31 +111,24 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
     }
   };
 
-  // Initialize with sorted words based on server-provided initial sort
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() =>
-    sortWords(words, initialSort)
-  );
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(() =>
-    initialSort === "random" ? sortWords(words, "random") : []
-  );
+  // Compute sorted words based on URL params - no state needed
+  const sortedActiveWords = useMemo(() => {
+    return sortWords(activeWords, sortMode);
+  }, [activeWords, sortMode]);
+
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(sortedActiveWords);
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
 
-  // Apply sort when URL params or activeWords change
+  // Update displayed words when sorted words change
   useEffect(() => {
-    let sortedWords: WordWithEmbedding[];
-
     if (sortMode === "random") {
-      // Create new random order
-      sortedWords = sortWords(activeWords, "random");
-      setRandomOrder([...sortedWords]);
-    } else {
-      sortedWords = sortWords(activeWords, sortMode);
+      setRandomOrder([...sortedActiveWords]);
     }
-
-    setDisplayedWords(sortedWords);
-  }, [activeWords, sortMode]);
+    setDisplayedWords(sortedActiveWords);
+  }, [sortedActiveWords, sortMode]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -229,49 +234,49 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
     setExpandedRowId(expandedRowId === wordId ? null : wordId);
   };
 
+  const updateURLParams = (updates: { view?: string; sort?: string }) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (updates.view !== undefined) params.set("view", updates.view);
+    if (updates.sort !== undefined) params.set("sort", updates.sort);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
   const handleSortModeChange = (
     newSortMode: "none" | "asc" | "desc" | "random"
   ) => {
     if (newSortMode === "none") {
-      // Reset to ascending sort (default state)
-      updateURLState({ sort: "asc" });
+      updateURLParams({ sort: "asc" });
       return;
     }
 
     // Don't allow shuffle animation if already shuffling
     if (newSortMode === "random" && isShuffling) return;
 
-    // Update URL with new sort mode (this will trigger the useEffect to re-sort)
-    updateURLState({ sort: newSortMode });
+    // Update URL with new sort mode
+    updateURLParams({ sort: newSortMode });
 
     // Only do shuffle animation for random mode
     if (newSortMode === "random") {
-      // Store current scroll position before starting shuffle animation
       const currentScrollY = window.scrollY;
-
       setIsShuffling(true);
       const originalWords = [...displayedWords];
 
-      // Shuffle animation: rapidly change order for 1 second
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(originalWords, "random");
         setDisplayedWords(tempShuffled);
-        // Maintain scroll position during animation
         window.scrollTo(0, currentScrollY);
       }, 100);
 
-      // After 1 second, stop animation (the actual sorting will be handled by the useEffect)
       setTimeout(() => {
         clearInterval(shuffleInterval);
         setIsShuffling(false);
-        // Restore scroll position after final shuffle
         window.scrollTo(0, currentScrollY);
       }, 1000);
     }
   };
 
   const handleViewModeChange = (newViewMode: "list" | "map" | "grid") => {
-    updateURLState({ view: newViewMode });
+    updateURLParams({ view: newViewMode });
   };
 
   return (
@@ -279,9 +284,9 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
-          viewMode={viewMode || initialView}
+          viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
-          sortMode={sortMode || initialSort}
+          sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
         />
@@ -301,7 +306,7 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
 
       {/* Content - either list or map view */}
       <main className="min-h-[calc(100vh-120px)] pb-16">
-        {(viewMode || initialView) === "list" ? (
+        {viewMode === "list" ? (
           displayedWords.length > 0 ? (
             <div>
               {displayedWords.map((word, index) => {
@@ -330,7 +335,7 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
               </div>
             </div>
           )
-        ) : (viewMode || initialView) === "grid" ? (
+        ) : viewMode === "grid" ? (
           displayedWords.length > 0 ? (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
@@ -362,7 +367,7 @@ export function WordsClient({ words, initialView, initialSort }: WordsClientProp
               </div>
             </div>
           )
-        ) : (viewMode || initialView) === "map" ? (
+        ) : viewMode === "map" ? (
           <MapView
             words={displayedWords}
             onWordClick={(word) => setSelectedWord(word)}
