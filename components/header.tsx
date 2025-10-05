@@ -10,6 +10,7 @@ import {
   Grid3X3,
 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface LexiconicHeaderProps {
   viewMode: "list" | "map" | "grid";
@@ -26,11 +27,24 @@ export function LexiconicHeader({
   onSortModeChange,
   isShuffling,
 }: LexiconicHeaderProps) {
+  const searchParams = useSearchParams();
+
+  // Build URL that preserves current params but sets view=list
+  const getHomeUrl = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", "list");
+    // Only set sort=random if no sort param exists
+    if (!params.has("sort")) {
+      params.set("sort", "random");
+    }
+    return `/?${params.toString()}`;
+  };
+
   return (
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <Link href="/?view=list&sort=random" className="native-script text-3xl font-bold text-foreground font-playfair">
+          <Link href={getHomeUrl()} className="native-script text-3xl font-bold text-foreground font-playfair">
             LEXICONIC
           </Link>
           <div className="flex items-center gap-2">
