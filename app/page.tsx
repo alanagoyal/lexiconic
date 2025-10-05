@@ -1,5 +1,3 @@
-export const dynamic = "force-static";
-
 import { Suspense } from "react";
 import { WordsClient } from "@/components/words-client";
 import { loadWords } from "@/lib/load-words";
