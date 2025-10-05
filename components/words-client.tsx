@@ -93,15 +93,22 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  const [ignoreNextSync, setIgnoreNextSync] = useState(false);
 
   // Sync displayedWords with words prop when it changes (e.g., after navigation)
   // This ensures server-rendered order is reflected in the client
   useEffect(() => {
+    // Skip sync if we just set the final order from shuffle animation
+    if (ignoreNextSync) {
+      setIgnoreNextSync(false);
+      return;
+    }
+
     // Only update if not currently searching or shuffling
     if (!searchTerm.trim() && !isShuffling) {
       setDisplayedWords(words);
     }
-  }, [words, searchTerm, isShuffling]);
+  }, [words, searchTerm, isShuffling, ignoreNextSync]);
 
   // Seeded random number generator for consistent random order
   const seededRandom = (seed: number) => {
@@ -240,9 +247,10 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
       setIsShuffling(true);
       const originalWords = [...displayedWords];
 
-      // Generate seed for consistent order
+      // Generate seed and calculate final order BEFORE animation
       const newSeed = Date.now();
       setCurrentSeed(newSeed);
+      const finalOrder = sortWords(originalWords, "random", newSeed);
 
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(originalWords, "random");
@@ -252,11 +260,17 @@ export function WordsClient({ words, initialViewMode, initialSortMode, randomSee
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
+        // Set to final seeded order immediately so animation ends smoothly
+        setDisplayedWords(finalOrder);
         setIsShuffling(false);
+        setIgnoreNextSync(true); // Prevent sync effect from overwriting
         window.scrollTo(0, currentScrollY);
-        // Navigate to trigger server re-render with the seed
-        // The server will provide the correct seeded order
-        router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
+
+        // Navigate in background to update URL and sync server state
+        // This happens after we've already shown the final order
+        setTimeout(() => {
+          router.push(`?view=${viewMode}&sort=${newSortMode}&seed=${newSeed}`, { scroll: false });
+        }, 0);
       }, 1000);
     } else {
       // Navigate immediately for non-random sorts (no seed needed)
