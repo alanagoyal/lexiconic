@@ -56,12 +56,14 @@ export interface WordData {
 
 interface WordsClientProps {
   words: WordWithEmbedding[];
+  initialView: "list" | "map" | "grid";
+  initialSort: "none" | "asc" | "desc" | "random";
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function WordsClient({ words }: WordsClientProps) {
-  // Use URL params as source of truth
+export function WordsClient({ words, initialView, initialSort }: WordsClientProps) {
+  // Use URL params as source of truth, with server-provided initial values
   const { view: viewMode, sort: sortMode, updateURLState } = useURLState();
 
   // Load embeddings in the background with SWR
@@ -97,11 +99,13 @@ export function WordsClient({ words }: WordsClientProps) {
     }
   };
 
-  // Initialize with sorted words based on URL params
+  // Initialize with sorted words based on server-provided initial sort
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(() =>
-    sortWords(words, sortMode)
+    sortWords(words, initialSort)
   );
-  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>([]);
+  const [randomOrder, setRandomOrder] = useState<WordWithEmbedding[]>(() =>
+    initialSort === "random" ? sortWords(words, "random") : []
+  );
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
@@ -275,9 +279,9 @@ export function WordsClient({ words }: WordsClientProps) {
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
-          viewMode={viewMode}
+          viewMode={viewMode || initialView}
           onViewModeChange={handleViewModeChange}
-          sortMode={sortMode}
+          sortMode={sortMode || initialSort}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
         />
@@ -297,7 +301,7 @@ export function WordsClient({ words }: WordsClientProps) {
 
       {/* Content - either list or map view */}
       <main className="min-h-[calc(100vh-120px)] pb-16">
-        {viewMode === "list" ? (
+        {(viewMode || initialView) === "list" ? (
           displayedWords.length > 0 ? (
             <div>
               {displayedWords.map((word, index) => {
@@ -326,7 +330,7 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             </div>
           )
-        ) : viewMode === "grid" ? (
+        ) : (viewMode || initialView) === "grid" ? (
           displayedWords.length > 0 ? (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
@@ -358,7 +362,7 @@ export function WordsClient({ words }: WordsClientProps) {
               </div>
             </div>
           )
-        ) : viewMode === "map" ? (
+        ) : (viewMode || initialView) === "map" ? (
           <MapView
             words={displayedWords}
             onWordClick={(word) => setSelectedWord(word)}
