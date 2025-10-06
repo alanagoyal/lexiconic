@@ -65,9 +65,20 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type SortMode = "none" | "asc" | "desc" | "random";
 
+function seededRandom(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash) / 2147483647;
+}
+
 function sortWords(
   words: WordWithEmbedding[],
-  mode: SortMode
+  mode: SortMode,
+  seed?: string
 ): WordWithEmbedding[] {
   const sorted = [...words];
 
@@ -77,6 +88,13 @@ function sortWords(
     case "desc":
       return sorted.sort((a, b) => b.word.localeCompare(a.word));
     case "random":
+      if (seed) {
+        return sorted.sort((a, b) => {
+          const hashA = seededRandom(seed + a.word);
+          const hashB = seededRandom(seed + b.word);
+          return hashA - hashB;
+        });
+      }
       return sorted.sort(() => Math.random() - 0.5);
     case "none":
     default:
@@ -259,6 +277,9 @@ export function WordsClient({
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
+        // Set final seeded order
+        const finalOrder = sortWords(displayedWords, "random", newSeed);
+        setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
         // Update URL after shuffle animation completes
