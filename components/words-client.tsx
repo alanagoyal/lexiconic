@@ -204,7 +204,9 @@ export function WordsClient({
   useEffect(() => {
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
-      setDisplayedWords(words);
+      // Apply current sort to active words when no search term
+      const sortedWords = sortWords(activeWords, sortMode, sortMode === "random" ? seed : undefined);
+      setDisplayedWords(sortedWords);
       return;
     }
 
@@ -214,7 +216,7 @@ export function WordsClient({
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
         // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
+        const sortedResults = sortWords(results, sortMode, sortMode === "random" ? seed : undefined);
         setDisplayedWords(sortedResults);
       } finally {
         setIsSearching(false);
@@ -222,7 +224,7 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words]);
+  }, [deferredSearchTerm, activeWords, sortMode, seed]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
