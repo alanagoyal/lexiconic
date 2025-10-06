@@ -4,7 +4,6 @@ import { useState, useEffect, useDeferredValue } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
-import { Footer } from "@/components/footer";
 import {
   searchWordsBySimilarity,
   type WordWithEmbedding,
@@ -296,7 +295,7 @@ export function WordsClient({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div>
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
@@ -343,9 +342,6 @@ export function WordsClient({
         open={selectedWord !== null}
         onClose={() => setSelectedWord(null)}
       />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

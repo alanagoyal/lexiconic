@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { WordsClient } from "@/components/words-client";
+import { Footer } from "@/components/footer";
 import { loadWords } from "@/lib/load-words";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
 
@@ -60,17 +61,20 @@ export default async function HomePage({
   const sortedWords = sortWords(words, sortMode, sortMode === "random" ? seed : undefined);
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center"></div>
-      }
-    >
-      <WordsClient
-        words={sortedWords}
-        initialViewMode={viewMode}
-        initialSortMode={sortMode}
-        initialSeed={seed}
-      />
-    </Suspense>
+    <div className="min-h-screen bg-background">
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-background flex items-center justify-center"></div>
+        }
+      >
+        <WordsClient
+          words={sortedWords}
+          initialViewMode={viewMode}
+          initialSortMode={sortMode}
+          initialSeed={seed}
+        />
+      </Suspense>
+      <Footer />
+    </div>
   );
 }
