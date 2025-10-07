@@ -2,18 +2,18 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 
-export async function GET() {
+export async function GET(request: Request) {
   const fontData = await fetch(
-    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap'
-  ).then((res) => res.text());
+    new URL('/lexiconic/fonts/PlayfairDisplay-Regular.ttf', process.env.NEXT_PUBLIC_VERCEL_URL || new URL(request.url).origin)
+  ).then((res) => res.arrayBuffer());
 
-  // Extract the actual font URL from the CSS
-  const fontUrlMatch = fontData.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/);
-  const fontUrl = fontUrlMatch?.[1];
-
-  const playfairFont = fontUrl
-    ? await fetch(fontUrl).then((res) => res.arrayBuffer())
-    : undefined;
+  // Fetch the world map background image
+  const mapImageData = await fetch(
+    new URL('/lexiconic/images/world-map-bg.png', process.env.NEXT_PUBLIC_VERCEL_URL || new URL(request.url).origin)
+  ).then((res) => res.arrayBuffer());
+  
+  const base64Map = Buffer.from(mapImageData).toString('base64');
+  const mapImageUrl = `data:image/png;base64,${base64Map}`;
 
   return new ImageResponse(
     (
@@ -23,42 +23,78 @@ export async function GET() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#fafafa',
-          padding: '80px',
+          position: 'relative',
+          backgroundImage: `url(${mapImageUrl})`,
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
+        
+        {/* Content area */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '40px',
+            flex: 1,
+            padding: '60px',
+            position: 'relative',
           }}
         >
-          <h1
+          <div
             style={{
-              fontSize: '120px',
-              fontWeight: 400,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: '#1a1a1a',
-              margin: 0,
-              fontFamily: playfairFont ? 'Playfair Display' : 'serif',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
             }}
           >
-            Lexiconic
-          </h1>
+            <h1
+              style={{
+                fontSize: '140px',
+                fontWeight: 400,
+                letterSpacing: '0.02em',
+                color: '#000000',
+                margin: 0,
+                fontFamily: fontData ? 'Playfair Display' : 'serif',
+                lineHeight: 1,
+              }}
+            >
+              LEXICONIC
+            </h1>
+            <p
+              style={{
+                fontSize: '36px',
+                fontWeight: 400,
+                color: '#000000',
+                margin: 0,
+                fontFamily: 'sans-serif',
+                letterSpacing: '0.02em',
+              }}
+            >
+              lek·si·kon·ik
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom banner */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(230, 230, 230, 0.95)',
+            padding: '32px 60px',
+          }}
+        >
           <p
             style={{
-              fontSize: '32px',
+              fontSize: '28px',
               fontWeight: 400,
-              color: '#666666',
+              color: '#000000',
               margin: 0,
-              fontFamily: playfairFont ? 'Playfair Display' : 'serif',
-              letterSpacing: '0.02em',
+              fontFamily: fontData ? 'Playfair Display' : 'serif',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
             }}
           >
             A digital exploration of linguistic untranslatability
@@ -69,11 +105,11 @@ export async function GET() {
     {
       width: 1200,
       height: 630,
-      fonts: playfairFont
+      fonts: fontData
         ? [
             {
               name: 'Playfair Display',
-              data: playfairFont,
+              data: fontData,
               style: 'normal',
               weight: 400,
             },
