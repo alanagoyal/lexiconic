@@ -14,6 +14,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000'),
   title: "Lexiconic",
   description: "A digital exploration of linguistic untranslatability",
   openGraph: {
