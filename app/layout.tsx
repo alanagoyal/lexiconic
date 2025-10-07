@@ -36,10 +36,8 @@ html {
         `}</style>
       </head>
       <body className={`${playfair.variable}`}>
-        <NuqsAdapter>
-          {children}
-          <Footer />
-        </NuqsAdapter>
+        <NuqsAdapter>{children}</NuqsAdapter>
+        <Footer />
       </body>
     </html>
   )
