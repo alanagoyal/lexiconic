@@ -16,6 +16,24 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Lexiconic",
   description: "A digital exploration of linguistic untranslatability",
+  openGraph: {
+    title: "Lexiconic",
+    description: "A digital exploration of linguistic untranslatability",
+    images: [
+      {
+        url: "/lexiconic/api/og",
+        width: 1200,
+        height: 630,
+        alt: "Lexiconic",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lexiconic",
+    description: "A digital exploration of linguistic untranslatability",
+    images: ["/lexiconic/api/og"],
+  },
 }
 
 export default function RootLayout({
