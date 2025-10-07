@@ -1,14 +1,23 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Shuffle, ArrowUpAZ, ArrowDownZA, List, Map as MapIcon } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Shuffle,
+  ArrowUpAZ,
+  ArrowDownZA,
+  List,
+  Map as MapIcon,
+  Grid3X3,
+} from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface LexiconicHeaderProps {
-  viewMode: "list" | "map"
-  onViewModeChange: (mode: "list" | "map") => void
-  sortMode: "none" | "asc" | "desc" | "random"
-  onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void
-  isShuffling: boolean
+  viewMode: "list" | "map" | "grid";
+  onViewModeChange: (mode: "list" | "map" | "grid") => void;
+  sortMode: "none" | "asc" | "desc" | "random";
+  onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void;
+  isShuffling: boolean;
 }
 
 export function LexiconicHeader({
@@ -16,17 +25,30 @@ export function LexiconicHeader({
   onViewModeChange,
   sortMode,
   onSortModeChange,
-  isShuffling
+  isShuffling,
 }: LexiconicHeaderProps) {
+  const searchParams = useSearchParams();
+
+  // Build URL that preserves current params but sets view=list
+  const getHomeUrl = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", "list");
+    // Only set sort=random if no sort param exists
+    if (!params.has("sort")) {
+      params.set("sort", "random");
+    }
+    return `/?${params.toString()}`;
+  };
+
   return (
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <h1 className="monuments-title text-2xl font-bold text-foreground font-playfair">
+          <Link href={getHomeUrl()} className="native-script text-3xl font-bold text-foreground font-playfair">
             LEXICONIC
-          </h1>
+          </Link>
           <div className="flex items-center gap-2">
-            {viewMode === "list" && (
+            {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
                 <Button
                   variant={sortMode === "random" ? "default" : "ghost"}
@@ -39,28 +61,24 @@ export function LexiconicHeader({
                   <Shuffle className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={sortMode === "asc" || sortMode === "desc" ? "default" : "ghost"}
+                  variant={sortMode === "asc" ? "default" : "ghost"}
                   size="icon"
-                  onClick={() => {
-                    if (sortMode === "none") {
-                      onSortModeChange("asc")
-                    } else if (sortMode === "asc") {
-                      onSortModeChange("desc")
-                    } else if (sortMode === "desc") {
-                      onSortModeChange("none")
-                    } else {
-                      onSortModeChange("asc")
-                    }
-                  }}
-                  title={sortMode === "desc" ? "Sort Z-A (click to clear)" : "Sort A-Z"}
-                  aria-label={sortMode === "desc" ? "Sort Z-A (click to clear)" : "Sort A-Z"}
+                  onClick={() => onSortModeChange("asc")}
+                  title="Sort A-Z"
+                  aria-label="Sort A-Z"
                   className="h-7 w-7"
                 >
-                  {sortMode === "desc" ? (
-                    <ArrowDownZA className="h-4 w-4" />
-                  ) : (
-                    <ArrowUpAZ className="h-4 w-4" />
-                  )}
+                  <ArrowUpAZ className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={sortMode === "desc" ? "default" : "ghost"}
+                  size="icon"
+                  onClick={() => onSortModeChange("desc")}
+                  title="Sort Z-A"
+                  aria-label="Sort Z-A"
+                  className="h-7 w-7"
+                >
+                  <ArrowDownZA className="h-4 w-4" />
                 </Button>
               </div>
             )}
@@ -78,6 +96,16 @@ export function LexiconicHeader({
                 <List className="h-4 w-4" />
               </Button>
               <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="icon"
+                onClick={() => onViewModeChange("grid")}
+                title="Grid view"
+                aria-label="Grid view"
+                className="h-7 w-7"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
                 variant={viewMode === "map" ? "default" : "ghost"}
                 size="icon"
                 onClick={() => onViewModeChange("map")}
@@ -92,5 +120,5 @@ export function LexiconicHeader({
         </div>
       </div>
     </header>
-  )
+  );
 }

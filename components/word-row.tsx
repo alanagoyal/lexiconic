@@ -9,9 +9,10 @@ interface WordRowProps {
   word: WordData;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  viewMode?: "list" | "grid";
 }
 
-export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
+export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }: WordRowProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePronounce = async (e?: React.MouseEvent) => {
@@ -53,6 +54,46 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
     handlePronounce();
   };
 
+  if (viewMode === "grid") {
+    return (
+      <div className="word-card border-r border-b border-border p-4 space-y-3 h-full">
+        {/* Language and Category */}
+        <div className="space-y-1 text-sm">
+          <div className="text-foreground font-medium">{word.language}</div>
+          {word.category && word.category !== "—" && (
+            <div className="text-muted-foreground">{word.category}</div>
+          )}
+        </div>
+
+        {/* Native Word */}
+        <div className="text-left space-y-2">
+          <div className="native-script text-2xl text-foreground">
+            {word.word.toLowerCase()}
+          </div>
+          {word.phonetic &&
+            word.phonetic.trim() !== "" &&
+            word.phonetic !== "—" && (
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                {word.phonetic}
+                <Volume2
+                  className={`h-4 w-4 cursor-pointer ${
+                    isPlaying ? "animate-pulse" : ""
+                  }`}
+                  onClick={handleWordClick}
+                />
+              </div>
+            )}
+        </div>
+
+        {/* Definition */}
+        <div className="word-definition text-sm text-foreground leading-relaxed font-playfair flex-1">
+          {word.definition}
+        </div>
+      </div>
+    );
+  }
+
+  // Original list view layout
   return (
     <div className="word-row border-b border-border w-full">
       {/* Main Grid Layout - responsive design */}
@@ -93,7 +134,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
                   {word.phonetic}
                   <Volume2
-                    className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${
+                    className={`h-4 w-4 cursor-pointer ${
                       isPlaying ? "animate-pulse" : ""
                     }`}
                     onClick={handleWordClick}
@@ -121,7 +162,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
                     {word.phonetic}
                     <Volume2
-                      className={`h-4 w-4 cursor-pointer hover:opacity-70 transition-opacity ${
+                      className={`h-4 w-4 cursor-pointer ${
                         isPlaying ? "animate-pulse" : ""
                       }`}
                       onClick={handleWordClick}
@@ -174,7 +215,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               )}
 
-
               {word.usage_notes && word.usage_notes !== "—" && (
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
@@ -184,14 +224,13 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                 </div>
               )}
 
-
               {word.sources && word.sources !== "—" && (
                 <div>
                   <a
                     href={word.sources}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                    className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Source <ExternalLink className="w-3 h-3" />
@@ -240,7 +279,6 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                       </p>
                     </div>
                   )}
-
                 </div>
               </div>
 
@@ -252,7 +290,7 @@ export function WordRow({ word, isExpanded, onToggleExpand }: WordRowProps) {
                         href={word.sources}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium mb-2 text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                        className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"
                         onClick={(e) => e.stopPropagation()}
                       >
                         Source <ExternalLink className="w-3 h-3" />

@@ -141,8 +141,10 @@
   transition: background-color 0.15s ease;
 }
 
-.word-row:hover {
-  background-color: var(--muted);
+@media (hover: hover) and (pointer: fine) {
+  .word-row:hover {
+    background-color: var(--muted);
+  }
 }
 
 .native-script {
