@@ -193,7 +193,8 @@ export function MapView({ words, onWordClick }: MapViewProps) {
       >
         {/* Clusters */}
         {clusters.map((cluster, i) => {
-          const size = 30 + Math.min(cluster.count * 2, 50);
+          const size = 15 + Math.min(cluster.count * 1, 25);
+          const fontSize = 6 + Math.min(cluster.count * 0.2, 8);
           const sampleWords = cluster.words.slice(0, 3).map(w => w.word.word).join(", ");
           const label = cluster.count <= 3 ? sampleWords : `${sampleWords}...`;
 
@@ -215,6 +216,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
                     width: `${size}px`,
                     height: `${size}px`,
                     backgroundColor: '#7C7D7E',
+                    fontSize: `${fontSize}px`,
                   }}
                   onClick={() => handleClusterClick(cluster)}
                 >
