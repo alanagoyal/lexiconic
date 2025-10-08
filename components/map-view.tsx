@@ -45,10 +45,12 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         const coords = LANGUAGE_COORDINATES[word.language];
         if (!coords) return null;
 
-        // Add slight jitter to prevent exact overlaps
+        // Add slight jitter to prevent exact overlaps using deterministic offset
         const jitter = 0.5;
-        const lat = coords.lat + (Math.random() - 0.5) * jitter;
-        const lng = coords.lng + (Math.random() - 0.5) * jitter;
+        // Use word string to generate stable pseudo-random offset
+        const hash = word.word.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const lat = coords.lat + ((hash % 1000) / 1000 - 0.5) * jitter;
+        const lng = coords.lng + ((hash % 1001) / 1001 - 0.5) * jitter;
 
         return { word, lat, lng };
       })
