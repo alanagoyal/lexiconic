@@ -210,7 +210,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
                 onMouseLeave={() => setHoveredCluster(null)}
               >
                 <button
-                  className="flex items-center justify-center bg-[#E7E7E8] text-foreground font-semibold transition-all duration-200 border border-border hover:scale-110"
+                  className="flex items-center justify-center bg-black text-[#fafafa] font-semibold transition-all duration-200 hover:scale-110"
                   style={{
                     width: `${size}px`,
                     height: `${size}px`,
@@ -221,7 +221,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
                 </button>
                 {hoveredCluster === i && (
                   <div 
-                    className="absolute bg-background/90 px-2 py-0.5 rounded text-xs font-medium text-foreground whitespace-nowrap border border-border shadow-sm transition-opacity duration-200"
+                    className="absolute bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm transition-opacity duration-200"
                     style={{ 
                       top: 'calc(50% + 8px)',
                       left: '50%',
@@ -247,10 +247,10 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           >
             <div className="flex flex-col items-center gap-1">
               <button
-                className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold transition-all duration-200 border border-border hover:scale-110"
+                className="flex items-center justify-center w-6 h-6 bg-black text-foreground text-xs font-semibold transition-all duration-200 hover:scale-110"
                 onClick={() => onWordClick(point.word)}
               ></button>
-              <div className="bg-background/90 px-2 py-0.5 rounded text-xs font-medium text-foreground whitespace-nowrap border border-border shadow-sm">
+              <div className="bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
                 {point.word.word}
               </div>
             </div>
