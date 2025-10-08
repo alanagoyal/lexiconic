@@ -249,7 +249,6 @@ export function MapView({ words, onWordClick }: MapViewProps) {
               <button
                 className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold transition-all duration-200 border border-border hover:scale-110"
                 onClick={() => onWordClick(point.word)}
-                title={point.word.word}
               ></button>
               <div className="bg-background/90 px-2 py-0.5 rounded text-xs font-medium text-foreground whitespace-nowrap border border-border shadow-sm">
                 {point.word.word}
