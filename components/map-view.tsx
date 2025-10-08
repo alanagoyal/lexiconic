@@ -36,6 +36,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     longitude: 0,
     zoom: 1.5,
   });
+  const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
 
   // Convert words to points with coordinates
   const wordPoints: WordPoint[] = useMemo(() => {
@@ -193,6 +194,8 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         {/* Clusters */}
         {clusters.map((cluster, i) => {
           const size = 30 + Math.min(cluster.count * 2, 50);
+          const sampleWords = cluster.words.slice(0, 3).map(w => w.word.word).join(", ");
+          const label = cluster.count <= 3 ? sampleWords : `${sampleWords}...`;
 
           return (
             <Marker
@@ -201,16 +204,35 @@ export function MapView({ words, onWordClick }: MapViewProps) {
               longitude={cluster.lng}
               anchor="center"
             >
-              <button
-                className="flex items-center justify-center bg-[#E7E7E8] text-foreground font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all border border-border"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                }}
-                onClick={() => handleClusterClick(cluster)}
+              <div 
+                className="relative flex items-center justify-center"
+                onMouseEnter={() => setHoveredCluster(i)}
+                onMouseLeave={() => setHoveredCluster(null)}
               >
-                {cluster.count}
-              </button>
+                <button
+                  className="flex items-center justify-center bg-[#E7E7E8] text-foreground font-semibold transition-all duration-200 border border-border hover:scale-110"
+                  style={{
+                    width: `${size}px`,
+                    height: `${size}px`,
+                  }}
+                  onClick={() => handleClusterClick(cluster)}
+                >
+                  {cluster.count}
+                </button>
+                {hoveredCluster === i && (
+                  <div 
+                    className="absolute bg-background/90 px-2 py-0.5 rounded text-xs font-medium text-foreground whitespace-nowrap border border-border shadow-sm transition-opacity duration-200"
+                    style={{ 
+                      top: 'calc(50% + 8px)',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {label}
+                  </div>
+                )}
+              </div>
             </Marker>
           );
         })}
@@ -223,11 +245,16 @@ export function MapView({ words, onWordClick }: MapViewProps) {
             longitude={point.lng}
             anchor="center"
           >
-            <button
-              className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all duration-200 border border-border hover:scale-110"
-              onClick={() => onWordClick(point.word)}
-              title={point.word.word}
-            ></button>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold transition-all duration-200 border border-border hover:scale-110"
+                onClick={() => onWordClick(point.word)}
+                title={point.word.word}
+              ></button>
+              <div className="bg-background/90 px-2 py-0.5 rounded text-xs font-medium text-foreground whitespace-nowrap border border-border shadow-sm">
+                {point.word.word}
+              </div>
+            </div>
           </Marker>
         ))}
       </Map>
