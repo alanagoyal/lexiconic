@@ -210,10 +210,11 @@ export function MapView({ words, onWordClick }: MapViewProps) {
                 onMouseLeave={() => setHoveredCluster(null)}
               >
                 <button
-                  className="flex items-center justify-center bg-black text-[#fafafa] font-semibold transition-all duration-200 hover:scale-110"
+                  className="flex items-center justify-center text-[#fafafa] font-semibold transition-all duration-200 hover:scale-110"
                   style={{
                     width: `${size}px`,
                     height: `${size}px`,
+                    backgroundColor: '#7C7D7E',
                   }}
                   onClick={() => handleClusterClick(cluster)}
                 >
@@ -221,8 +222,9 @@ export function MapView({ words, onWordClick }: MapViewProps) {
                 </button>
                 {hoveredCluster === i && (
                   <div 
-                    className="absolute bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm transition-opacity duration-200"
+                    className="absolute bg-background/90 px-2 py-0.5 text-xs font-medium whitespace-nowrap shadow-sm transition-opacity duration-200"
                     style={{ 
+                      color: '#7C7D7E',
                       top: 'calc(50% + 8px)',
                       left: '50%',
                       transform: 'translateX(-50%)',
@@ -247,10 +249,11 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           >
             <div className="flex flex-col items-center gap-1">
               <button
-                className="flex items-center justify-center w-6 h-6 bg-black text-foreground text-xs font-semibold transition-all duration-200 hover:scale-110"
+                className="flex items-center justify-center w-6 h-6 text-foreground text-xs font-semibold transition-all duration-200 hover:scale-110"
+                style={{ backgroundColor: '#7C7D7E' }}
                 onClick={() => onWordClick(point.word)}
               ></button>
-              <div className="bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+              <div className="bg-background/90 px-2 py-0.5 text-xs font-medium whitespace-nowrap shadow-sm" style={{ color: '#7C7D7E' }}>
                 {point.word.word}
               </div>
             </div>
