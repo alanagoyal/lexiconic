@@ -57,11 +57,43 @@ export function MapView({ words, onWordClick }: MapViewProps) {
       .filter((p): p is WordPoint => p !== null);
   }, [words]);
 
+  // Get current map bounds to filter visible markers
+  const bounds = useMemo(() => {
+    if (!mapRef.current) return null;
+    const map = mapRef.current.getMap();
+    const mapBounds = map.getBounds();
+    return {
+      north: mapBounds.getNorth(),
+      south: mapBounds.getSouth(),
+      east: mapBounds.getEast(),
+      west: mapBounds.getWest(),
+    };
+  }, [viewport]);
+
   // Create clusters based on zoom level
   const { clusters, points } = useMemo(() => {
+    // Filter points to only those in viewport (accounting for longitude wrapping)
+    const visiblePoints = bounds
+      ? wordPoints.filter((point) => {
+          const inLatRange = point.lat >= bounds.south && point.lat <= bounds.north;
+
+          // Handle longitude wrapping around 180/-180
+          let inLngRange;
+          if (bounds.west <= bounds.east) {
+            // Normal case: bounds don't cross antimeridian
+            inLngRange = point.lng >= bounds.west && point.lng <= bounds.east;
+          } else {
+            // Bounds cross antimeridian
+            inLngRange = point.lng >= bounds.west || point.lng <= bounds.east;
+          }
+
+          return inLatRange && inLngRange;
+        })
+      : wordPoints;
+
     if (viewport.zoom > 4) {
       // At high zoom, show individual points
-      return { clusters: [], points: wordPoints };
+      return { clusters: [], points: visiblePoints };
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
@@ -72,13 +104,13 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     const unclustered: WordPoint[] = [];
     const processed = new Set<number>();
 
-    wordPoints.forEach((point, i) => {
+    visiblePoints.forEach((point, i) => {
       if (processed.has(i)) return;
 
       const nearby: WordPoint[] = [point];
       processed.add(i);
 
-      wordPoints.forEach((other, j) => {
+      visiblePoints.forEach((other, j) => {
         if (i === j || processed.has(j)) return;
         if (
           distance(point.lat, point.lng, other.lat, other.lng) < clusterRadius
@@ -107,7 +139,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     });
 
     return { clusters: clustered, points: unclustered };
-  }, [wordPoints, viewport.zoom]);
+  }, [wordPoints, viewport.zoom, bounds]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
