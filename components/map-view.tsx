@@ -62,7 +62,8 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
-    const clusterRadius = 15 / Math.pow(viewport.zoom, 1.5);
+    // Increased from 15 to 35 for more aggressive clustering
+    const clusterRadius = 35 / Math.pow(viewport.zoom, 1.2);
 
     const clustered: Cluster[] = [];
     const unclustered: WordPoint[] = [];
