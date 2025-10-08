@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description: "A digital exploration of linguistic untranslatability",
     images: [
       {
-        url: "/lexiconic/images/og.png",
+        url: "https://base-case-images.s3.us-west-1.amazonaws.com/lexiconic.png",
         width: 1200,
         height: 630,
         alt: "Lexiconic",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lexiconic",
     description: "A digital exploration of linguistic untranslatability",
-    images: ["/lexiconic/images/og.png"],
+    images: ["https://base-case-images.s3.us-west-1.amazonaws.com/lexiconic.png"],
   },
 }
 
