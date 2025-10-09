@@ -40,13 +40,23 @@ export function LexiconicHeader({
     return `/?${params.toString()}`;
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onViewModeChange("list");
+    window.history.pushState({}, "", getHomeUrl());
+  };
+
   return (
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <Link href={getHomeUrl()} className="native-script text-3xl font-bold text-foreground font-playfair">
+          <a
+            href={getHomeUrl()}
+            onClick={handleLogoClick}
+            className="native-script text-3xl font-bold text-foreground font-playfair cursor-pointer"
+          >
             LEXICONIC
-          </Link>
+          </a>
           <div className="flex items-center gap-2">
             {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
