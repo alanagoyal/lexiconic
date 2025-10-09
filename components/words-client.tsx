@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
+import { useDeviceType } from "@/hooks/use-device-type";
 
 const MapView = dynamic(
   () =>
@@ -110,8 +111,14 @@ export function WordsClient({
   initialSearchQuery,
 }: WordsClientProps) {
   const router = useRouter();
+  const { isMobile } = useDeviceType();
 
-  const [viewMode, setViewMode] = useState(initialViewMode);
+  // Force list view on mobile devices, even if URL says grid/map
+  const sanitizedInitialView = (isMobile && (initialViewMode === "grid" || initialViewMode === "map"))
+    ? "list"
+    : initialViewMode;
+
+  const [viewMode, setViewMode] = useState(sanitizedInitialView);
   const [sortMode, setSortMode] = useState(initialSortMode);
   const [seed, setSeed] = useState(initialSeed);
 
@@ -141,12 +148,28 @@ export function WordsClient({
   // Track if initial search from URL has completed
   const initialSearchCompleted = useRef(!initialSearchQuery);
 
+  // Force list view when on mobile and prevent grid/map views
+  useEffect(() => {
+    if (isMobile && (viewMode === "grid" || viewMode === "map")) {
+      setViewMode("list");
+      // Update URL to reflect forced list view
+      const params = new URLSearchParams();
+      params.set("view", "list");
+      params.set("sort", sortMode);
+      params.set("seed", seed);
+      if (searchTerm) {
+        params.set("q", searchTerm);
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [isMobile, viewMode, sortMode, seed, searchTerm, router]);
+
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
     const currentUrl = new URL(window.location.href);
     if (!currentUrl.searchParams.has('seed') && initialSeed) {
       const params = new URLSearchParams();
-      params.set('view', initialViewMode);
+      params.set('view', sanitizedInitialView);
       params.set('sort', initialSortMode);
       params.set('seed', initialSeed);
       if (initialSearchQuery) {
