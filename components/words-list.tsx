@@ -6,6 +6,7 @@ interface WordsListProps {
   viewMode: "list" | "grid";
   expandedRowId?: string | null;
   onToggleExpand?: (wordId: string) => void;
+  isSearching?: boolean;
 }
 
 export function WordsList({
@@ -13,8 +14,9 @@ export function WordsList({
   viewMode,
   expandedRowId,
   onToggleExpand,
+  isSearching = false,
 }: WordsListProps) {
-  if (words.length === 0) {
+  if (words.length === 0 && !isSearching) {
     return (
       <div className="p-16 text-center">
         <div className="text-muted-foreground text-sm">No words found</div>

@@ -7,10 +7,12 @@ type SortMode = "none" | "asc" | "desc" | "random";
 interface URLState {
   view: ViewMode;
   sort: SortMode;
+  search: string;
 }
 
 const DEFAULT_VIEW: ViewMode = "list";
 const DEFAULT_SORT: SortMode = "random";
+const DEFAULT_SEARCH: string = "";
 
 export function useURLState() {
   const searchParams = useSearchParams();
@@ -19,6 +21,7 @@ export function useURLState() {
   // Read from URL params
   const view = (searchParams.get("view") as ViewMode) || DEFAULT_VIEW;
   const sort = (searchParams.get("sort") as SortMode) || DEFAULT_SORT;
+  const search = searchParams.get("search") || DEFAULT_SEARCH;
 
   // Validate and normalize params
   const validView: ViewMode = ["list", "map", "grid"].includes(view)
@@ -47,6 +50,13 @@ export function useURLState() {
     if (updates.sort !== undefined) {
       params.set("sort", updates.sort);
     }
+    if (updates.search !== undefined) {
+      if (updates.search) {
+        params.set("search", updates.search);
+      } else {
+        params.delete("search");
+      }
+    }
 
     router.replace(`?${params.toString()}`, { scroll: false });
   };
@@ -54,6 +64,7 @@ export function useURLState() {
   return {
     view: validView,
     sort: validSort,
+    search,
     updateURLState,
   };
 }

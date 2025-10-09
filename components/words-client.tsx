@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const MapView = dynamic(
   () =>
@@ -108,6 +108,8 @@ export function WordsClient({
   initialSeed,
 }: WordsClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialSearchQuery = searchParams.get("search") || "";
 
   const [viewMode, setViewMode] = useState(initialViewMode);
   const [sortMode, setSortMode] = useState(initialSortMode);
@@ -126,13 +128,14 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
-  const [isSearching, setIsSearching] = useState(false);
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(initialSearchQuery ? words : words);
+  const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
@@ -223,12 +226,39 @@ export function WordsClient({
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, sortMode, words]);
 
+  // Update URL when search term changes (debounced separately for URL)
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (searchTerm.trim()) {
+        params.set("search", searchTerm);
+      } else {
+        params.delete("search");
+      }
+      params.set("view", viewMode);
+      params.set("sort", sortMode);
+      params.set("seed", seed);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchTerm, viewMode, sortMode, seed, router]);
+
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
   };
 
   const handleClear = () => {
     setSearchTerm("");
+    setDisplayedWords(words);
   };
 
   const handleRowExpand = (wordId: string) => {
@@ -332,6 +362,7 @@ export function WordsClient({
             viewMode={viewMode}
             expandedRowId={expandedRowId}
             onToggleExpand={handleRowExpand}
+            isSearching={isSearching}
           />
         )}
       </main>
