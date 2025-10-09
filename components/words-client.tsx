@@ -140,6 +140,15 @@ export function WordsClient({
   const lastUrlSearchTerm = useRef(initialSearchQuery);
   // Track if initial search from URL has completed
   const initialSearchCompleted = useRef(!initialSearchQuery);
+  
+  console.log('[WordsClient] State:', { 
+    initialSearchQuery,
+    searchTerm, 
+    deferredSearchTerm,
+    isSearching, 
+    displayedWordsCount: displayedWords.length,
+    totalWords: words.length
+  });
 
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
@@ -233,29 +242,46 @@ export function WordsClient({
 
   // Simple search effect with debouncing
   useEffect(() => {
+    console.log('[Search Effect] Running with deferredSearchTerm:', deferredSearchTerm, 'searchTerm:', searchTerm);
+    
+    // If deferred hasn't caught up to initial search term, skip this effect run
+    // This prevents the race condition where deferredSearchTerm is empty on first render
+    if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
+      console.log('[Search Effect] Skipping - waiting for deferredSearchTerm to catch up');
+      return;
+    }
+    
     if (!deferredSearchTerm.trim()) {
+      console.log('[Search Effect] Empty search, showing all words');
       setIsSearching(false);
       setDisplayedWords(words);
       initialSearchCompleted.current = true;
       return;
     }
 
+    console.log('[Search Effect] Starting search, setting isSearching=true');
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
+      console.log('[Search Effect] Executing search after debounce');
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
         // Apply current sort mode to search results
         const sortedResults = sortWords(results, sortMode);
+        console.log('[Search Effect] Search complete, results:', sortedResults.length);
         setDisplayedWords(sortedResults);
         initialSearchCompleted.current = true;
       } finally {
+        console.log('[Search Effect] Setting isSearching=false');
         setIsSearching(false);
       }
     }, 300);
 
-    return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words]);
+    return () => {
+      console.log('[Search Effect] Cleanup - clearing timeout');
+      clearTimeout(timeoutId);
+    };
+  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
