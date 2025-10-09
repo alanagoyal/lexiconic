@@ -121,8 +121,15 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    /* Ensure footer safe area is properly handled on iOS */
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Prevent iOS Safari from showing gap behind footer */
+    min-height: 100vh;
+    /* Use dvh (dynamic viewport height) for iOS Safari compatibility */
+    min-height: 100dvh;
+  }
+
+  html {
+    /* Prevent overscroll/bounce effect that can reveal content behind footer */
+    overscroll-behavior-y: none;
   }
 }
 
