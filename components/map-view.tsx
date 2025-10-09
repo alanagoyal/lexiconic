@@ -53,40 +53,55 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         const coords = LANGUAGE_COORDINATES[word.language];
         if (!coords) return null;
 
-        // Add slight jitter to prevent exact overlaps
+        // Add slight jitter to prevent exact overlaps using deterministic offset
         const jitter = 0.5;
-        const lat = coords.lat + (Math.random() - 0.5) * jitter;
-        const lng = coords.lng + (Math.random() - 0.5) * jitter;
+        // Use word string to generate stable pseudo-random offset
+        const hash = word.word.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const lat = coords.lat + ((hash % 1000) / 1000 - 0.5) * jitter;
+        const lng = coords.lng + ((hash % 1001) / 1001 - 0.5) * jitter;
 
         return { word, lat, lng };
       })
       .filter((p): p is WordPoint => p !== null);
   }, [words]);
 
-  // Filter points to only those visible in current viewport (with padding)
-  const visibleWordPoints = useMemo(() => {
-    // Add significant padding to prevent edge flashing (in degrees)
-    const padding = 30;
-    const minLat = stableViewport.latitude - padding;
-    const maxLat = stableViewport.latitude + padding;
-    const minLng = stableViewport.longitude - padding;
-    const maxLng = stableViewport.longitude + padding;
-
-    return wordPoints.filter((point) => {
-      return (
-        point.lat >= minLat &&
-        point.lat <= maxLat &&
-        point.lng >= minLng &&
-        point.lng <= maxLng
-      );
-    });
-  }, [wordPoints, stableViewport.latitude, stableViewport.longitude]);
+  // Get current map bounds to filter visible markers
+  const bounds = useMemo(() => {
+    if (!mapRef.current) return null;
+    const map = mapRef.current.getMap();
+    const mapBounds = map.getBounds();
+    return {
+      north: mapBounds.getNorth(),
+      south: mapBounds.getSouth(),
+      east: mapBounds.getEast(),
+      west: mapBounds.getWest(),
+    };
+  }, [viewport]);
 
   // Create clusters based on zoom level
   const { clusters, points } = useMemo(() => {
+    // Filter points to only those in viewport (accounting for longitude wrapping)
+    const visiblePoints = bounds
+      ? wordPoints.filter((point) => {
+          const inLatRange = point.lat >= bounds.south && point.lat <= bounds.north;
+
+          // Handle longitude wrapping around 180/-180
+          let inLngRange;
+          if (bounds.west <= bounds.east) {
+            // Normal case: bounds don't cross antimeridian
+            inLngRange = point.lng >= bounds.west && point.lng <= bounds.east;
+          } else {
+            // Bounds cross antimeridian
+            inLngRange = point.lng >= bounds.west || point.lng <= bounds.east;
+          }
+
+          return inLatRange && inLngRange;
+        })
+      : wordPoints;
+
     if (viewport.zoom > 4) {
       // At high zoom, show individual points
-      return { clusters: [], points: visibleWordPoints };
+      return { clusters: [], points: visiblePoints };
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
@@ -96,13 +111,13 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     const unclustered: WordPoint[] = [];
     const processed = new Set<number>();
 
-    visibleWordPoints.forEach((point, i) => {
+    visiblePoints.forEach((point, i) => {
       if (processed.has(i)) return;
 
       const nearby: WordPoint[] = [point];
       processed.add(i);
 
-      visibleWordPoints.forEach((other, j) => {
+      visiblePoints.forEach((other, j) => {
         if (i === j || processed.has(j)) return;
         if (
           distance(point.lat, point.lng, other.lat, other.lng) < clusterRadius
@@ -131,7 +146,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     });
 
     return { clusters: clustered, points: unclustered };
-  }, [visibleWordPoints, viewport.zoom]);
+  }, [wordPoints, viewport.zoom, bounds]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
