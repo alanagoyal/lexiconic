@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { WordsClient } from "@/components/words-client";
 import { loadWords } from "@/lib/load-words";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 type SortMode = "none" | "asc" | "desc" | "random";
 
@@ -48,14 +50,29 @@ export default async function HomePage({
   searchParams: Promise<{ view?: string; sort?: string; seed?: string; q?: string }>;
 }) {
   const words = await loadWords();
-  
+
   // Await searchParams before accessing its properties
   const params = await searchParams;
 
+  // Detect mobile from user-agent header
+  const headersList = await headers();
+  const userAgent = headersList.get("user-agent") || "";
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
   // Parse URL params server-side
-  const viewMode = (params.view as "list" | "map" | "grid") || "list";
+  let viewMode = (params.view as "list" | "map" | "grid") || "list";
   const sortMode = (params.sort as SortMode) || "random";
   const searchQuery = params.q || "";
+
+  // Redirect to list view if mobile and trying to access grid or map view
+  if (isMobile && (viewMode === "grid" || viewMode === "map")) {
+    const newParams = new URLSearchParams();
+    newParams.set("view", "list");
+    if (params.sort) newParams.set("sort", params.sort);
+    if (params.seed) newParams.set("seed", params.seed);
+    if (params.q) newParams.set("q", params.q);
+    redirect(`/?${newParams.toString()}`);
+  }
 
   // Only generate seed if not provided and sort is random
   const seed = params.seed || (sortMode === "random" ? Date.now().toString() : "");
