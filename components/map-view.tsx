@@ -38,6 +38,14 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   });
   const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
 
+  // Stabilize viewport position to prevent constant filtering changes during zoom/pan
+  const stableViewport = useMemo(() => {
+    return {
+      latitude: Math.round(viewport.latitude * 2) / 2, // Round to nearest 0.5 degree
+      longitude: Math.round(viewport.longitude * 2) / 2,
+    };
+  }, [viewport.latitude, viewport.longitude]);
+
   // Convert words to points with coordinates
   const wordPoints: WordPoint[] = useMemo(() => {
     return words
@@ -97,7 +105,6 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
-    // Increased from 15 to 35 for more aggressive clustering
     const clusterRadius = 35 / Math.pow(viewport.zoom, 1.2);
 
     const clustered: Cluster[] = [];
@@ -224,6 +231,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
+        renderWorldCopies={false}
       >
         {/* Clusters */}
         {clusters.map((cluster, i) => {
