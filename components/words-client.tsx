@@ -132,12 +132,14 @@ export function WordsClient({
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
   
   // Track last URL-synced search term to avoid unnecessary updates
   const lastUrlSearchTerm = useRef(initialSearchQuery);
+  // Track if initial search from URL has completed
+  const initialSearchCompleted = useRef(!initialSearchQuery);
 
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
@@ -234,6 +236,7 @@ export function WordsClient({
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
       setDisplayedWords(words);
+      initialSearchCompleted.current = true;
       return;
     }
 
@@ -245,6 +248,7 @@ export function WordsClient({
         // Apply current sort mode to search results
         const sortedResults = sortWords(results, sortMode);
         setDisplayedWords(sortedResults);
+        initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
       }
@@ -370,6 +374,7 @@ export function WordsClient({
             viewMode={viewMode}
             expandedRowId={expandedRowId}
             onToggleExpand={handleRowExpand}
+            isSearching={isSearching}
           />
         )}
       </main>
