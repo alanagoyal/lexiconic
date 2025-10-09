@@ -357,6 +357,7 @@ export function WordsClient({
           sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
+          onClearSearch={handleClear}
         />
 
         {/* Search - full width */}
