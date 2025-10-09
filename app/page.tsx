@@ -45,16 +45,17 @@ function sortWords(
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ view?: string; sort?: string; seed?: string }>;
+  searchParams: Promise<{ view?: string; sort?: string; seed?: string; search?: string }>;
 }) {
   const words = await loadWords();
-  
+
   // Await searchParams before accessing its properties
   const params = await searchParams;
 
   // Parse URL params server-side
   const viewMode = (params.view as "list" | "map" | "grid") || "list";
   const sortMode = (params.sort as SortMode) || "random";
+  const searchQuery = params.search || "";
 
   // Only generate seed if not provided and sort is random
   const seed = params.seed || (sortMode === "random" ? Date.now().toString() : "");
@@ -73,6 +74,7 @@ export default async function HomePage({
         initialViewMode={viewMode}
         initialSortMode={sortMode}
         initialSeed={seed}
+        initialSearchQuery={searchQuery}
       />
     </Suspense>
   );

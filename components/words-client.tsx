@@ -58,6 +58,7 @@ interface WordsClientProps {
   initialViewMode: "list" | "map" | "grid";
   initialSortMode: "none" | "asc" | "desc" | "random";
   initialSeed: string;
+  initialSearchQuery?: string;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -106,6 +107,7 @@ export function WordsClient({
   initialViewMode,
   initialSortMode,
   initialSeed,
+  initialSearchQuery = "",
 }: WordsClientProps) {
   const router = useRouter();
 
@@ -126,7 +128,7 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
@@ -198,6 +200,21 @@ export function WordsClient({
       return performKeywordSearch(query);
     }
   };
+
+  // Debounced URL update for search term
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (searchTerm) {
+        params.set("search", searchTerm);
+      } else {
+        params.delete("search");
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }, 500); // 500ms debounce for URL updates
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, router]);
 
   // Simple search effect with debouncing
   useEffect(() => {
