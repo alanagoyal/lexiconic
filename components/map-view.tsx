@@ -36,6 +36,15 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     longitude: 0,
     zoom: 1.5,
   });
+  const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
+
+  // Stabilize viewport position to prevent constant filtering changes during zoom/pan
+  const stableViewport = useMemo(() => {
+    return {
+      latitude: Math.round(viewport.latitude * 2) / 2, // Round to nearest 0.5 degree
+      longitude: Math.round(viewport.longitude * 2) / 2,
+    };
+  }, [viewport.latitude, viewport.longitude]);
 
   // Convert words to points with coordinates
   const wordPoints: WordPoint[] = useMemo(() => {
@@ -44,37 +53,71 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         const coords = LANGUAGE_COORDINATES[word.language];
         if (!coords) return null;
 
-        // Add slight jitter to prevent exact overlaps
+        // Add slight jitter to prevent exact overlaps using deterministic offset
         const jitter = 0.5;
-        const lat = coords.lat + (Math.random() - 0.5) * jitter;
-        const lng = coords.lng + (Math.random() - 0.5) * jitter;
+        // Use word string to generate stable pseudo-random offset
+        const hash = word.word.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const lat = coords.lat + ((hash % 1000) / 1000 - 0.5) * jitter;
+        const lng = coords.lng + ((hash % 1001) / 1001 - 0.5) * jitter;
 
         return { word, lat, lng };
       })
       .filter((p): p is WordPoint => p !== null);
   }, [words]);
 
+  // Get current map bounds to filter visible markers
+  const bounds = useMemo(() => {
+    if (!mapRef.current) return null;
+    const map = mapRef.current.getMap();
+    const mapBounds = map.getBounds();
+    return {
+      north: mapBounds.getNorth(),
+      south: mapBounds.getSouth(),
+      east: mapBounds.getEast(),
+      west: mapBounds.getWest(),
+    };
+  }, [viewport]);
+
   // Create clusters based on zoom level
   const { clusters, points } = useMemo(() => {
+    // Filter points to only those in viewport (accounting for longitude wrapping)
+    const visiblePoints = bounds
+      ? wordPoints.filter((point) => {
+          const inLatRange = point.lat >= bounds.south && point.lat <= bounds.north;
+
+          // Handle longitude wrapping around 180/-180
+          let inLngRange;
+          if (bounds.west <= bounds.east) {
+            // Normal case: bounds don't cross antimeridian
+            inLngRange = point.lng >= bounds.west && point.lng <= bounds.east;
+          } else {
+            // Bounds cross antimeridian
+            inLngRange = point.lng >= bounds.west || point.lng <= bounds.east;
+          }
+
+          return inLatRange && inLngRange;
+        })
+      : wordPoints;
+
     if (viewport.zoom > 4) {
       // At high zoom, show individual points
-      return { clusters: [], points: wordPoints };
+      return { clusters: [], points: visiblePoints };
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
-    const clusterRadius = 15 / Math.pow(viewport.zoom, 1.5);
+    const clusterRadius = 35 / Math.pow(viewport.zoom, 1.2);
 
     const clustered: Cluster[] = [];
     const unclustered: WordPoint[] = [];
     const processed = new Set<number>();
 
-    wordPoints.forEach((point, i) => {
+    visiblePoints.forEach((point, i) => {
       if (processed.has(i)) return;
 
       const nearby: WordPoint[] = [point];
       processed.add(i);
 
-      wordPoints.forEach((other, j) => {
+      visiblePoints.forEach((other, j) => {
         if (i === j || processed.has(j)) return;
         if (
           distance(point.lat, point.lng, other.lat, other.lng) < clusterRadius
@@ -103,7 +146,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     });
 
     return { clusters: clustered, points: unclustered };
-  }, [wordPoints, viewport.zoom]);
+  }, [wordPoints, viewport.zoom, bounds]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
@@ -188,10 +231,14 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
+        renderWorldCopies={false}
       >
         {/* Clusters */}
         {clusters.map((cluster, i) => {
-          const size = 30 + Math.min(cluster.count * 2, 50);
+          const size = 15 + Math.min(cluster.count * 1, 25);
+          const fontSize = 6 + Math.min(cluster.count * 0.2, 8);
+          const sampleWords = cluster.words.slice(0, 3).map(w => w.word.word).join(", ");
+          const label = cluster.count <= 3 ? sampleWords : `${sampleWords}...`;
 
           return (
             <Marker
@@ -200,16 +247,36 @@ export function MapView({ words, onWordClick }: MapViewProps) {
               longitude={cluster.lng}
               anchor="center"
             >
-              <button
-                className="flex items-center justify-center bg-[#E7E7E8] text-foreground font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all border border-border"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                }}
-                onClick={() => handleClusterClick(cluster)}
+              <div 
+                className="relative flex items-center justify-center"
+                onMouseEnter={() => setHoveredCluster(i)}
+                onMouseLeave={() => setHoveredCluster(null)}
               >
-                {cluster.count}
-              </button>
+                <button
+                  className="flex items-center justify-center bg-black text-[#fafafa] font-semibold transition-all duration-200 hover:scale-110"
+                  style={{
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    fontSize: `${fontSize}px`,
+                  }}
+                  onClick={() => handleClusterClick(cluster)}
+                >
+                  {cluster.count}
+                </button>
+                {hoveredCluster === i && (
+                  <div 
+                    className="absolute bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm transition-opacity duration-200"
+                    style={{ 
+                      top: 'calc(50% + 8px)',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {label}
+                  </div>
+                )}
+              </div>
             </Marker>
           );
         })}
@@ -222,11 +289,15 @@ export function MapView({ words, onWordClick }: MapViewProps) {
             longitude={point.lng}
             anchor="center"
           >
-            <button
-              className="flex items-center justify-center w-6 h-6 bg-[#E7E7E8] text-foreground text-xs font-semibold hover:bg-[#D1D1D2] hover:text-foreground hover:border-transparent transition-all duration-200 border border-border hover:scale-110"
-              onClick={() => onWordClick(point.word)}
-              title={point.word.word}
-            ></button>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                className="flex items-center justify-center w-6 h-6 bg-black text-foreground text-xs font-semibold transition-all duration-200 hover:scale-110"
+                onClick={() => onWordClick(point.word)}
+              ></button>
+              <div className="bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                {point.word.word}
+              </div>
+            </div>
           </Marker>
         ))}
       </Map>
