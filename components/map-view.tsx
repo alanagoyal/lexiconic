@@ -38,6 +38,14 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   });
   const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
 
+  // Stabilize viewport position to prevent constant filtering changes during zoom/pan
+  const stableViewport = useMemo(() => {
+    return {
+      latitude: Math.round(viewport.latitude * 2) / 2, // Round to nearest 0.5 degree
+      longitude: Math.round(viewport.longitude * 2) / 2,
+    };
+  }, [viewport.latitude, viewport.longitude]);
+
   // Convert words to points with coordinates
   const wordPoints: WordPoint[] = useMemo(() => {
     return words
@@ -55,28 +63,46 @@ export function MapView({ words, onWordClick }: MapViewProps) {
       .filter((p): p is WordPoint => p !== null);
   }, [words]);
 
+  // Filter points to only those visible in current viewport (with padding)
+  const visibleWordPoints = useMemo(() => {
+    // Add significant padding to prevent edge flashing (in degrees)
+    const padding = 30;
+    const minLat = stableViewport.latitude - padding;
+    const maxLat = stableViewport.latitude + padding;
+    const minLng = stableViewport.longitude - padding;
+    const maxLng = stableViewport.longitude + padding;
+
+    return wordPoints.filter((point) => {
+      return (
+        point.lat >= minLat &&
+        point.lat <= maxLat &&
+        point.lng >= minLng &&
+        point.lng <= maxLng
+      );
+    });
+  }, [wordPoints, stableViewport.latitude, stableViewport.longitude]);
+
   // Create clusters based on zoom level
   const { clusters, points } = useMemo(() => {
     if (viewport.zoom > 4) {
       // At high zoom, show individual points
-      return { clusters: [], points: wordPoints };
+      return { clusters: [], points: visibleWordPoints };
     }
 
     // Cluster radius based on zoom (larger radius at lower zoom)
-    // Increased from 15 to 35 for more aggressive clustering
     const clusterRadius = 35 / Math.pow(viewport.zoom, 1.2);
 
     const clustered: Cluster[] = [];
     const unclustered: WordPoint[] = [];
     const processed = new Set<number>();
 
-    wordPoints.forEach((point, i) => {
+    visibleWordPoints.forEach((point, i) => {
       if (processed.has(i)) return;
 
       const nearby: WordPoint[] = [point];
       processed.add(i);
 
-      wordPoints.forEach((other, j) => {
+      visibleWordPoints.forEach((other, j) => {
         if (i === j || processed.has(j)) return;
         if (
           distance(point.lat, point.lng, other.lat, other.lng) < clusterRadius
@@ -105,7 +131,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     });
 
     return { clusters: clustered, points: unclustered };
-  }, [wordPoints, viewport.zoom]);
+  }, [visibleWordPoints, viewport.zoom]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
@@ -190,6 +216,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
+        renderWorldCopies={false}
       >
         {/* Clusters */}
         {clusters.map((cluster, i) => {
