@@ -356,7 +356,6 @@ export function WordsClient({
           onViewModeChange={handleViewModeChange}
           sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
-          isShuffling={isShuffling}
           onClearSearch={handleClear}
         />
 
