@@ -70,6 +70,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     if (!mapRef.current) return null;
     const map = mapRef.current.getMap();
     const mapBounds = map.getBounds();
+    if (!mapBounds) return null;
     return {
       north: mapBounds.getNorth(),
       south: mapBounds.getSouth(),
