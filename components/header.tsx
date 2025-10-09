@@ -16,6 +16,7 @@ interface LexiconicHeaderProps {
   sortMode: "none" | "asc" | "desc" | "random";
   onSortModeChange: (mode: "none" | "asc" | "desc" | "random") => void;
   isShuffling: boolean;
+  onClearSearch: () => void;
 }
 
 export function LexiconicHeader({
@@ -24,9 +25,11 @@ export function LexiconicHeader({
   sortMode,
   onSortModeChange,
   isShuffling,
+  onClearSearch,
 }: LexiconicHeaderProps) {
   const handleLogoClick = () => {
     onViewModeChange("list");
+    onClearSearch();
   };
 
   return (

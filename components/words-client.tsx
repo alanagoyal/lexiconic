@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -58,6 +58,7 @@ interface WordsClientProps {
   initialViewMode: "list" | "map" | "grid";
   initialSortMode: "none" | "asc" | "desc" | "random";
   initialSeed: string;
+  initialSearchQuery: string;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -106,6 +107,7 @@ export function WordsClient({
   initialViewMode,
   initialSortMode,
   initialSeed,
+  initialSearchQuery,
 }: WordsClientProps) {
   const router = useRouter();
 
@@ -114,7 +116,7 @@ export function WordsClient({
   const [seed, setSeed] = useState(initialSeed);
 
   // Load embeddings in the background with SWR
-  const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
+  const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
     "/lexiconic/api/words-with-embeddings",
     fetcher,
     {
@@ -126,13 +128,18 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  
+  // Track last URL-synced search term to avoid unnecessary updates
+  const lastUrlSearchTerm = useRef(initialSearchQuery);
+  // Track if initial search from URL has completed
+  const initialSearchCompleted = useRef(!initialSearchQuery);
 
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
@@ -142,9 +149,34 @@ export function WordsClient({
       params.set('view', initialViewMode);
       params.set('sort', initialSortMode);
       params.set('seed', initialSeed);
+      if (initialSearchQuery) {
+        params.set('q', initialSearchQuery);
+      }
       router.replace(`?${params.toString()}`, { scroll: false });
     }
   }, []);
+
+  // Debounced URL update for search term
+  useEffect(() => {
+    // Skip if search term hasn't changed from what's in URL
+    if (searchTerm === lastUrlSearchTerm.current) return;
+    
+    const timeoutId = setTimeout(() => {
+      lastUrlSearchTerm.current = searchTerm;
+      
+      const params = new URLSearchParams();
+      params.set("view", viewMode);
+      params.set("sort", sortMode);
+      params.set("seed", seed);
+      if (searchTerm) {
+        params.set("q", searchTerm);
+      }
+      
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, viewMode, sortMode, seed, router]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -201,9 +233,21 @@ export function WordsClient({
 
   // Simple search effect with debouncing
   useEffect(() => {
+    // Wait for embeddings to load before searching if we have an initial search query
+    if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
+      return;
+    }
+    
+    // If deferred hasn't caught up to initial search term, skip this effect run
+    // This prevents the race condition where deferredSearchTerm is empty on first render
+    if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
+      return;
+    }
+    
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
       setDisplayedWords(words);
+      initialSearchCompleted.current = true;
       return;
     }
 
@@ -215,13 +259,14 @@ export function WordsClient({
         // Apply current sort mode to search results
         const sortedResults = sortWords(results, sortMode);
         setDisplayedWords(sortedResults);
+        initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
       }
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words]);
+  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -229,6 +274,7 @@ export function WordsClient({
 
   const handleClear = () => {
     setSearchTerm("");
+    // Let the useEffect handle URL update
   };
 
   const handleRowExpand = (wordId: string) => {
@@ -239,11 +285,18 @@ export function WordsClient({
     view?: string;
     sort?: string;
     seed?: string;
+    search?: string;
   }) => {
     const params = new URLSearchParams();
     params.set("view", updates.view || viewMode);
     params.set("sort", updates.sort || sortMode);
     params.set("seed", updates.seed || seed);
+    
+    const searchValue = updates.search !== undefined ? updates.search : searchTerm;
+    if (searchValue) {
+      params.set("q", searchValue);
+    }
+    
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
@@ -304,6 +357,7 @@ export function WordsClient({
           sortMode={sortMode}
           onSortModeChange={handleSortModeChange}
           isShuffling={isShuffling}
+          onClearSearch={handleClear}
         />
 
         {/* Search - full width */}
@@ -332,6 +386,7 @@ export function WordsClient({
             viewMode={viewMode}
             expandedRowId={expandedRowId}
             onToggleExpand={handleRowExpand}
+            isSearching={isSearching}
           />
         )}
       </main>
