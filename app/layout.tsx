@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:3000'),
   title: "Lexiconic",
   description: "A digital exploration of linguistic untranslatability",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+  },
   openGraph: {
     title: "Lexiconic",
     description: "A digital exploration of linguistic untranslatability",
