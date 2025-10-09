@@ -127,13 +127,49 @@ If you want to run it locally at the root path (recommended for local developmen
 - `npm run generate-pronunciations` - Generate audio for all words
 - `npm run regenerate-pronunciations` - Regenerate audio for changed words
 
+## Automation & Git Hooks
+
+This project uses a **post-commit hook** to automatically generate pronunciations, phonetics, definitions, and embeddings when you modify `public/data/words.json`.
+
+### Setting Up the Git Hook
+
+```bash
+cp scripts/post-commit .git/hooks/post-commit
+chmod +x .git/hooks/post-commit
+```
+
+### How It Works
+
+When you commit changes to `public/data/words.json`, the hook automatically:
+
+1. **Generates pronunciations** for new/changed words (requires `OPENAI_API_KEY`)
+2. **Generates phonetic spellings** for new words without phonetics (requires `BRAINTRUST_API_KEY`)
+3. **Generates definitions** for new words without definitions (requires `BRAINTRUST_API_KEY`)
+4. **Regenerates embeddings** intelligently - only when semantic fields change (requires `OPENAI_API_KEY`)
+5. **Stages all updated files** for you to review and commit
+
+The hook gracefully skips steps if API keys are missing.
+
+For detailed information about each script, see [scripts/README.md](scripts/README.md).
+
 ## Adding New Words
 
-To add words to the collection:
+### With Git Hook (Recommended)
 
 1. Edit `/public/data/words.json` following the existing schema
-2. Run `npm run generate-pronunciations` to create audio files
-3. The app will automatically pick up the new words on next load
+2. Commit your changes: `git add public/data/words.json && git commit -m "add new words"`
+3. The post-commit hook automatically generates all required data
+4. Review the staged changes and commit them when ready
+
+### Manual Process
+
+If you haven't set up the git hook, you can run scripts manually:
+
+1. Edit `/public/data/words.json`
+2. Run `npx tsx scripts/generate-pronunciations.ts`
+3. Run `npx tsx scripts/generate-phonetics.ts`
+4. Run `npx tsx scripts/generate-definitions.ts`
+5. Run `npx tsx scripts/generate-embeddings.ts`
 
 ## Project Structure
 
