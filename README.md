@@ -1,18 +1,8 @@
-# Lexiconic - Untranslatable Words
+# Lexiconic
 
-A beautiful, interactive web application for exploring untranslatable words from languages around the world. Discover words that capture unique concepts and emotions that don't have direct English equivalents.
+Lexiconic is a digital exploration of untranslatable words - terms from various languages that express concepts, feelings, or situations that lack a direct translation in English. Each word includes:
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/alanagoyals-projects/v0-untranslatable-words-website)
-
-## What is Lexiconic?
-
-Lexiconic is a curated collection of untranslatable words—terms from various languages that express concepts, feelings, or situations that lack a direct translation in English. Each word includes:
-
-- **Native script and pronunciation** - Audio pronunciation with phonetic transcription
-- **Definition and context** - Detailed explanation of meaning and usage
-- **Language information** - Language family and origin
-- **English approximations** - Closest English equivalent
-- **Semantic search** - Find words by meaning using AI-powered embeddings
 
 ## Features
 
