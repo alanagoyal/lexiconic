@@ -116,7 +116,7 @@ export function WordsClient({
   const [seed, setSeed] = useState(initialSeed);
 
   // Load embeddings in the background with SWR
-  const { data: wordsWithEmbeddings } = useSWR<WordWithEmbedding[]>(
+  const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
     "/lexiconic/api/words-with-embeddings",
     fetcher,
     {
@@ -127,6 +127,11 @@ export function WordsClient({
 
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
+  
+  console.log('[WordsClient] Embeddings status:', { 
+    embeddingsLoading, 
+    hasEmbeddings: !!wordsWithEmbeddings 
+  });
 
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
@@ -242,7 +247,13 @@ export function WordsClient({
 
   // Simple search effect with debouncing
   useEffect(() => {
-    console.log('[Search Effect] Running with deferredSearchTerm:', deferredSearchTerm, 'searchTerm:', searchTerm);
+    console.log('[Search Effect] Running with deferredSearchTerm:', deferredSearchTerm, 'searchTerm:', searchTerm, 'embeddingsLoading:', embeddingsLoading);
+    
+    // Wait for embeddings to load before searching if we have an initial search query
+    if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
+      console.log('[Search Effect] Skipping - waiting for embeddings to load');
+      return;
+    }
     
     // If deferred hasn't caught up to initial search term, skip this effect run
     // This prevents the race condition where deferredSearchTerm is empty on first render
@@ -281,7 +292,7 @@ export function WordsClient({
       console.log('[Search Effect] Cleanup - clearing timeout');
       clearTimeout(timeoutId);
     };
-  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery]);
+  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
