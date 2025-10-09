@@ -132,7 +132,7 @@ export function WordsClient({
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(initialSearchQuery.trim() !== "");
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
 
@@ -224,6 +224,7 @@ export function WordsClient({
       return;
     }
 
+    // Only set searching state if we're actively typing (not initial load)
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -349,6 +350,7 @@ export function WordsClient({
             viewMode={viewMode}
             expandedRowId={expandedRowId}
             onToggleExpand={handleRowExpand}
+            isSearching={isSearching}
           />
         )}
       </main>
