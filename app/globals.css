@@ -121,6 +121,8 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    /* Ensure footer safe area is properly handled on iOS */
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
