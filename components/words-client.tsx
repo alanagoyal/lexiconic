@@ -373,7 +373,7 @@ export function WordsClient({
       </div>
 
       {/* Content - either list, grid, or map view */}
-      <main className="min-h-[calc(100vh-120px)] pb-16">
+      <main className="min-h-[calc(100vh-120px)]">
         {viewMode === "map" ? (
           <MapView
             words={displayedWords}
