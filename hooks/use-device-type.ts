@@ -5,17 +5,20 @@ import { useState, useEffect } from "react";
 export interface DeviceType {
   isMobile: boolean;
   isTouch: boolean;
+  isIOS: boolean;
 }
 
 /**
  * Hook to detect device type based on:
  * - Screen size using Tailwind's md breakpoint (768px)
  * - Touch capability detection
+ * - iOS device detection
  */
 export function useDeviceType(): DeviceType {
   const [deviceType, setDeviceType] = useState<DeviceType>({
     isMobile: false,
     isTouch: false,
+    isIOS: false,
   });
 
   useEffect(() => {
@@ -30,7 +33,11 @@ export function useDeviceType(): DeviceType {
         // @ts-ignore - legacy support
         (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0);
 
-      setDeviceType({ isMobile, isTouch });
+      // Check for iOS (iPhone, iPad, iPod)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      setDeviceType({ isMobile, isTouch, isIOS });
     };
 
     // Initial check

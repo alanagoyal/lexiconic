@@ -111,7 +111,7 @@ export function WordsClient({
   initialSearchQuery,
 }: WordsClientProps) {
   const router = useRouter();
-  const { isMobile } = useDeviceType();
+  const { isMobile, isIOS } = useDeviceType();
 
   // Force list view on mobile devices, even if URL says grid/map
   const sanitizedInitialView = (isMobile && (initialViewMode === "grid" || initialViewMode === "map"))
@@ -396,7 +396,7 @@ export function WordsClient({
       </div>
 
       {/* Content - either list, grid, or map view */}
-      <main className="min-h-[calc(100vh-120px)] pb-16">
+      <main className={`min-h-[calc(100vh-120px)] ${isIOS ? '' : 'pb-16'}`}>
         {viewMode === "map" ? (
           <MapView
             words={displayedWords}
