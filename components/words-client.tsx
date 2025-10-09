@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -135,6 +135,7 @@ export function WordsClient({
   const [isSearching, setIsSearching] = useState(initialSearchQuery.trim() !== "");
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  const hasSearchedInitially = useRef(false);
 
   // Initialize URL params on mount if seed is not in URL
   useEffect(() => {
@@ -221,10 +222,14 @@ export function WordsClient({
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
       setDisplayedWords(words);
+      hasSearchedInitially.current = true;
       return;
     }
 
     setIsSearching(true);
+
+    // For initial search from URL, execute immediately without debounce
+    const delay = hasSearchedInitially.current ? 300 : 0;
 
     const timeoutId = setTimeout(async () => {
       try {
@@ -234,11 +239,13 @@ export function WordsClient({
         // Only update displayed words once we have results
         setDisplayedWords(sortedResults);
         setIsSearching(false);
+        hasSearchedInitially.current = true;
       } catch (error) {
         console.error("Search failed:", error);
         setIsSearching(false);
+        hasSearchedInitially.current = true;
       }
-    }, 300);
+    }, delay);
 
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, sortMode, words]);
