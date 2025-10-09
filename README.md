@@ -43,6 +43,32 @@ The app uses AI embeddings to enable semantic search:
 - Node.js 18+ and npm
 - (Optional) OpenAI API key for pronunciation generation
 
+### Important: `/lexiconic` Base Path
+
+**This project is currently configured to be hosted at `/lexiconic` (not at the root).**
+
+If you want to run it locally at the root path (recommended for local development), you'll need to make the following changes:
+
+1. **Remove the basePath in `next.config.mjs`:**
+   ```javascript
+   // Change this:
+   basePath: '/lexiconic',
+
+   // To this:
+   // basePath: '', // or remove the line entirely
+   ```
+
+2. **Update hardcoded paths in the codebase:**
+   - `app/api/og/route.tsx` - Remove `/lexiconic` from font and image paths
+   - Any other references to `/lexiconic` in your code
+
+3. **Update environment variables:**
+   ```bash
+   # For local development, you can omit NEXT_PUBLIC_VERCEL_URL
+   # or set it to your local URL:
+   NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
+   ```
+
 ### Installation
 
 1. **Clone the repository**
@@ -56,19 +82,41 @@ The app uses AI embeddings to enable semantic search:
    npm install
    ```
 
-3. **Set up environment variables** (optional, only needed for generating pronunciations)
+3. **Configure for local development** (see "Important: `/lexiconic` Base Path" above)
+   - Comment out or remove `basePath: '/lexiconic'` in `next.config.mjs`
+   - Search for `/lexiconic` in the codebase and update paths as needed
+
+4. **Set up environment variables**
+   Create a `.env.local` file:
    ```bash
-   # Create .env.local file
+   # Required for pronunciation generation
    OPENAI_API_KEY=your_openai_api_key_here
+
+   # Required for map view functionality
+   NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token_here
+
+   # Required for running certain scripts (generate-definitions, generate-phonetics)
+   BRAINTRUST_API_KEY=your_braintrust_api_key_here
+
+   # Optional - defaults to localhost:3000 in development
+   NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
    ```
 
-4. **Run the development server**
+   **Getting API Keys:**
+   - **OpenAI**: Get from [platform.openai.com](https://platform.openai.com/api-keys)
+   - **Mapbox**: Get from [mapbox.com/account/access-tokens](https://account.mapbox.com/access-tokens/)
+   - **Braintrust**: Get from [braintrust.dev](https://www.braintrust.dev/)
+
+   **Note:** The map view won't work without `NEXT_PUBLIC_MAPBOX_TOKEN`. Pronunciation generation and some scripts won't work without their respective API keys.
+
+5. **Run the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+6. **Open your browser**
+   - If you removed the basePath: [http://localhost:3000](http://localhost:3000)
+   - If you kept the basePath: [http://localhost:3000/lexiconic](http://localhost:3000/lexiconic)
 
 ### Available Scripts
 
