@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
-import { useRouter } from "next/navigation";
+import { useURLState } from "@/hooks/use-url-state";
 
 const MapView = dynamic(
   () =>
@@ -107,7 +107,7 @@ export function WordsClient({
   initialSortMode,
   initialSeed,
 }: WordsClientProps) {
-  const router = useRouter();
+  const { view, sort, search: urlSearch, updateURLState } = useURLState();
 
   const [viewMode, setViewMode] = useState(initialViewMode);
   const [sortMode, setSortMode] = useState(initialSortMode);
@@ -126,25 +126,22 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(urlSearch);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
+  const isInitialMount = useRef(true);
+  const embeddingsLoaded = useRef(false);
 
-  // Initialize URL params on mount if seed is not in URL
+  // Track when embeddings are loaded
   useEffect(() => {
-    const currentUrl = new URL(window.location.href);
-    if (!currentUrl.searchParams.has('seed') && initialSeed) {
-      const params = new URLSearchParams();
-      params.set('view', initialViewMode);
-      params.set('sort', initialSortMode);
-      params.set('seed', initialSeed);
-      router.replace(`?${params.toString()}`, { scroll: false });
+    if (wordsWithEmbeddings) {
+      embeddingsLoaded.current = true;
     }
-  }, []);
+  }, [wordsWithEmbeddings]);
 
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
@@ -207,6 +204,13 @@ export function WordsClient({
       return;
     }
 
+    // If this is initial mount with a URL search param, wait for embeddings
+    if (isInitialMount.current && !embeddingsLoaded.current) {
+      setIsSearching(true);
+      setDisplayedWords(words); // Show all words while waiting
+      return;
+    }
+
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -217,6 +221,7 @@ export function WordsClient({
         setDisplayedWords(sortedResults);
       } finally {
         setIsSearching(false);
+        isInitialMount.current = false;
       }
     }, 300);
 
@@ -229,7 +234,17 @@ export function WordsClient({
 
   const handleClear = () => {
     setSearchTerm("");
+    updateURLState({ search: "" });
   };
+
+  // Debounced URL update for search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      updateURLState({ search: searchTerm });
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   const handleRowExpand = (wordId: string) => {
     setExpandedRowId(expandedRowId === wordId ? null : wordId);
@@ -240,11 +255,10 @@ export function WordsClient({
     sort?: string;
     seed?: string;
   }) => {
-    const params = new URLSearchParams();
-    params.set("view", updates.view || viewMode);
-    params.set("sort", updates.sort || sortMode);
-    params.set("seed", updates.seed || seed);
-    router.replace(`?${params.toString()}`, { scroll: false });
+    const urlUpdates: any = {};
+    if (updates.view) urlUpdates.view = updates.view;
+    if (updates.sort) urlUpdates.sort = updates.sort;
+    updateURLState(urlUpdates);
   };
 
   const handleSortModeChange = (newSortMode: SortMode) => {
@@ -332,6 +346,7 @@ export function WordsClient({
             viewMode={viewMode}
             expandedRowId={expandedRowId}
             onToggleExpand={handleRowExpand}
+            isSearching={isSearching}
           />
         )}
       </main>
