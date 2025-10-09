@@ -16,7 +16,11 @@ export function WordsList({
   onToggleExpand,
   isSearching = false,
 }: WordsListProps) {
-  if (words.length === 0 && !isSearching) {
+  // Don't show "No words found" if we're still searching
+  if (words.length === 0) {
+    if (isSearching) {
+      return null; // Show nothing while searching
+    }
     return (
       <div className="p-16 text-center">
         <div className="text-muted-foreground text-sm">No words found</div>

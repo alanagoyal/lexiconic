@@ -131,7 +131,8 @@ export function WordsClient({
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(initialSearchQuery ? words : words);
+  // Start with all words visible, search effect will filter them
+  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
