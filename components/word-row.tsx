@@ -4,6 +4,7 @@ import { ExternalLink, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { WordData } from "@/components/words-client";
+import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {
   word: WordData;
@@ -14,6 +15,7 @@ interface WordRowProps {
 
 export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }: WordRowProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const { isTouch } = useDeviceType();
 
   const handlePronounce = async (e?: React.MouseEvent) => {
     if (e) {
@@ -98,7 +100,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
     <div className="word-row border-b border-border w-full">
       {/* Main Grid Layout - responsive design */}
       <div
-        className="grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer"
+        className={`grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer ${!isTouch ? 'hover:bg-muted/30 transition-colors' : ''}`}
         onClick={onToggleExpand}
         role="button"
         tabIndex={0}
