@@ -224,7 +224,6 @@ export function WordsClient({
       return;
     }
 
-    // Only set searching state if we're actively typing (not initial load)
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -232,8 +231,11 @@ export function WordsClient({
         const results = await performSemanticSearch(deferredSearchTerm);
         // Apply current sort mode to search results
         const sortedResults = sortWords(results, sortMode);
+        // Only update displayed words once we have results
         setDisplayedWords(sortedResults);
-      } finally {
+        setIsSearching(false);
+      } catch (error) {
+        console.error("Search failed:", error);
         setIsSearching(false);
       }
     }, 300);
