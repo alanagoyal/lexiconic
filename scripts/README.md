@@ -107,27 +107,6 @@ npm run generate-embeddings
 
 ---
 
-### `generate-locations.ts`
-
-One-time script to generate geographic locations for all words using the Braintrust `generate-location-7320` prompt.
-
-**Usage:**
-```bash
-npm run generate-locations
-```
-
-**What it does:**
-- Reads each word from `public/data/words.json`
-- Calls Braintrust function with `word` and `language` as inputs
-- Adds a `location` field to each word with the returned location string
-- Creates a backup before modifying
-- Skips words that already have a location
-
-**Requirements:**
-- `BRAINTRUST_API_KEY` in `.env.local`
-
----
-
 ## Environment Variables
 
 Required API keys in `.env.local`:
@@ -205,7 +184,6 @@ npm run generate-metadata          # Generate metadata for new words
 npm run generate-metadata:all      # Generate metadata for ALL words missing it
 npm run generate-pronunciations    # Generate audio files
 npm run generate-embeddings        # Generate semantic embeddings
-npm run generate-locations         # Generate geographic locations (one-time)
 ```
 
 ### Updating existing words:
