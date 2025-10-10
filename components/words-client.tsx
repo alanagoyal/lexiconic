@@ -222,15 +222,36 @@ export function WordsClient({
       );
       const keywordResults = performKeywordSearch(query);
 
-      // Combine results (semantic first, then keyword)
-      const combined = [...semanticResults];
-      keywordResults.forEach((kwResult) => {
-        if (!combined.some((semResult) => semResult.word === kwResult.word)) {
-          combined.push(kwResult);
+      // Combine results: exact matches first, then semantic, then keyword
+      const exactMatches: WordData[] = [];
+      const otherSemanticResults: WordData[] = [];
+      const otherKeywordResults: WordData[] = [];
+
+      const queryLower = query.toLowerCase();
+
+      // Separate exact matches from semantic results
+      semanticResults.forEach((result) => {
+        if (result.word.toLowerCase() === queryLower) {
+          exactMatches.push(result);
+        } else {
+          otherSemanticResults.push(result);
         }
       });
 
-      return combined;
+      // Add keyword results that aren't already included
+      keywordResults.forEach((kwResult) => {
+        const alreadyIncluded = exactMatches.some((r) => r.word === kwResult.word) ||
+                                otherSemanticResults.some((r) => r.word === kwResult.word);
+        if (!alreadyIncluded) {
+          if (kwResult.word.toLowerCase() === queryLower) {
+            exactMatches.push(kwResult);
+          } else {
+            otherKeywordResults.push(kwResult);
+          }
+        }
+      });
+
+      return [...exactMatches, ...otherSemanticResults, ...otherKeywordResults];
     } catch (error) {
       console.error("Semantic search failed, using keyword only:", error);
       return performKeywordSearch(query);
