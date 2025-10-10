@@ -142,33 +142,60 @@ export function MapView({ words, onWordClick }: MapViewProps) {
 
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
-  // Layer styles for clusters
+  // We'll need to add a square icon image to the map after it loads
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const map = mapRef.current.getMap();
+
+    // Wait for map to load
+    if (!map.loaded()) {
+      map.on('load', addSquareIcon);
+    } else {
+      addSquareIcon();
+    }
+
+    function addSquareIcon() {
+      if (map.hasImage('square')) return;
+
+      // Create a square icon using canvas
+      const size = 64;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      if (ctx) {
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, size, size);
+
+        map.addImage('square', canvas);
+      }
+    }
+
+    return () => {
+      map.off('load', addSquareIcon);
+    };
+  }, []);
+
+  // Layer styles for clusters (using symbols with square icon)
   const clusterLayer: LayerProps = {
     id: 'clusters',
-    type: 'circle',
-    source: 'words',
-    filter: ['has', 'point_count'],
-    paint: {
-      'circle-color': '#000000',
-      'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        15,  // radius for clusters with < 10 points
-        10, 20,  // radius for 10-99 points
-        100, 30  // radius for 100+ points
-      ],
-    },
-  };
-
-  // Layer for cluster counts
-  const clusterCountLayer: LayerProps = {
-    id: 'cluster-count',
     type: 'symbol',
     source: 'words',
     filter: ['has', 'point_count'],
     layout: {
+      'icon-image': 'square',
+      'icon-size': [
+        'step',
+        ['get', 'point_count'],
+        0.3,  // size for clusters with < 10 points
+        10, 0.4,  // size for 10-99 points
+        100, 0.5  // size for 100+ points
+      ],
+      'icon-allow-overlap': true,
       'text-field': '{point_count_abbreviated}',
-      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-font': ['DIN Offc Pro Bold', 'Arial Unicode MS Bold'],
       'text-size': 12,
     },
     paint: {
@@ -176,15 +203,16 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     },
   };
 
-  // Layer for unclustered points (just circles)
+  // Layer for unclustered points (using same square icon)
   const unclusteredPointLayer: LayerProps = {
     id: 'unclustered-point',
-    type: 'circle',
+    type: 'symbol',
     source: 'words',
     filter: ['!', ['has', 'point_count']],
-    paint: {
-      'circle-color': '#000000',
-      'circle-radius': 6,
+    layout: {
+      'icon-image': 'square',
+      'icon-size': 0.15,
+      'icon-allow-overlap': true,
     },
   };
 
@@ -268,7 +296,6 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           clusterRadius={50}
         >
           <Layer {...clusterLayer} />
-          <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
           <Layer {...wordLabelLayer} />
         </Source>
