@@ -117,15 +117,6 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
       >
         {/* Mobile Layout - stacked */}
         <div className="md:hidden p-3 space-y-2">
-          <div className="flex justify-between items-start">
-            <div className="space-y-0.5 text-sm">
-              <div className="text-foreground font-medium">{word.language}</div>
-              {word.category && word.category !== "—" && (
-                <div className="text-muted-foreground">{word.category}</div>
-              )}
-            </div>
-          </div>
-
           <div className="text-left space-y-1">
             <div className="native-script text-2xl text-foreground truncate">
               {word.word.toLowerCase()}
@@ -197,6 +188,13 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
           {/* Mobile Expanded Content */}
           <div className="md:hidden p-4">
             <div className="space-y-4">
+              <div className="space-y-0.5 text-sm">
+                <div className="text-foreground font-medium">{word.language}</div>
+                {word.category && word.category !== "—" && (
+                  <div className="text-muted-foreground">{word.category}</div>
+                )}
+              </div>
+
               {word.literal && word.literal !== "—" && (
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
