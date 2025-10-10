@@ -26,7 +26,7 @@ export function LexiconicHeader({
   onSortModeChange,
   onClearSearch,
 }: LexiconicHeaderProps) {
-  const { isMobile } = useDeviceType();
+  const { isMobile, isLoading } = useDeviceType();
 
   const handleLogoClick = () => {
     onViewModeChange("list");
@@ -37,12 +37,13 @@ export function LexiconicHeader({
     <header className="border-b border-border bg-background">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <button 
+          <button
             onClick={handleLogoClick}
             className="native-script text-3xl font-bold text-foreground font-playfair cursor-pointer hover:opacity-80 transition-opacity"
           >
             LEXICONIC
           </button>
+          {!isLoading && (
           <div className="flex items-center gap-2">
             {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
@@ -115,6 +116,7 @@ export function LexiconicHeader({
             </div>
             )}
           </div>
+          )}
         </div>
       </div>
     </header>
