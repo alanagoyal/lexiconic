@@ -37,6 +37,14 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   });
   const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
 
+  // Debounced bounds state to prevent flashing during fast panning
+  const [debouncedBounds, setDebouncedBounds] = useState<{
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  } | null>(null);
+
   // Stabilize viewport position to prevent constant filtering changes during zoom/pan
   const stableViewport = useMemo(() => {
     return {
@@ -69,35 +77,40 @@ export function MapView({ words, onWordClick }: MapViewProps) {
       .filter((p): p is WordPoint => p !== null);
   }, [words]);
 
-  // Get current map bounds to filter visible markers
-  const bounds = useMemo(() => {
-    if (!mapRef.current) return null;
-    const map = mapRef.current.getMap();
-    const mapBounds = map.getBounds();
-    if (!mapBounds) return null;
-    return {
-      north: mapBounds.getNorth(),
-      south: mapBounds.getSouth(),
-      east: mapBounds.getEast(),
-      west: mapBounds.getWest(),
-    };
+  // Update debounced bounds after map movement stabilizes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!mapRef.current) return;
+      const map = mapRef.current.getMap();
+      const mapBounds = map.getBounds();
+      if (!mapBounds) return;
+
+      setDebouncedBounds({
+        north: mapBounds.getNorth(),
+        south: mapBounds.getSouth(),
+        east: mapBounds.getEast(),
+        west: mapBounds.getWest(),
+      });
+    }, 50); // 50ms debounce - fast enough to feel responsive, slow enough to prevent flickering
+
+    return () => clearTimeout(timer);
   }, [viewport]);
 
   // Create clusters based on zoom level
   const { clusters, points } = useMemo(() => {
     // Filter points to only those in viewport (accounting for longitude wrapping)
-    const visiblePoints = bounds
+    const visiblePoints = debouncedBounds
       ? wordPoints.filter((point) => {
-          const inLatRange = point.lat >= bounds.south && point.lat <= bounds.north;
+          const inLatRange = point.lat >= debouncedBounds.south && point.lat <= debouncedBounds.north;
 
           // Handle longitude wrapping around 180/-180
           let inLngRange;
-          if (bounds.west <= bounds.east) {
+          if (debouncedBounds.west <= debouncedBounds.east) {
             // Normal case: bounds don't cross antimeridian
-            inLngRange = point.lng >= bounds.west && point.lng <= bounds.east;
+            inLngRange = point.lng >= debouncedBounds.west && point.lng <= debouncedBounds.east;
           } else {
             // Bounds cross antimeridian
-            inLngRange = point.lng >= bounds.west || point.lng <= bounds.east;
+            inLngRange = point.lng >= debouncedBounds.west || point.lng <= debouncedBounds.east;
           }
 
           return inLatRange && inLngRange;
@@ -151,7 +164,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     });
 
     return { clusters: clustered, points: unclustered };
-  }, [wordPoints, viewport.zoom, bounds]);
+  }, [wordPoints, viewport.zoom, debouncedBounds]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
