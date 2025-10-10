@@ -4,21 +4,14 @@ import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import Map, { Source, Layer, type MapRef } from "react-map-gl";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
 import type {
-  CircleLayer,
-  SymbolLayer,
-  GeoJSONSource
+  CircleLayerSpecification,
+  SymbolLayerSpecification,
 } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 interface MapViewProps {
   words: WordWithEmbedding[];
   onWordClick: (word: WordWithEmbedding) => void;
-}
-
-interface WordPoint {
-  word: WordWithEmbedding;
-  lat: number;
-  lng: number;
 }
 
 export function MapView({ words, onWordClick }: MapViewProps) {
@@ -129,7 +122,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
 
     const feature = features[0];
 
-    if (feature.layer.id === 'clusters') {
+    if (feature.layer?.id === 'clusters') {
       // Zoom into cluster
       const clusterId = feature.properties?.cluster_id;
       const source = map.getSource('words') as any;
@@ -144,7 +137,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           duration: 500
         });
       });
-    } else if (feature.layer.id === 'unclustered-point') {
+    } else if (feature.layer?.id === 'unclustered-point') {
       // Handle word click
       try {
         const wordData = JSON.parse(feature.properties?.wordData || '{}');
@@ -158,7 +151,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
   // Define layer styles matching the original visual design
-  const clusterLayer: CircleLayer = {
+  const clusterLayer: CircleLayerSpecification = {
     id: 'clusters',
     type: 'circle',
     source: 'words',
@@ -181,7 +174,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
   };
 
-  const clusterCountLayer: SymbolLayer = {
+  const clusterCountLayer: SymbolLayerSpecification = {
     id: 'cluster-count',
     type: 'symbol',
     source: 'words',
@@ -197,7 +190,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
   };
 
-  const unclusteredPointLayer: CircleLayer = {
+  const unclusteredPointLayer: CircleLayerSpecification = {
     id: 'unclustered-point',
     type: 'circle',
     source: 'words',
@@ -210,7 +203,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
   };
 
-  const unclusteredLabelLayer: SymbolLayer = {
+  const unclusteredLabelLayer: SymbolLayerSpecification = {
     id: 'unclustered-label',
     type: 'symbol',
     source: 'words',
@@ -264,11 +257,13 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         {...viewport}
         onMove={(evt) => setViewport(evt.viewState)}
         onClick={handleMapClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        interactiveLayerIds={['unclustered-point', 'clusters']}
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
         renderWorldCopies={false}
-        mapLib={import('mapbox-gl')}
         // Enable WebGPU rendering
         antialias={true}
         optimizeForTerrain={true}
@@ -281,17 +276,9 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           clusterMaxZoom={14}
           clusterRadius={50}
         >
-          <Layer
-            {...clusterLayer}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          />
+          <Layer {...clusterLayer} />
           <Layer {...clusterCountLayer} />
-          <Layer
-            {...unclusteredPointLayer}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          />
+          <Layer {...unclusteredPointLayer} />
           <Layer {...unclusteredLabelLayer} />
         </Source>
       </Map>
