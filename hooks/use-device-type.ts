@@ -6,6 +6,7 @@ export interface DeviceType {
   isMobile: boolean;
   isTouch: boolean;
   isIOS: boolean;
+  mounted: boolean;
 }
 
 /**
@@ -19,6 +20,7 @@ export function useDeviceType(): DeviceType {
     isMobile: false,
     isTouch: false,
     isIOS: false,
+    mounted: false,
   });
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export function useDeviceType(): DeviceType {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-      setDeviceType({ isMobile, isTouch, isIOS });
+      setDeviceType({ isMobile, isTouch, isIOS, mounted: true });
     };
 
     // Initial check

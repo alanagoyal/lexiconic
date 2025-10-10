@@ -26,7 +26,7 @@ export function LexiconicHeader({
   onSortModeChange,
   onClearSearch,
 }: LexiconicHeaderProps) {
-  const { isMobile } = useDeviceType();
+  const { isMobile, mounted } = useDeviceType();
 
   const handleLogoClick = () => {
     onViewModeChange("list");
@@ -80,7 +80,7 @@ export function LexiconicHeader({
             )}
 
             {/* View toggle buttons - only show on desktop (based on screen size) */}
-            {!isMobile && (
+            {mounted && !isMobile && (
             <div className="flex items-center gap-1 border border-border rounded-md p-1">
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
