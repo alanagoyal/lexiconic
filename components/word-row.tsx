@@ -116,8 +116,8 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
         }`}
       >
         {/* Mobile Layout - stacked */}
-        <div className="md:hidden p-4 space-y-4">
-          <div className="text-left space-y-2 py-4">
+        <div className="md:hidden p-3 space-y-2">
+          <div className="text-left space-y-2">
             <div className="native-script text-3xl text-foreground truncate">
               {word.word.toLowerCase()}
             </div>
@@ -136,7 +136,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
               )}
           </div>
 
-          <div className="word-definition text-base text-foreground leading-relaxed pt-2 font-playfair">
+          <div className="word-definition text-base text-foreground leading-relaxed font-playfair">
             {word.definition}
           </div>
         </div>
