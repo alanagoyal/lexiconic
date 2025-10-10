@@ -1,3 +1,6 @@
+// DEPRECATED: This script is no longer needed as the native_script field has been removed.
+// The word field now contains the word in its native script directly.
+
 const fs = require('fs');
 const path = require('path');
 

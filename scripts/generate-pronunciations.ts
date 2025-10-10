@@ -43,7 +43,6 @@ const openai = new OpenAI({
 
 interface Word {
   word: string;
-  native_script: string;
   transliteration: string;
   language: string;
   pronunciation?: string;

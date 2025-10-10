@@ -30,7 +30,6 @@ loadEnvLocal();
 
 interface Word {
   word: string;
-  native_script: string;
   phonetic: string;
   language: string;
   family: string;

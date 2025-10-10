@@ -1,7 +1,6 @@
 [
   {
     "word": "ありがためいわく",
-    "native_script": "ありがためいわく",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/obligation",
@@ -15,7 +14,6 @@
   },
   {
     "word": "上げ劣り",
-    "native_script": "上げ劣り",
     "language": "Japanese",
     "family": "Japonic",
     "category": "appearance/beauty",
@@ -29,7 +27,6 @@
   },
   {
     "word": "abbiocco",
-    "native_script": "abbiocco",
     "language": "Italian",
     "family": "Indo-European",
     "category": "emotion/food",
@@ -43,7 +40,6 @@
   },
   {
     "word": "arbejdsglæde",
-    "native_script": "arbejdsglæde",
     "language": "Danish",
     "family": "Germanic",
     "category": "work/happiness",
@@ -57,7 +53,6 @@
   },
   {
     "word": "ailyak",
-    "native_script": "ailyak",
     "language": "Bulgarian",
     "family": "Indo-European",
     "category": "lifestyle/philosophy",
@@ -71,7 +66,6 @@
   },
   {
     "word": "akihi",
-    "native_script": "akihi",
     "language": "Hawaiian",
     "family": "Austronesian",
     "category": "behavior/memory",
@@ -85,7 +79,6 @@
   },
   {
     "word": "aloha",
-    "native_script": "aloha",
     "language": "Hawaiian",
     "family": "Austronesian",
     "category": "ethic/greeting",
@@ -99,7 +92,6 @@
   },
   {
     "word": "甘え",
-    "native_script": "甘え",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/relationship",
@@ -113,7 +105,6 @@
   },
   {
     "word": "anteayer",
-    "native_script": "anteayer",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "time/temporal",
@@ -127,7 +118,6 @@
   },
   {
     "word": "àṣẹ",
-    "native_script": "àṣẹ",
     "language": "Yorùbá",
     "family": "Niger-Congo",
     "category": "power/speech",
@@ -141,7 +131,6 @@
   },
   {
     "word": "aspaldiko",
-    "native_script": "aspaldiko",
     "language": "Basque",
     "family": "Basque",
     "category": "emotion/social",
@@ -155,7 +144,6 @@
   },
   {
     "word": "attaccabottoni",
-    "native_script": "attaccabottoni",
     "language": "Italian",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -169,7 +157,6 @@
   },
   {
     "word": "ayni",
-    "native_script": "ayni",
     "language": "Quechua",
     "family": "Quechuan",
     "category": "ethic/economy",
@@ -183,7 +170,6 @@
   },
   {
     "word": "backpfeifengesicht",
-    "native_script": "backpfeifengesicht",
     "language": "German",
     "family": "Germanic",
     "category": "humor/insult",
@@ -197,7 +183,6 @@
   },
   {
     "word": "badkruka",
-    "native_script": "badkruka",
     "language": "Swedish",
     "family": "Germanic",
     "category": "personality/reluctance",
@@ -211,7 +196,6 @@
   },
   {
     "word": "バックシャン",
-    "native_script": "バックシャン",
     "language": "Japanese",
     "family": "Japonic",
     "category": "appearance/dating",
@@ -225,7 +209,6 @@
   },
   {
     "word": "bella figura",
-    "native_script": "bella figura",
     "language": "Italian",
     "family": "Romance",
     "category": "ethos",
@@ -239,7 +222,6 @@
   },
   {
     "word": "bérézina",
-    "native_script": "bérézina",
     "language": "French",
     "family": "Indo-European",
     "category": "emotion/defeat",
@@ -253,7 +235,6 @@
   },
   {
     "word": "besa",
-    "native_script": "besa",
     "language": "Albanian",
     "family": "Indo-European",
     "category": "ethics/honor",
@@ -267,7 +248,6 @@
   },
   {
     "word": "blunda",
-    "native_script": "blunda",
     "language": "Swedish",
     "family": "Germanic",
     "category": "emotion/avoidance",
@@ -281,7 +261,6 @@
   },
   {
     "word": "ぼけっと",
-    "native_script": "ぼけっと",
     "language": "Japanese",
     "family": "Japonic",
     "category": "mental/daydreaming",
@@ -295,7 +274,6 @@
   },
   {
     "word": "bricoleur",
-    "native_script": "bricoleur",
     "language": "French",
     "family": "Indo-European",
     "category": "work/creativity",
@@ -309,7 +287,6 @@
   },
   {
     "word": "cafuné",
-    "native_script": "cafuné",
     "language": "Portuguese",
     "family": "Indo-European",
     "category": "affection/touch",
@@ -323,7 +300,6 @@
   },
   {
     "word": "cavoli riscaldati",
-    "native_script": "cavoli riscaldati",
     "language": "Italian",
     "family": "Indo-European",
     "category": "relationships/metaphor",
@@ -337,7 +313,6 @@
   },
   {
     "word": "ceilidh",
-    "native_script": "céilidh",
     "language": "Scottish Gaelic",
     "family": "Celtic",
     "category": "custom/music",
@@ -351,7 +326,6 @@
   },
   {
     "word": "चाय पानी",
-    "native_script": "चाय पानी",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "social/hospitality",
@@ -365,7 +339,6 @@
   },
   {
     "word": "吃苦",
-    "native_script": "吃苦",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "virtue",
@@ -379,7 +352,6 @@
   },
   {
     "word": "珍道具",
-    "native_script": "珍道具",
     "language": "Japanese",
     "family": "Japonic",
     "category": "objects/prank",
@@ -393,7 +365,6 @@
   },
   {
     "word": "chingada",
-    "native_script": "chingada",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "expression/vulgar",
@@ -407,7 +378,6 @@
   },
   {
     "word": "חוצפה",
-    "native_script": "חוצפה",
     "language": "Yiddish/Hebrew",
     "family": "Germanic/Semitic",
     "category": "trait",
@@ -421,7 +391,6 @@
   },
   {
     "word": "ciğerpare",
-    "native_script": "ciğerpare",
     "language": "Turkish",
     "family": "Turkic",
     "category": "emotion/love",
@@ -435,7 +404,6 @@
   },
   {
     "word": "commovente",
-    "native_script": "commovente",
     "language": "Italian",
     "family": "Indo-European",
     "category": "emotion/feelings",
@@ -449,7 +417,6 @@
   },
   {
     "word": "craic",
-    "native_script": "craic",
     "language": "Irish",
     "family": "Celtic",
     "category": "fun/social",
@@ -463,7 +430,6 @@
   },
   {
     "word": "cúbóg",
-    "native_script": "cúbóg",
     "language": "Irish",
     "family": "Indo-European",
     "category": "objects/food",
@@ -477,7 +443,6 @@
   },
   {
     "word": "culaccino",
-    "native_script": "culaccino",
     "language": "Italian",
     "family": "Indo-European",
     "category": "objects/traces",
@@ -491,7 +456,6 @@
   },
   {
     "word": "dalalæða",
-    "native_script": "dalalæða",
     "language": "Icelandic",
     "family": "Germanic",
     "category": "nature/weather",
@@ -505,7 +469,6 @@
   },
   {
     "word": "답정너",
-    "native_script": "답정너",
     "language": "Korean",
     "family": "Koreanic",
     "category": "social/deception",
@@ -519,7 +482,6 @@
   },
   {
     "word": "दर्शन",
-    "native_script": "दर्शन",
     "language": "Sanskrit/Hindi",
     "family": "Indo-Aryan",
     "category": "religion",
@@ -533,7 +495,6 @@
   },
   {
     "word": "דווקא",
-    "native_script": "דווקא",
     "language": "Hebrew",
     "family": "Afro-Asiatic",
     "category": "particle/attitude",
@@ -547,7 +508,6 @@
   },
   {
     "word": "dépaysement",
-    "native_script": "dépaysement",
     "language": "French",
     "family": "Indo-European",
     "category": "emotion/displacement",
@@ -561,7 +521,6 @@
   },
   {
     "word": "desenrascanço",
-    "native_script": "desenrascanço",
     "language": "Portuguese",
     "family": "Indo-European",
     "category": "problem-solving",
@@ -575,7 +534,6 @@
   },
   {
     "word": "desvelado",
-    "native_script": "desvelado",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "state/wakefulness",
@@ -589,7 +547,6 @@
   },
   {
     "word": "dietrologia",
-    "native_script": "dietrologia",
     "language": "Italian",
     "family": "Romance",
     "category": "mindset",
@@ -603,7 +560,6 @@
   },
   {
     "word": "dor",
-    "native_script": "dor",
     "language": "Romanian",
     "family": "Indo-European",
     "category": "emotion/longing",
@@ -617,7 +573,6 @@
   },
   {
     "word": "dożywocie",
-    "native_script": "dożywocie",
     "language": "Polish",
     "family": "Indo-European",
     "category": "legal/family",
@@ -631,7 +586,6 @@
   },
   {
     "word": "drachenfutter",
-    "native_script": "drachenfutter",
     "language": "German",
     "family": "Indo-European",
     "category": "social/relationships",
@@ -645,7 +599,6 @@
   },
   {
     "word": "dreich",
-    "native_script": "dreich",
     "language": "Scots",
     "family": "Germanic (Scots)",
     "category": "weather",
@@ -659,7 +612,6 @@
   },
   {
     "word": "duende",
-    "native_script": "duende",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "art/supernatural",
@@ -673,7 +625,6 @@
   },
   {
     "word": "dugnad",
-    "native_script": "dugnad",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "social/community",
@@ -687,7 +638,6 @@
   },
   {
     "word": "duktig",
-    "native_script": "duktig",
     "language": "Swedish",
     "family": "Germanic",
     "category": "praise/competence",
@@ -701,7 +651,6 @@
   },
   {
     "word": "elmosolyodni",
-    "native_script": "elmosolyodni",
     "language": "Hungarian",
     "family": "Finno-Ugric",
     "category": "emotion/behavior",
@@ -715,7 +664,6 @@
   },
   {
     "word": "encandilar",
-    "native_script": "encandilar",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "physical/vision",
@@ -729,7 +677,6 @@
   },
   {
     "word": "epibreren",
-    "native_script": "epibreren",
     "language": "Dutch",
     "family": "Germanic",
     "category": "work/behavior",
@@ -743,7 +690,6 @@
   },
   {
     "word": "erklärungsnot",
-    "native_script": "erklärungsnot",
     "language": "German",
     "family": "Indo-European",
     "category": "communication/pressure",
@@ -757,7 +703,6 @@
   },
   {
     "word": "esprit d’escalier",
-    "native_script": "esprit d’escalier",
     "language": "French",
     "family": "Romance",
     "category": "wit",
@@ -771,7 +716,6 @@
   },
   {
     "word": "estrenar",
-    "native_script": "estrenar",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "experience/newness",
@@ -785,7 +729,6 @@
   },
   {
     "word": "extrawunsch",
-    "native_script": "extrawunsch",
     "language": "German",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -799,7 +742,6 @@
   },
   {
     "word": "fachidiot",
-    "native_script": "fachidiot",
     "language": "German",
     "family": "Indo-European",
     "category": "personality/knowledge",
@@ -813,7 +755,6 @@
   },
   {
     "word": "faamiti",
-    "native_script": "faamiti",
     "language": "Samoan",
     "family": "Austronesian",
     "category": "communication/sound",
@@ -827,7 +768,6 @@
   },
   {
     "word": "farpotshket",
-    "native_script": "farpotshket",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "action/mistake",
@@ -841,7 +781,6 @@
   },
   {
     "word": "fahrvergnügen",
-    "native_script": "fahrvergnügen",
     "language": "German",
     "family": "Germanic",
     "category": "feeling/driving",
@@ -855,7 +794,6 @@
   },
   {
     "word": "fare la scarpetta",
-    "native_script": "fare la scarpetta",
     "language": "Italian",
     "family": "Indo-European",
     "category": "behavior/food",
@@ -869,7 +807,6 @@
   },
   {
     "word": "风水",
-    "native_script": "风水",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "philosophy/design",
@@ -883,7 +820,6 @@
   },
   {
     "word": "fernweh",
-    "native_script": "fernweh",
     "language": "German",
     "family": "Germanic",
     "category": "wanderlust",
@@ -897,7 +833,6 @@
   },
   {
     "word": "fika",
-    "native_script": "fika",
     "language": "Swedish",
     "family": "Germanic",
     "category": "food/drink",
@@ -911,7 +846,6 @@
   },
   {
     "word": "φιλότιμο",
-    "native_script": "φιλότιμο",
     "language": "Greek",
     "family": "Indo-European",
     "category": "ethics/honor",
@@ -925,7 +859,6 @@
   },
   {
     "word": "פירגון",
-    "native_script": "פירגון",
     "language": "Hebrew",
     "family": "Semitic",
     "category": "emotion/social",
@@ -939,7 +872,6 @@
   },
   {
     "word": "fingerspitzengefühl",
-    "native_script": "fingerspitzengefühl",
     "language": "German",
     "family": "Germanic",
     "category": "concept/intuition",
@@ -953,7 +885,6 @@
   },
   {
     "word": "fisselig",
-    "native_script": "fisselig",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/behavior",
@@ -967,7 +898,6 @@
   },
   {
     "word": "flâneur",
-    "native_script": "flâneur",
     "language": "French",
     "family": "Indo-European",
     "category": "lifestyle/leisure",
@@ -981,7 +911,6 @@
   },
   {
     "word": "forelsket",
-    "native_script": "forelsket",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "emotion/love",
@@ -995,7 +924,6 @@
   },
   {
     "word": "formacja",
-    "native_script": "formacja",
     "language": "Polish",
     "family": "Indo-European",
     "category": "social/psychology",
@@ -1009,7 +937,6 @@
   },
   {
     "word": "fremdschämen",
-    "native_script": "fremdschämen",
     "language": "German",
     "family": "Germanic",
     "category": "emotion",
@@ -1023,7 +950,6 @@
   },
   {
     "word": "friolero",
-    "native_script": "friolero",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "personality/physical",
@@ -1037,7 +963,6 @@
   },
   {
     "word": "frisson",
-    "native_script": "frisson",
     "language": "French",
     "family": "Romance",
     "category": "emotion/sensation",
@@ -1051,7 +976,6 @@
   },
   {
     "word": "gattara",
-    "native_script": "gattara",
     "language": "Italian",
     "family": "Indo-European",
     "category": "personality/animals",
@@ -1065,7 +989,6 @@
   },
   {
     "word": "gezelligheid",
-    "native_script": "gezelligheid",
     "language": "Dutch",
     "family": "Germanic",
     "category": "comfort/social",
@@ -1079,7 +1002,6 @@
   },
   {
     "word": "ঘোড়ার ডিম",
-    "native_script": "ঘোড়ার ডিম",
     "language": "Bengali",
     "family": "Indo-European",
     "category": "abstract/sarcasm",
@@ -1093,7 +1015,6 @@
   },
   {
     "word": "غُربة",
-    "native_script": "غُربة",
     "language": "Arabic",
     "family": "Afro-Asiatic",
     "category": "emotion",
@@ -1107,7 +1028,6 @@
   },
   {
     "word": "gigil",
-    "native_script": "gigil",
     "language": "Tagalog/Filipino",
     "family": "Austronesian",
     "category": "emotion/sensation",
@@ -1121,7 +1041,6 @@
   },
   {
     "word": "길치",
-    "native_script": "길치",
     "language": "Korean",
     "family": "Koreanic",
     "category": "personality/navigation",
@@ -1135,7 +1054,6 @@
   },
   {
     "word": "glas wen",
-    "native_script": "glas wen",
     "language": "Welsh",
     "family": "Celtic",
     "category": "emotion/mockery",
@@ -1149,7 +1067,6 @@
   },
   {
     "word": "gluggaveður",
-    "native_script": "gluggaveður",
     "language": "Icelandic",
     "family": "Germanic",
     "category": "nature/weather",
@@ -1163,7 +1080,6 @@
   },
   {
     "word": "고소하다",
-    "native_script": "고소하다",
     "language": "Korean",
     "family": "Koreanic",
     "category": "emotion/satisfaction",
@@ -1177,7 +1093,6 @@
   },
   {
     "word": "gökotta",
-    "native_script": "gökotta",
     "language": "Swedish",
     "family": "Germanic",
     "category": "nature/custom",
@@ -1191,7 +1106,6 @@
   },
   {
     "word": "gotong royong",
-    "native_script": "gotong royong",
     "language": "Indonesian",
     "family": "Austronesian",
     "category": "social ethic",
@@ -1205,7 +1119,6 @@
   },
   {
     "word": "goya",
-    "native_script": "goya",
     "language": "Urdu",
     "family": "Indo-Aryan",
     "category": "arts/storytelling",
@@ -1219,7 +1132,6 @@
   },
   {
     "word": "关系",
-    "native_script": "关系",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "social/relationships",
@@ -1233,7 +1145,6 @@
   },
   {
     "word": "反面教師",
-    "native_script": "反面教師",
     "language": "Japanese",
     "family": "Japonic",
     "category": "teaching/learning",
@@ -1247,7 +1158,6 @@
   },
   {
     "word": "hanyauku",
-    "native_script": "hanyauku",
     "language": "Rukwangali",
     "family": "Niger-Congo",
     "category": "physical/movement",
@@ -1261,7 +1171,6 @@
   },
   {
     "word": "hakuna matata",
-    "native_script": "hakuna matata",
     "language": "Swahili",
     "family": "Niger–Congo",
     "category": "ethic/social",
@@ -1275,7 +1184,6 @@
   },
   {
     "word": "한",
-    "native_script": "한",
     "language": "Korean",
     "family": "Koreanic",
     "category": "emotion/culture",
@@ -1289,7 +1197,6 @@
   },
   {
     "word": "handschuhschneeballwerfer",
-    "native_script": "handschuhschneeballwerfer",
     "language": "German",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -1303,7 +1210,6 @@
   },
   {
     "word": "harkla",
-    "native_script": "harkla",
     "language": "Swedish",
     "family": "Germanic",
     "category": "body/action",
@@ -1317,7 +1223,6 @@
   },
   {
     "word": "házisárkány",
-    "native_script": "házisárkány",
     "language": "Hungarian",
     "family": "Finno-Ugric",
     "category": "personality/relationships",
@@ -1331,7 +1236,6 @@
   },
   {
     "word": "효",
-    "native_script": "효",
     "language": "Korean",
     "family": "Koreanic",
     "category": "ethics/family",
@@ -1345,7 +1249,6 @@
   },
   {
     "word": "hygge",
-    "native_script": "hygge",
     "language": "Danish",
     "family": "Germanic",
     "category": "comfort/social",
@@ -1359,7 +1262,6 @@
   },
   {
     "word": "hinna",
-    "native_script": "hinna",
     "language": "Swedish",
     "family": "Germanic",
     "category": "time/punctuality",
@@ -1373,7 +1275,6 @@
   },
   {
     "word": "hiraeth",
-    "native_script": "hiraeth",
     "language": "Welsh",
     "family": "Celtic",
     "category": "emotion",
@@ -1387,7 +1288,6 @@
   },
   {
     "word": "本音",
-    "native_script": "本音",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social/emotion",
@@ -1401,7 +1301,6 @@
   },
   {
     "word": "hüzün",
-    "native_script": "hüzün",
     "language": "Turkish",
     "family": "Turkic",
     "category": "emotion",
@@ -1415,7 +1314,6 @@
   },
   {
     "word": "hyppytyynytyydytys",
-    "native_script": "hyppytyynytyydytys",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "emotion/satisfaction",
@@ -1429,7 +1327,6 @@
   },
   {
     "word": "ʻohana",
-    "native_script": "ʻohana",
     "language": "Hawaiian",
     "family": "Austronesian",
     "category": "kinship",
@@ -1443,7 +1340,6 @@
   },
   {
     "word": "生き甲斐",
-    "native_script": "生き甲斐",
     "language": "Japanese",
     "family": "Japonic",
     "category": "life/philosophy",
@@ -1457,7 +1353,6 @@
   },
   {
     "word": "ᐃᒃᑦᓱᐊᕐᐳᒃ",
-    "native_script": "ᐃᒃᑦᓱᐊᕐᐳᒃ",
     "language": "Inuit",
     "family": "Eskimo-Aleut",
     "category": "behavior/anticipation",
@@ -1471,7 +1366,6 @@
   },
   {
     "word": "ilunga",
-    "native_script": "ilunga",
     "language": "Tshiluba (Congo)",
     "family": "Niger–Congo",
     "category": "ethic/forgiveness",
@@ -1485,7 +1379,6 @@
   },
   {
     "word": "इज़्ज़त",
-    "native_script": "इज़्ज़त",
     "language": "Hindi/Urdu",
     "family": "Indo-Aryan",
     "category": "social",
@@ -1499,7 +1392,6 @@
   },
   {
     "word": "jaksaa",
-    "native_script": "jaksaa",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "emotion/motivation",
@@ -1513,7 +1405,6 @@
   },
   {
     "word": "jayus",
-    "native_script": "jayus",
     "language": "Indonesian",
     "family": "Austronesian",
     "category": "humor/behavior",
@@ -1527,7 +1418,6 @@
   },
   {
     "word": "정",
-    "native_script": "정",
     "language": "Korean",
     "family": "Koreanic",
     "category": "relationship",
@@ -1541,7 +1431,6 @@
   },
   {
     "word": "加油",
-    "native_script": "加油",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "cheer",
@@ -1555,7 +1444,6 @@
   },
   {
     "word": "जिजीविषा",
-    "native_script": "जिजीविषा",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "emotion/motivation",
@@ -1569,7 +1457,6 @@
   },
   {
     "word": "jobbig",
-    "native_script": "jobbig",
     "language": "Swedish",
     "family": "Germanic",
     "category": "emotion/annoyance",
@@ -1583,7 +1470,6 @@
   },
   {
     "word": "joie de vivre",
-    "native_script": "joie de vivre",
     "language": "French",
     "family": "Romance",
     "category": "emotion",
@@ -1597,7 +1483,6 @@
   },
   {
     "word": "जुगाड़",
-    "native_script": "जुगाड़",
     "language": "Hindi/Urdu",
     "family": "Indo-Aryan",
     "category": "problem-solving",
@@ -1611,7 +1496,6 @@
   },
   {
     "word": "kaamos",
-    "native_script": "kaamos",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "emotion/weather",
@@ -1625,7 +1509,6 @@
   },
   {
     "word": "kaapshljmurslis",
-    "native_script": "kaapshljmurslis",
     "language": "Latvian",
     "family": "Indo-European",
     "category": "emotion/space",
@@ -1639,7 +1522,6 @@
   },
   {
     "word": "kabelsalat",
-    "native_script": "kabelsalat",
     "language": "German",
     "family": "Indo-European",
     "category": "objects/technology",
@@ -1653,7 +1535,6 @@
   },
   {
     "word": "改善",
-    "native_script": "改善",
     "language": "Japanese",
     "family": "Japonic",
     "category": "philosophy/improvement",
@@ -1667,7 +1548,6 @@
   },
   {
     "word": "kaitiakitanga",
-    "native_script": "kaitiakitanga",
     "language": "Māori",
     "family": "Austronesian",
     "category": "ethic/environment",
@@ -1681,7 +1561,6 @@
   },
   {
     "word": "kalsarikännit",
-    "native_script": "kalsarikännit",
     "language": "Finnish",
     "family": "Uralic",
     "category": "humor/leisure",
@@ -1695,7 +1574,6 @@
   },
   {
     "word": "karelu",
-    "native_script": "karelu",
     "language": "Tulu (Indian)",
     "family": "Dravidian",
     "category": "body/marks",
@@ -1709,7 +1587,6 @@
   },
   {
     "word": "過労死",
-    "native_script": "過労死",
     "language": "Japanese",
     "family": "Japonic",
     "category": "work/society",
@@ -1723,7 +1600,6 @@
   },
   {
     "word": "κέφι",
-    "native_script": "κέφι",
     "language": "Greek",
     "family": "Hellenic",
     "category": "mood",
@@ -1737,7 +1613,6 @@
   },
   {
     "word": "keyif",
-    "native_script": "keyif",
     "language": "Turkish",
     "family": "Turkic",
     "category": "mood",
@@ -1751,7 +1626,6 @@
   },
   {
     "word": "kilig",
-    "native_script": "kilig",
     "language": "Tagalog/Filipino",
     "family": "Austronesian",
     "category": "emotion",
@@ -1765,7 +1639,6 @@
   },
   {
     "word": "kilkanaście",
-    "native_script": "kilkanaście",
     "language": "Polish",
     "family": "Indo-European",
     "category": "numbers/quantity",
@@ -1779,7 +1652,6 @@
   },
   {
     "word": "金継ぎ",
-    "native_script": "金継ぎ",
     "language": "Japanese",
     "family": "Japonic",
     "category": "craft/philosophy",
@@ -1793,7 +1665,6 @@
   },
   {
     "word": "木漏れ日",
-    "native_script": "木漏れ日",
     "language": "Japanese",
     "family": "Japonic",
     "category": "nature/light",
@@ -1807,7 +1678,6 @@
   },
   {
     "word": "恋の予感",
-    "native_script": "恋の予感",
     "language": "Japanese",
     "family": "Japonic",
     "category": "emotion/love",
@@ -1821,7 +1691,6 @@
   },
   {
     "word": "kombinować",
-    "native_script": "kombinować",
     "language": "Polish",
     "family": "Indo-European",
     "category": "problem-solving",
@@ -1835,7 +1704,6 @@
   },
   {
     "word": "kos",
-    "native_script": "kos",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "coziness",
@@ -1849,7 +1717,6 @@
   },
   {
     "word": "เกรงใจ",
-    "native_script": "เกรงใจ",
     "language": "Thai",
     "family": "Tai-Kadai",
     "category": "etiquette",
@@ -1863,7 +1730,6 @@
   },
   {
     "word": "kummerspeck",
-    "native_script": "kummerspeck",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/food",
@@ -1877,7 +1743,6 @@
   },
   {
     "word": "קװעלן",
-    "native_script": "קװעלן",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "emotion",
@@ -1891,7 +1756,6 @@
   },
   {
     "word": "教育ママ",
-    "native_script": "教育ママ",
     "language": "Japanese",
     "family": "Japonic",
     "category": "personality/parenting",
@@ -1905,7 +1769,6 @@
   },
   {
     "word": "l'appel du vide",
-    "native_script": "l'appel du vide",
     "language": "French",
     "family": "Indo-European",
     "category": "psychology/impulse",
@@ -1919,7 +1782,6 @@
   },
   {
     "word": "l'esprit de l'escalier",
-    "native_script": "l'esprit de l'escalier",
     "language": "French",
     "family": "Indo-European",
     "category": "emotion/regret",
@@ -1933,7 +1795,6 @@
   },
   {
     "word": "la douleur exquise",
-    "native_script": "la douleur exquise",
     "language": "French",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -1947,7 +1808,6 @@
   },
   {
     "word": "lagom",
-    "native_script": "lagom",
     "language": "Swedish",
     "family": "Germanic",
     "category": "moderation",
@@ -1961,7 +1821,6 @@
   },
   {
     "word": "laïcité",
-    "native_script": "laïcité",
     "language": "French",
     "family": "Romance",
     "category": "politics",
@@ -1975,7 +1834,6 @@
   },
   {
     "word": "lebensmüde",
-    "native_script": "lebensmüde",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/existential",
@@ -1989,7 +1847,6 @@
   },
   {
     "word": "leiliviskaja",
-    "native_script": "leiliviskaja",
     "language": "Estonian",
     "family": "Finno-Ugric",
     "category": "sauna/activity",
@@ -2003,7 +1860,6 @@
   },
   {
     "word": "lieko",
-    "native_script": "lieko",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "nature/objects",
@@ -2017,7 +1873,6 @@
   },
   {
     "word": "листопа́дъ",
-    "native_script": "листопа́дъ",
     "language": "Russian",
     "family": "Indo-European",
     "category": "nature/seasonal",
@@ -2031,7 +1886,6 @@
   },
   {
     "word": "lítost",
-    "native_script": "lítost",
     "language": "Czech",
     "family": "Slavic",
     "category": "emotion",
@@ -2045,7 +1899,6 @@
   },
   {
     "word": "לופֿטמענטש",
-    "native_script": "לופֿטמענטש",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "personality/dreamer",
@@ -2059,7 +1912,6 @@
   },
   {
     "word": "loskop",
-    "native_script": "loskop",
     "language": "Afrikaans",
     "family": "Germanic",
     "category": "personality/behavior",
@@ -2073,7 +1925,6 @@
   },
   {
     "word": "madrugada",
-    "native_script": "madrugada",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "time/temporal",
@@ -2087,7 +1938,6 @@
   },
   {
     "word": "malandragem",
-    "native_script": "malandragem",
     "language": "Portuguese (Brazil)",
     "family": "Romance",
     "category": "street smarts",
@@ -2101,7 +1951,6 @@
   },
   {
     "word": "malinchismo",
-    "native_script": "malinchismo",
     "language": "Mexican Spanish",
     "family": "Romance",
     "category": "attitude",
@@ -2115,7 +1964,6 @@
   },
   {
     "word": "mamihlapinatapai",
-    "native_script": "mamihlapinatapai",
     "language": "Yaghan (often cited)",
     "family": "Isolate",
     "category": "social glance",
@@ -2129,7 +1977,6 @@
   },
   {
     "word": "mana",
-    "native_script": "mana",
     "language": "Māori/Polynesian",
     "family": "Austronesian",
     "category": "power",
@@ -2143,7 +1990,6 @@
   },
   {
     "word": "mångata",
-    "native_script": "mångata",
     "language": "Swedish",
     "family": "Germanic",
     "category": "nature/night",
@@ -2157,7 +2003,6 @@
   },
   {
     "word": "manja",
-    "native_script": "manja",
     "language": "Malay",
     "family": "Austronesian",
     "category": "behavior/affection",
@@ -2171,7 +2016,6 @@
   },
   {
     "word": "mencolek",
-    "native_script": "mencolek",
     "language": "Indonesian",
     "family": "Austronesian",
     "category": "behavior/prank",
@@ -2185,7 +2029,6 @@
   },
   {
     "word": "merak",
-    "native_script": "merak",
     "language": "Serbian",
     "family": "Indo-European",
     "category": "philosophy/lifestyle",
@@ -2199,7 +2042,6 @@
   },
   {
     "word": "μεράκι",
-    "native_script": "μεράκι",
     "language": "Greek",
     "family": "Hellenic",
     "category": "craft/love",
@@ -2213,7 +2055,6 @@
   },
   {
     "word": "meriggiare",
-    "native_script": "meriggiare",
     "language": "Italian",
     "family": "Indo-European",
     "category": "leisure/time",
@@ -2227,7 +2068,6 @@
   },
   {
     "word": "面子",
-    "native_script": "面子",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "social",
@@ -2241,7 +2081,6 @@
   },
   {
     "word": "mít kliku",
-    "native_script": "mít kliku",
     "language": "Czech",
     "family": "Slavic",
     "category": "luck",
@@ -2255,7 +2094,6 @@
   },
   {
     "word": "mokita",
-    "native_script": "mokita",
     "language": "Kivila",
     "family": "Austronesian",
     "category": "social/truth",
@@ -2269,7 +2107,6 @@
   },
   {
     "word": "物の哀れ",
-    "native_script": "物の哀れ",
     "language": "Japanese",
     "family": "Japonic",
     "category": "aesthetics/emotion",
@@ -2283,7 +2120,6 @@
   },
   {
     "word": "勿体無い",
-    "native_script": "勿体無い",
     "language": "Japanese",
     "family": "Japonic",
     "category": "ethic",
@@ -2297,7 +2133,6 @@
   },
   {
     "word": "mudik",
-    "native_script": "mudik",
     "language": "Indonesian",
     "family": "Austronesian",
     "category": "custom/migration",
@@ -2311,7 +2146,6 @@
   },
   {
     "word": "murr-ma",
-    "native_script": "murr-ma",
     "language": "Wagiman",
     "family": "Language isolate",
     "category": "nature/water",
@@ -2325,7 +2159,6 @@
   },
   {
     "word": "myötähäpeä",
-    "native_script": "myötähäpeä",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "emotion/social",
@@ -2339,7 +2172,6 @@
   },
   {
     "word": "mysa",
-    "native_script": "mysa",
     "language": "Swedish",
     "family": "Germanic",
     "category": "emotion/coziness",
@@ -2353,7 +2185,6 @@
   },
   {
     "word": "नमस्ते",
-    "native_script": "नमस्ते",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "greeting/spirituality",
@@ -2367,7 +2198,6 @@
   },
   {
     "word": "懐かしい",
-    "native_script": "懐かしい",
     "language": "Japanese",
     "family": "Japonic",
     "category": "emotion/memory",
@@ -2381,7 +2211,6 @@
   },
   {
     "word": "内卷",
-    "native_script": "内卷",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "society",
@@ -2395,7 +2224,6 @@
   },
   {
     "word": "ネカマ",
-    "native_script": "ネカマ",
     "language": "Japanese",
     "family": "Japonic",
     "category": "technology/identity",
@@ -2409,7 +2237,6 @@
   },
   {
     "word": "nepakartojama",
-    "native_script": "nepakartojama",
     "language": "Lithuanian",
     "family": "Indo-European",
     "category": "time/perfection",
@@ -2423,7 +2250,6 @@
   },
   {
     "word": "눈치",
-    "native_script": "눈치",
     "language": "Korean",
     "family": "Koreanic",
     "category": "social skill",
@@ -2437,7 +2263,6 @@
   },
   {
     "word": "однолюб",
-    "native_script": "однолюб",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -2451,7 +2276,6 @@
   },
   {
     "word": "おもてなし",
-    "native_script": "おもてなし",
     "language": "Japanese",
     "family": "Japonic",
     "category": "hospitality",
@@ -2465,7 +2289,6 @@
   },
   {
     "word": "oodal",
-    "native_script": "oodal",
     "language": "Tamil",
     "family": "Dravidian",
     "category": "emotion/love-play",
@@ -2479,7 +2302,6 @@
   },
   {
     "word": "utepils",
-    "native_script": "utepils",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "leisure/nature",
@@ -2493,7 +2315,6 @@
   },
   {
     "word": "orka",
-    "native_script": "orka",
     "language": "Swedish",
     "family": "Germanic",
     "category": "energy/fatigue",
@@ -2507,7 +2328,6 @@
   },
   {
     "word": "पैसा वसूल",
-    "native_script": "पैसा वसूल",
     "language": "Hindi",
     "family": "Indo-Aryan",
     "category": "value judgment",
@@ -2521,7 +2341,6 @@
   },
   {
     "word": "pålegg",
-    "native_script": "pålegg",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "food/objects",
@@ -2535,7 +2354,6 @@
   },
   {
     "word": "pana po’o",
-    "native_script": "pana po’o",
     "language": "Hawaiian",
     "family": "Austronesian",
     "category": "gesture",
@@ -2549,7 +2367,6 @@
   },
   {
     "word": "papakata",
-    "native_script": "papakata",
     "language": "Māori",
     "family": "Austronesian",
     "category": "physical/anatomy",
@@ -2563,7 +2380,6 @@
   },
   {
     "word": "παρέα",
-    "native_script": "παρέα",
     "language": "Greek",
     "family": "Indo-European",
     "category": "social/friendship",
@@ -2577,7 +2393,6 @@
   },
   {
     "word": "passeggiata",
-    "native_script": "passeggiata",
     "language": "Italian",
     "family": "Romance",
     "category": "custom",
@@ -2591,7 +2406,6 @@
   },
   {
     "word": "pena ajena",
-    "native_script": "pena ajena",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "emotion/empathy",
@@ -2605,7 +2419,6 @@
   },
   {
     "word": "φιλοξενία",
-    "native_script": "φιλοξενία",
     "language": "Greek",
     "family": "Hellenic",
     "category": "ethic",
@@ -2619,7 +2432,6 @@
   },
   {
     "word": "pisan zapra",
-    "native_script": "pisan zapra",
     "language": "Malay",
     "family": "Austronesian",
     "category": "time/measurement",
@@ -2633,7 +2445,6 @@
   },
   {
     "word": "почемучка",
-    "native_script": "почемучка",
     "language": "Russian",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -2647,7 +2458,6 @@
   },
   {
     "word": "pono",
-    "native_script": "pono",
     "language": "Hawaiian",
     "family": "Austronesian",
     "category": "ethic",
@@ -2661,7 +2471,6 @@
   },
   {
     "word": "poronkusema",
-    "native_script": "poronkusema",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "measurement/animals",
@@ -2675,7 +2484,6 @@
   },
   {
     "word": "пошлость",
-    "native_script": "пошлость",
     "language": "Russian",
     "family": "Slavic",
     "category": "aesthetics/morality",
@@ -2689,7 +2497,6 @@
   },
   {
     "word": "빨리빨리",
-    "native_script": "빨리빨리",
     "language": "Korean",
     "family": "Koreanic",
     "category": "pace/culture",
@@ -2703,7 +2510,6 @@
   },
   {
     "word": "prozvonit",
-    "native_script": "prozvonit",
     "language": "Czech",
     "family": "Indo-European",
     "category": "technology/behavior",
@@ -2717,7 +2523,6 @@
   },
   {
     "word": "Ψυθισμός",
-    "native_script": "Ψυθισμός",
     "language": "Greek",
     "family": "Indo-European",
     "category": "nature/sound",
@@ -2731,7 +2536,6 @@
   },
   {
     "word": "气",
-    "native_script": "气",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "philosophy/medicine",
@@ -2745,7 +2549,6 @@
   },
   {
     "word": "radioukacz",
-    "native_script": "radioukacz",
     "language": "Polish",
     "family": "Indo-European",
     "category": "historical/occupation",
@@ -2759,7 +2562,6 @@
   },
   {
     "word": "разлюбить",
-    "native_script": "разлюбить",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -2773,7 +2575,6 @@
   },
   {
     "word": "热闹",
-    "native_script": "热闹",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "atmosphere",
@@ -2787,7 +2588,6 @@
   },
   {
     "word": "人情",
-    "native_script": "人情",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "society",
@@ -2801,7 +2601,6 @@
   },
   {
     "word": "resfeber",
-    "native_script": "resfeber",
     "language": "Swedish",
     "family": "Germanic",
     "category": "travel/emotion",
@@ -2815,7 +2614,6 @@
   },
   {
     "word": "retrouvailles",
-    "native_script": "retrouvailles",
     "language": "French",
     "family": "Indo-European",
     "category": "emotion/reunion",
@@ -2829,7 +2627,6 @@
   },
   {
     "word": "สบาย",
-    "native_script": "สบาย",
     "language": "Thai",
     "family": "Tai-Kadai",
     "category": "wellbeing",
@@ -2843,7 +2640,6 @@
   },
   {
     "word": "سمر",
-    "native_script": "سمر",
     "language": "Arabic",
     "family": "Semitic",
     "category": "social/time",
@@ -2857,7 +2653,6 @@
   },
   {
     "word": "sankofa",
-    "native_script": "sankofa",
     "language": "Akan (Twi)",
     "family": "Niger-Congo",
     "category": "ethic",
@@ -2871,7 +2666,6 @@
   },
   {
     "word": "สนุก",
-    "native_script": "สนุก",
     "language": "Thai",
     "family": "Tai-Kadai",
     "category": "value",
@@ -2885,7 +2679,6 @@
   },
   {
     "word": "saudade",
-    "native_script": "saudade",
     "language": "Portuguese",
     "family": "Indo-European",
     "category": "emotion/longing",
@@ -2899,7 +2692,6 @@
   },
   {
     "word": "sauna",
-    "native_script": "sauna",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "culture/wellness",
@@ -2913,7 +2705,6 @@
   },
   {
     "word": "schadenfreude",
-    "native_script": "schadenfreude",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/social",
@@ -2927,7 +2718,6 @@
   },
   {
     "word": "schilderwald",
-    "native_script": "schilderwald",
     "language": "German",
     "family": "Indo-European",
     "category": "environment/navigation",
@@ -2941,7 +2731,6 @@
   },
   {
     "word": "שלעפּן",
-    "native_script": "שלעפּן",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "action",
@@ -2955,7 +2744,6 @@
   },
   {
     "word": "schlimmbesserung",
-    "native_script": "schlimmbesserung",
     "language": "German",
     "family": "Indo-European",
     "category": "change/improvement",
@@ -2969,7 +2757,6 @@
   },
   {
     "word": "schnapsidee",
-    "native_script": "schnapsidee",
     "language": "German",
     "family": "Indo-European",
     "category": "ideas/planning",
@@ -2983,7 +2770,6 @@
   },
   {
     "word": "सेवा",
-    "native_script": "सेवा",
     "language": "Sanskrit/Hindi",
     "family": "Indo-Aryan",
     "category": "ethic",
@@ -2997,7 +2783,6 @@
   },
   {
     "word": "sgrìob",
-    "native_script": "sgrìob",
     "language": "Scottish Gaelic",
     "family": "Indo-European",
     "category": "physical/sensation",
@@ -3011,7 +2796,6 @@
   },
   {
     "word": "შემომეძამ",
-    "native_script": "შემომეძამ",
     "language": "Georgian",
     "family": "Kartvelian",
     "category": "behavior/food",
@@ -3025,7 +2809,6 @@
   },
   {
     "word": "森林浴",
-    "native_script": "森林浴",
     "language": "Japanese",
     "family": "Japonic",
     "category": "wellbeing",
@@ -3039,7 +2822,6 @@
   },
   {
     "word": "שלימזל",
-    "native_script": "שלימזל",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "personality/misfortune",
@@ -3053,7 +2835,6 @@
   },
   {
     "word": "しょうがない",
-    "native_script": "しょうがない",
     "language": "Japanese",
     "family": "Japonic",
     "category": "philosophy/acceptance",
@@ -3067,7 +2848,6 @@
   },
   {
     "word": "sisu",
-    "native_script": "sisu",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "character/resilience",
@@ -3081,7 +2861,6 @@
   },
   {
     "word": "sitzfleisch",
-    "native_script": "sitzfleisch",
     "language": "German",
     "family": "Indo-European",
     "category": "work/endurance",
@@ -3095,7 +2874,6 @@
   },
   {
     "word": "soare cu dinți",
-    "native_script": "soare cu dinți",
     "language": "Romanian",
     "family": "Indo-European",
     "category": "weather/description",
@@ -3109,7 +2887,6 @@
   },
   {
     "word": "sobremesa",
-    "native_script": "sobremesa",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "social/dining",
@@ -3123,7 +2900,6 @@
   },
   {
     "word": "spregledati",
-    "native_script": "spregledati",
     "language": "Slovenian",
     "family": "Indo-European",
     "category": "perception/understanding",
@@ -3137,7 +2913,6 @@
   },
   {
     "word": "sprezzatura",
-    "native_script": "sprezzatura",
     "language": "Italian",
     "family": "Romance",
     "category": "style/virtue",
@@ -3151,7 +2926,6 @@
   },
   {
     "word": "suilk",
-    "native_script": "suilk",
     "language": "Scottish Gaelic",
     "family": "Indo-European",
     "category": "behavior/eating",
@@ -3165,7 +2939,6 @@
   },
   {
     "word": "تعارف",
-    "native_script": "تعارف",
     "language": "Persian (Farsi)",
     "family": "Indo-Iranian",
     "category": "etiquette",
@@ -3179,7 +2952,6 @@
   },
   {
     "word": "تراض",
-    "native_script": "تراض",
     "language": "Arabic",
     "family": "Semitic",
     "category": "social/conflict",
@@ -3193,7 +2965,6 @@
   },
   {
     "word": "tokka",
-    "native_script": "tokka",
     "language": "Finnish",
     "family": "Finno-Ugric",
     "category": "animals/collective",
@@ -3207,7 +2978,6 @@
   },
   {
     "word": "tampo",
-    "native_script": "tampo",
     "language": "Tagalog/Filipino",
     "family": "Austronesian",
     "category": "relationship",
@@ -3221,7 +2991,6 @@
   },
   {
     "word": "tapu",
-    "native_script": "tapu",
     "language": "Tongan/Polynesian",
     "family": "Austronesian",
     "category": "custom/law",
@@ -3235,7 +3004,6 @@
   },
   {
     "word": "طرب",
-    "native_script": "طرب",
     "language": "Arabic",
     "family": "Afro-Asiatic",
     "category": "music/emotion",
@@ -3249,7 +3017,6 @@
   },
   {
     "word": "tartle",
-    "native_script": "tartle",
     "language": "Scottish Gaelic",
     "family": "Indo-European",
     "category": "social/awkward",
@@ -3263,7 +3030,6 @@
   },
   {
     "word": "建前／本音",
-    "native_script": "建前／本音",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social",
@@ -3277,7 +3043,6 @@
   },
   {
     "word": "terroir",
-    "native_script": "terroir",
     "language": "French",
     "family": "Romance",
     "category": "food/wine",
@@ -3291,7 +3056,6 @@
   },
   {
     "word": "þetta reddast",
-    "native_script": "þetta reddast",
     "language": "Icelandic",
     "family": "Germanic",
     "category": "philosophy/attitude",
@@ -3305,7 +3069,6 @@
   },
   {
     "word": "tidsoptimist",
-    "native_script": "tidsoptimist",
     "language": "Swedish",
     "family": "Germanic",
     "category": "personality/time",
@@ -3319,7 +3082,6 @@
   },
   {
     "word": "tima",
-    "native_script": "tima",
     "language": "Icelandic",
     "family": "Germanic",
     "category": "personality/behavior",
@@ -3333,7 +3095,6 @@
   },
   {
     "word": "tingo",
-    "native_script": "tingo",
     "language": "Pascuense",
     "family": "Austronesian",
     "category": "social/behavior",
@@ -3347,7 +3108,6 @@
   },
   {
     "word": "torschlusspanik",
-    "native_script": "torschlusspanik",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/time",
@@ -3361,7 +3121,6 @@
   },
   {
     "word": "тоска",
-    "native_script": "тоска",
     "language": "Russian",
     "family": "Slavic",
     "category": "emotion",
@@ -3375,7 +3134,6 @@
   },
   {
     "word": "徒弟",
-    "native_script": "徒弟",
     "language": "Japanese",
     "family": "Japonic",
     "category": "social role",
@@ -3389,7 +3147,6 @@
   },
   {
     "word": "treppenwitz",
-    "native_script": "treppenwitz",
     "language": "German",
     "family": "Indo-European",
     "category": "communication/regret",
@@ -3403,7 +3160,6 @@
   },
   {
     "word": "trepverter",
-    "native_script": "trepverter",
     "language": "Yiddish",
     "family": "Germanic",
     "category": "language/wit",
@@ -3417,7 +3173,6 @@
   },
   {
     "word": "tretår",
-    "native_script": "tretår",
     "language": "Swedish",
     "family": "Germanic",
     "category": "food/drink",
@@ -3431,7 +3186,6 @@
   },
   {
     "word": "ツンデレ",
-    "native_script": "ツンデレ",
     "language": "Japanese",
     "family": "Japonic",
     "category": "personality trope",
@@ -3445,7 +3199,6 @@
   },
   {
     "word": "積ん読",
-    "native_script": "積ん読",
     "language": "Japanese",
     "family": "Japonic",
     "category": "habit",
@@ -3459,7 +3212,6 @@
   },
   {
     "word": "tuerto",
-    "native_script": "tuerto",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "physical/description",
@@ -3473,7 +3225,6 @@
   },
   {
     "word": "tutear",
-    "native_script": "tutear",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "language/formality",
@@ -3487,7 +3238,6 @@
   },
   {
     "word": "ubuntu",
-    "native_script": "ubuntu",
     "language": "Zulu/Xhosa",
     "family": "Bantu",
     "category": "ethic",
@@ -3501,7 +3251,6 @@
   },
   {
     "word": "uffda",
-    "native_script": "uffda",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "emotion/exclamation",
@@ -3515,7 +3264,6 @@
   },
   {
     "word": "uitwaaien",
-    "native_script": "uitwaaien",
     "language": "Dutch",
     "family": "Germanic",
     "category": "nature/wellness",
@@ -3529,7 +3277,6 @@
   },
   {
     "word": "utang na loob",
-    "native_script": "utang na loob",
     "language": "Tagalog/Filipino",
     "family": "Austronesian",
     "category": "ethic",
@@ -3543,7 +3290,6 @@
   },
   {
     "word": "vabba",
-    "native_script": "vabba",
     "language": "Swedish",
     "family": "Germanic",
     "category": "family/childcare",
@@ -3557,7 +3303,6 @@
   },
   {
     "word": "vacilando",
-    "native_script": "vacilando",
     "language": "Spanish",
     "family": "Indo-European",
     "category": "philosophy/travel",
@@ -3571,7 +3316,6 @@
   },
   {
     "word": "vedriti",
-    "native_script": "vedriti",
     "language": "Slovenian",
     "family": "Indo-European",
     "category": "emotional/protection",
@@ -3585,7 +3329,6 @@
   },
   {
     "word": "vergüenza ajena",
-    "native_script": "vergüenza ajena",
     "language": "Spanish",
     "family": "Romance",
     "category": "emotion",
@@ -3599,7 +3342,6 @@
   },
   {
     "word": "verschlimmbessern",
-    "native_script": "verschlimmbessern",
     "language": "German",
     "family": "Indo-European",
     "category": "action/improvement",
@@ -3613,7 +3355,6 @@
   },
   {
     "word": "विरह",
-    "native_script": "विरह",
     "language": "Hindi",
     "family": "Indo-European",
     "category": "emotion/love",
@@ -3627,7 +3368,6 @@
   },
   {
     "word": "vobba",
-    "native_script": "vobba",
     "language": "Swedish",
     "family": "Germanic",
     "category": "work/family",
@@ -3641,7 +3381,6 @@
   },
   {
     "word": "voorpret",
-    "native_script": "voorpret",
     "language": "Dutch",
     "family": "Germanic",
     "category": "emotion/anticipation",
@@ -3655,7 +3394,6 @@
   },
   {
     "word": "侘び寂び",
-    "native_script": "侘び寂び",
     "language": "Japanese",
     "family": "Japonic",
     "category": "aesthetics",
@@ -3669,7 +3407,6 @@
   },
   {
     "word": "waldeinsamkeit",
-    "native_script": "waldeinsamkeit",
     "language": "German",
     "family": "Indo-European",
     "category": "nature/emotion",
@@ -3683,7 +3420,6 @@
   },
   {
     "word": "وَاسْطَة",
-    "native_script": "واسطة",
     "language": "Arabic",
     "family": "Afro-Asiatic",
     "category": "society",
@@ -3697,7 +3433,6 @@
   },
   {
     "word": "weichei",
-    "native_script": "weichei",
     "language": "German",
     "family": "Indo-European",
     "category": "personality/behavior",
@@ -3711,7 +3446,6 @@
   },
   {
     "word": "weltschmerz",
-    "native_script": "weltschmerz",
     "language": "German",
     "family": "Indo-European",
     "category": "emotion/existential",
@@ -3725,7 +3459,6 @@
   },
   {
     "word": "whānau",
-    "native_script": "whānau",
     "language": "Māori",
     "family": "Austronesian",
     "category": "kinship",
@@ -3739,7 +3472,6 @@
   },
   {
     "word": "يقبرني",
-    "native_script": "يقبرني",
     "language": "Arabic",
     "family": "Semitic",
     "category": "emotion/love",
@@ -3753,7 +3485,6 @@
   },
   {
     "word": "yakamoz",
-    "native_script": "yakamoz",
     "language": "Turkish",
     "family": "Turkic",
     "category": "nature",
@@ -3767,7 +3498,6 @@
   },
   {
     "word": "yaourt",
-    "native_script": "yaourt",
     "language": "French",
     "family": "Indo-European",
     "category": "behavior/music",
@@ -3781,7 +3511,6 @@
   },
   {
     "word": "横飯",
-    "native_script": "横飯",
     "language": "Japanese",
     "family": "Japonic",
     "category": "stress/language",
@@ -3795,7 +3524,6 @@
   },
   {
     "word": "yr",
-    "native_script": "yr",
     "language": "Norwegian",
     "family": "Germanic",
     "category": "nature/weather",
@@ -3809,7 +3537,6 @@
   },
   {
     "word": "缘分",
-    "native_script": "缘分",
     "language": "Chinese (Mandarin)",
     "family": "Sino-Tibetan",
     "category": "fate/relationships",
@@ -3823,7 +3550,6 @@
   },
   {
     "word": "幽玄",
-    "native_script": "幽玄",
     "language": "Japanese",
     "family": "Japonic",
     "category": "aesthetics",
@@ -3837,7 +3563,6 @@
   },
   {
     "word": "załatwić",
-    "native_script": "załatwić",
     "language": "Polish",
     "family": "Indo-European",
     "category": "social/methods",
@@ -3851,7 +3576,6 @@
   },
   {
     "word": "Запой",
-    "native_script": "Запой",
     "language": "Russian",
     "family": "Indo-European",
     "category": "behavior/drinking",
@@ -3865,7 +3589,6 @@
   },
   {
     "word": "zeitgeist",
-    "native_script": "zeitgeist",
     "language": "German",
     "family": "Germanic",
     "category": "culture",
@@ -3879,7 +3602,6 @@
   },
   {
     "word": "ژغژغ",
-    "native_script": "ژغژغ",
     "language": "Persian",
     "family": "Indo-European",
     "category": "physical/emotional",
@@ -3893,7 +3615,6 @@
   },
   {
     "word": "злорадствовать",
-    "native_script": "злорадствовать",
     "language": "Russian",
     "family": "Indo-European",
     "category": "emotion/malicious",
