@@ -142,20 +142,13 @@ export function MapView({ words, onWordClick }: MapViewProps) {
 
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
-  // We'll need to add a square icon image to the map after it loads
+  // Add square icon image to the map after it loads
   useEffect(() => {
     if (!mapRef.current) return;
 
     const map = mapRef.current.getMap();
 
-    // Wait for map to load
-    if (!map.loaded()) {
-      map.on('load', addSquareIcon);
-    } else {
-      addSquareIcon();
-    }
-
-    function addSquareIcon() {
+    const addSquareIcon = () => {
       if (map.hasImage('square')) return;
 
       // Create a square icon using canvas
@@ -171,10 +164,17 @@ export function MapView({ words, onWordClick }: MapViewProps) {
 
         map.addImage('square', canvas);
       }
+    };
+
+    // Ensure map style is fully loaded before adding custom image
+    if (map.isStyleLoaded()) {
+      addSquareIcon();
+    } else {
+      map.on('styledata', addSquareIcon);
     }
 
     return () => {
-      map.off('load', addSquareIcon);
+      map.off('styledata', addSquareIcon);
     };
   }, []);
 
@@ -189,14 +189,17 @@ export function MapView({ words, onWordClick }: MapViewProps) {
       'icon-size': [
         'step',
         ['get', 'point_count'],
-        0.3,  // size for clusters with < 10 points
-        10, 0.4,  // size for 10-99 points
-        100, 0.5  // size for 100+ points
+        0.35,  // size for clusters with < 10 points
+        10, 0.45,  // size for 10-99 points
+        100, 0.55  // size for 100+ points
       ],
       'icon-allow-overlap': true,
+      'icon-ignore-placement': true,
       'text-field': '{point_count_abbreviated}',
       'text-font': ['DIN Offc Pro Bold', 'Arial Unicode MS Bold'],
       'text-size': 12,
+      'text-allow-overlap': true,
+      'text-ignore-placement': true,
     },
     paint: {
       'text-color': '#fafafa',
@@ -211,8 +214,9 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'square',
-      'icon-size': 0.15,
+      'icon-size': 0.18,
       'icon-allow-overlap': true,
+      'icon-ignore-placement': true,
     },
   };
 
