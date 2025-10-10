@@ -3651,5 +3651,18 @@
     "english_approx": "just",
     "phonetic": "noˈmas",
     "pronunciation": "ff90a159c85fd7ed91cac6da0e24fbda.mp3"
+  },
+  {
+    "word": "pués",
+    "language": "Spanish",
+    "sources": "https://latinamericanspanishcafe.com/unique-spanish-words/",
+    "family": "Indo-European (Romance)",
+    "category": "discourse/connector",
+    "definition": "A Spanish discourse particle used to introduce explanations, transitions, emphasis, or hesitation, functioning as a conversational filler and connective element in spoken and informal written language.",
+    "literal": "well",
+    "usage_notes": "Standardly spelled \"pues\" without an accent; used widely as a filler, hesitation marker, causal connector or discourse softener; tone and meaning depend on context and intonation, varying regionally.",
+    "english_approx": "well / so / then",
+    "phonetic": "pwés",
+    "pronunciation": "c1e3af636c31751d258b44b5ca873962.mp3"
   }
 ]
