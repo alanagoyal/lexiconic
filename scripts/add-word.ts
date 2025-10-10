@@ -44,6 +44,7 @@ interface BraintrustMetadata {
   usage_notes: string;
   english_approx: string;
   phonetic: string;
+  location: string;
 }
 
 const metadataSchema = z.object({
@@ -56,6 +57,7 @@ const metadataSchema = z.object({
   usage_notes: z.string(),
   english_approx: z.string(),
   phonetic: z.string(),
+  location: z.string(),
 });
 
 async function generateMetadata(word: string, language: string): Promise<BraintrustMetadata> {
@@ -203,6 +205,7 @@ async function addWord(word: string, language: string, source: string) {
       usage_notes: metadata.usage_notes,
       english_approx: metadata.english_approx,
       phonetic: metadata.phonetic,
+      location: metadata.location,
       pronunciation: pronunciationFile,
     };
 

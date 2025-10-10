@@ -37,6 +37,7 @@ interface Word {
   definition: string;
   literal: string;
   usage_notes: string;
+  location: string;
   example_native: string;
   example_gloss: string;
   english_approx: string;

@@ -12,6 +12,7 @@
     "generate-metadata:all": "tsx scripts/generate-metadata.ts --all-words",
     "generate-pronunciations": "tsx scripts/generate-pronunciations.ts",
     "generate-embeddings": "tsx scripts/generate-embeddings.ts",
+    "generate-locations": "tsx scripts/generate-locations.ts",
     "generate:all": "npm run generate-metadata && npm run generate-pronunciations && npm run generate-embeddings",
     "regenerate-pronunciations": "tsx scripts/regenerate-changed-pronunciations.ts"
   },
