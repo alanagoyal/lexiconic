@@ -4,7 +4,7 @@ This folder contains scripts for managing the Lexiconic word database.
 
 ## Core Scripts
 
-### `generate-metadata.ts` ⭐️ NEW
+### `generate-metadata.ts`
 
 Generates comprehensive metadata for new words using the Braintrust `generate-metadata-4263` prompt. This replaces the separate `generate-phonetics.ts` and `generate-definitions.ts` scripts.
 
@@ -128,22 +128,25 @@ BRAINTRUST_API_KEY=your_braintrust_key_here
 
 ## Workflow
 
-### Adding new words (Easy Mode 🎯):
+### Adding new words:
 
-1. Add a minimal word entry to `public/data/words.json` with just `word` and `language` fields:
+1. Add a minimal word entry to `public/data/words.json` with `word`, `language`, and `sources`:
    ```json
    {
      "word": "jayus",
-     "language": "Indonesian"
+     "language": "Indonesian",
+     "sources": "https://example.com/source"
    }
    ```
 2. Commit your changes: `git add public/data/words.json && git commit -m "add jayus"`
-3. The post-commit hook automatically:
-   - **Generates comprehensive metadata** (phonetic, definition, family, category, literal, usage_notes, english_approx)
-   - **Generates audio pronunciation** file
-   - **Generates semantic embedding** for search
+3. The post-commit hook automatically runs in this order:
+   - **Step 1: Generates comprehensive metadata** (phonetic, definition, family, category, literal, usage_notes, english_approx) and updates words.json
+   - **Step 2: Generates audio pronunciation** file and updates words.json with pronunciation field
+   - **Step 3: Generates semantic embedding** using the metadata from Step 1
    - Stages all updated files (words.json, pronunciations/, words-with-embeddings.json)
 4. Review the generated content and commit: `git commit -m "chore: update metadata, pronunciations, and embeddings"`
+
+**Note:** Embeddings are generated AFTER metadata because they depend on the semantic fields (definition, category, usage_notes, etc.) to create accurate search vectors.
 
 ### Manual generation:
 
@@ -179,11 +182,3 @@ npm run generate-embeddings        # Generate semantic embeddings
 - **Pronunciations** are generated for new or changed words using OpenAI TTS
 - All scripts gracefully handle missing API keys
 - Backups are automatically created before modifying `words.json`
-
----
-
-## Legacy Scripts (Deprecated)
-
-The following scripts are kept for reference but are replaced by `generate-metadata.ts`:
-- `generate-phonetics.ts` - Now handled by `generate-metadata.ts`
-- `generate-definitions.ts` - Now handled by `generate-metadata.ts`
