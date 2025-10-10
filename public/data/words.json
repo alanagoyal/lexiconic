@@ -3629,7 +3629,7 @@
   {
     "word": "Pflichterfüllung",
     "language": "German",
-    "sources" : "https://www.collinsdictionary.com/de/worterbuch/deutsch-englisch/pflichterfullung",
+    "sources": "https://www.collinsdictionary.com/de/worterbuch/deutsch-englisch/pflichterfullung",
     "pronunciation": "e7d873c2a32d99bfd0efb8cae5582b85.mp3",
     "family": "Indo-European (Germanic)",
     "category": "social/obligation",
@@ -3642,6 +3642,14 @@
   {
     "word": "nomás",
     "language": "Spanish",
-    "sources": "https://latinamericanspanishcafe.com/unique-spanish-words/"
+    "sources": "https://latinamericanspanishcafe.com/unique-spanish-words/",
+    "family": "Indo-European (Romance)",
+    "category": "colloquial/limitation",
+    "definition": "An informal Spanish adverb indicating exclusivity, limitation, or immediate action, often translating as 'only,' 'just,' or 'just now' depending on context.",
+    "literal": "no more",
+    "usage_notes": "Commonly used in Mexico and many Latin American dialects as a colloquial equivalent of 'solo' or 'solamente'; can indicate 'only' (exclusivity), 'just' (emphasis), or 'just now' (immediacy). Often appears in casual speech to soften commands or requests (e.g., 'nomás espérame' — 'just wait for me'). Written with an accent to mark stress; in some contexts written as two words ('no más') with similar meaning.",
+    "english_approx": "just",
+    "phonetic": "noˈmas",
+    "pronunciation": "ff90a159c85fd7ed91cac6da0e24fbda.mp3"
   }
 ]
