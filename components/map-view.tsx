@@ -103,6 +103,19 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     }
   }, [geojsonData]);
 
+  // Handle cursor changes on hover
+  const handleMouseEnter = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.getMap().getCanvas().style.cursor = 'pointer';
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.getMap().getCanvas().style.cursor = '';
+    }
+  }, []);
+
   // Handle map clicks on points and clusters
   const handleMapClick = useCallback((event: any) => {
     if (!mapRef.current) return;
@@ -268,9 +281,17 @@ export function MapView({ words, onWordClick }: MapViewProps) {
           clusterMaxZoom={14}
           clusterRadius={50}
         >
-          <Layer {...clusterLayer} />
+          <Layer
+            {...clusterLayer}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          />
           <Layer {...clusterCountLayer} />
-          <Layer {...unclusteredPointLayer} />
+          <Layer
+            {...unclusteredPointLayer}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          />
           <Layer {...unclusteredLabelLayer} />
         </Source>
       </Map>
