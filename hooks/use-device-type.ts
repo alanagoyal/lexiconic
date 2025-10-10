@@ -15,10 +15,22 @@ export interface DeviceType {
  * - iOS device detection
  */
 export function useDeviceType(): DeviceType {
-  const [deviceType, setDeviceType] = useState<DeviceType>({
-    isMobile: false,
-    isTouch: false,
-    isIOS: false,
+  const [deviceType, setDeviceType] = useState<DeviceType>(() => {
+    // Initialize with correct values to prevent layout shift
+    if (typeof window === 'undefined') {
+      return { isMobile: false, isTouch: false, isIOS: false };
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const isTouch =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      // @ts-ignore - legacy support
+      (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    return { isMobile, isTouch, isIOS };
   });
 
   useEffect(() => {
