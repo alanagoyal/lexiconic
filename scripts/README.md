@@ -26,12 +26,12 @@ npm run add-word -- "jayus" "Indonesian" "https://example.com/source"
 
 **What it does:**
 1. Validates inputs and checks for duplicates
-2. Creates a backup of `words.json`
+2. Creates a temporary backup of `words.json`
 3. Adds the minimal word entry
 4. Runs metadata generation (via Braintrust)
 5. Generates pronunciation audio (via OpenAI TTS)
 6. Generates semantic embeddings (via OpenAI)
-7. Rolls back on error
+7. Rolls back on error or cleans up backup on success
 
 **Requirements:**
 - `BRAINTRUST_API_KEY` in `.env.local`
@@ -132,7 +132,7 @@ This will:
 2. Generate comprehensive metadata (phonetic, definition, family, category, etc.)
 3. Generate audio pronunciation file
 4. Generate semantic embeddings
-5. Create a backup before making changes
+5. Create temporary backup (auto-deleted on success or used for rollback on error)
 
 Then simply commit everything:
 ```bash
@@ -203,4 +203,5 @@ npm run generate-embeddings        # Generate semantic embeddings
 - **Embeddings** are intelligently regenerated only when semantic fields change
 - **Pronunciations** are generated for new or changed words using OpenAI TTS
 - All scripts gracefully handle missing API keys
-- Backups are automatically created before modifying `words.json`
+- Temporary backups are created during `add-word` operations but automatically cleaned up on success
+- **Deprecated scripts**: The following scripts have been moved to `scripts/deprecated/`:

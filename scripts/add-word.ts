@@ -225,6 +225,10 @@ async function addWord(word: string, language: string, source: string) {
 
     console.log('✨ All generation complete!\n');
 
+    // Delete backup after successful completion
+    fs.unlinkSync(backupPath);
+    console.log('🗑️  Cleaned up backup file\n');
+
     // Prompt for commit
     console.log('📝 Ready to commit. Run:');
     console.log(`   git add .`);
@@ -236,6 +240,7 @@ async function addWord(word: string, language: string, source: string) {
     console.error('\nRolling back changes...');
     fs.copyFileSync(backupPath, wordsPath);
     console.error('✅ Rolled back to backup');
+    fs.unlinkSync(backupPath);
     process.exit(1);
   }
 }
