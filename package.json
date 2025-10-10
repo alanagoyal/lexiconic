@@ -9,7 +9,6 @@
     "start": "next start",
     "add-word": "tsx scripts/add-word.ts",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
-    "generate-metadata:all": "tsx scripts/generate-metadata.ts --all-words",
     "generate-pronunciations": "tsx scripts/generate-pronunciations.ts",
     "generate-embeddings": "tsx scripts/generate-embeddings.ts",
     "generate-locations": "tsx scripts/generate-locations.ts",
