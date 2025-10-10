@@ -1664,7 +1664,7 @@
     "lng": 128.1711
   },
   {
-    "word": "ᐃᒃᑦᓱᐊᕐᐳᒃ",
+    "word": "iktsuarpok",
     "language": "Inuit",
     "family": "Eskimo-Aleut",
     "category": "behavior/anticipation",
@@ -4056,7 +4056,7 @@
     "literal": "care of child",
     "usage_notes": "Common Swedish parental leave term.",
     "english_approx": "to stay home with a sick child",
-    "sources": "https://www.theintrepidguide.com/untranslatable-words-ultimate-list/#google_vignette",
+    "sources": "https://en.wiktionary.org/wiki/vabba",
     "pronunciation": "6250b6d639f2920c2b7c29d96100d9f5.mp3",
     "phonetic": "ˈvæb.ə",
     "location": "Stockholm",
@@ -4142,22 +4142,6 @@
     "location": "Vrindavan",
     "lat": 27.5806,
     "lng": 77.7006
-  },
-  {
-    "word": "vobba",
-    "language": "Swedish",
-    "family": "Germanic",
-    "category": "work/family",
-    "definition": "To wobble or shake in an unsteady manner, typically by tilting side to side or oscillating slightly, rather than moving with stable or smooth motion.",
-    "literal": "work + care for child",
-    "usage_notes": "A modern workplace term in Sweden.",
-    "english_approx": "work-from-home child care day",
-    "sources": "https://www.theintrepidguide.com/untranslatable-words-ultimate-list/#google_vignette",
-    "pronunciation": "a65bccf100723141472c795986b6f470.mp3",
-    "phonetic": "ˈvɒbə",
-    "location": "Stockholm",
-    "lat": 59.3293,
-    "lng": 18.0686
   },
   {
     "word": "voorpret",
@@ -4574,5 +4558,21 @@
     "lat": 40.4168,
     "lng": -3.7038,
     "pronunciation": "027ab16f4f49856ffcf0b481fbc352a0.mp3"
+  },
+  {
+    "word": "pasear",
+    "language": "Spanish",
+    "sources": "https://latinamericanspanishcafe.com/unique-spanish-words/",
+    "family": "Indo-European (Romance)",
+    "category": "leisure/behavior",
+    "definition": "To walk or wander leisurely, often without a specific destination, for pleasure, relaxation, or socializing; also, to take someone or something out for a stroll, drive, or casual outing.",
+    "literal": "to stroll; to go for a walk",
+    "usage_notes": "Used across the Spanish-speaking world; intransitive for strolling and transitive for taking someone or a pet out (e.g., pasear al perro); related phrase: dar un paseo.",
+    "english_approx": "to stroll; take a walk",
+    "phonetic": "pa·se·ár",
+    "location": "Spain",
+    "lat": 40.4168,
+    "lng": -3.7038,
+    "pronunciation": "06a85d6d5c8751a4e63160dc4eb67e1f.mp3"
   }
 ]

@@ -41,15 +41,11 @@ npm run add-word -- "jayus" "Indonesian" "https://example.com/source"
 
 ### `generate-metadata.ts`
 
-Generates comprehensive metadata for new words using the Braintrust `generate-metadata-4263` prompt. Used internally by `add-word.ts` but can also be run standalone.
+Generates comprehensive metadata for ALL words missing any metadata using the Braintrust `generate-metadata-4263` prompt. Used internally by `add-word.ts` but can also be run standalone to backfill any missing metadata.
 
 **Usage:**
 ```bash
-# Generate metadata for new words detected from git
 npm run generate-metadata
-
-# Generate metadata for ALL words missing any metadata
-npm run generate-metadata:all
 ```
 
 **What it generates:**
@@ -182,10 +178,9 @@ npm run generate:all
 
 Or run individual steps:
 ```bash
-npm run generate-metadata          # Generate metadata for new words
-npm run generate-metadata:all      # Generate metadata for ALL words missing it
-npm run generate-pronunciations    # Generate audio files
-npm run generate-embeddings        # Generate semantic embeddings
+npm run generate-metadata        # Generate metadata for ALL words missing it
+npm run generate-pronunciations  # Generate audio files
+npm run generate-embeddings      # Generate semantic embeddings
 ```
 
 ### Updating existing words:
