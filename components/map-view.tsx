@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useRef, useState, useEffect } from "react";
-import Map, { Marker, type MapRef } from "react-map-gl";
+import Map, { Source, Layer, type MapRef, type LayerProps } from "react-map-gl";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
+import type { FeatureCollection, Point } from "geojson";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 interface MapViewProps {
@@ -10,22 +11,17 @@ interface MapViewProps {
   onWordClick: (word: WordWithEmbedding) => void;
 }
 
-interface WordPoint {
-  word: WordWithEmbedding;
-  lat: number;
-  lng: number;
-}
-
-interface Cluster {
-  words: WordPoint[];
-  lat: number;
-  lng: number;
-  count: number;
-}
-
-// Calculate distance between two points (simple euclidean for clustering)
-function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  return Math.sqrt((lat2 - lat1) ** 2 + (lng2 - lng1) ** 2);
+interface WordFeature {
+  type: "Feature";
+  geometry: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  properties: {
+    word: string;
+    location: string;
+    wordData: WordWithEmbedding;
+  };
 }
 
 export function MapView({ words, onWordClick }: MapViewProps) {
@@ -35,152 +31,61 @@ export function MapView({ words, onWordClick }: MapViewProps) {
     longitude: 0,
     zoom: 1.5,
   });
-  const [hoveredCluster, setHoveredCluster] = useState<number | null>(null);
 
-  // Debounced bounds state to prevent flashing during fast panning
-  const [debouncedBounds, setDebouncedBounds] = useState<{
-    north: number;
-    south: number;
-    east: number;
-    west: number;
-  } | null>(null);
-
-  // Stabilize viewport position to prevent constant filtering changes during zoom/pan
-  const stableViewport = useMemo(() => {
-    return {
-      latitude: Math.round(viewport.latitude * 2) / 2, // Round to nearest 0.5 degree
-      longitude: Math.round(viewport.longitude * 2) / 2,
-    };
-  }, [viewport.latitude, viewport.longitude]);
-
-  // Convert words to points with coordinates
-  const wordPoints: WordPoint[] = useMemo(() => {
-    return words
-      .map((word) => {
-        // Read coordinates directly from word data
+  // Convert words to GeoJSON FeatureCollection - this is stable and only updates when words change
+  const geojsonData: FeatureCollection<Point> = useMemo(() => {
+    const features = words
+      .filter((word) => {
         const { lat, lng } = word;
-        
         if (typeof lat !== 'number' || typeof lng !== 'number') {
           console.warn(`Missing coordinates for word: ${word.word} (location: ${word.location})`);
-          return null;
+          return false;
         }
-
+        return true;
+      })
+      .map((word) => {
         // Add slight jitter to prevent exact overlaps using deterministic offset
         const jitter = 0.5;
-        // Use word string to generate stable pseudo-random offset
         const hash = word.word.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        const jitteredLat = lat + ((hash % 1000) / 1000 - 0.5) * jitter;
-        const jitteredLng = lng + ((hash % 1001) / 1001 - 0.5) * jitter;
+        const jitteredLat = word.lat + ((hash % 1000) / 1000 - 0.5) * jitter;
+        const jitteredLng = word.lng + ((hash % 1001) / 1001 - 0.5) * jitter;
 
-        return { word, lat: jitteredLat, lng: jitteredLng };
-      })
-      .filter((p): p is WordPoint => p !== null);
+        return {
+          type: "Feature" as const,
+          geometry: {
+            type: "Point" as const,
+            coordinates: [jitteredLng, jitteredLat], // GeoJSON uses [lng, lat] order
+          },
+          properties: {
+            word: word.word,
+            location: word.location,
+            wordData: word,
+          },
+        };
+      });
+
+    return {
+      type: "FeatureCollection" as const,
+      features,
+    };
   }, [words]);
-
-  // Update debounced bounds after map movement stabilizes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!mapRef.current) return;
-      const map = mapRef.current.getMap();
-      const mapBounds = map.getBounds();
-      if (!mapBounds) return;
-
-      setDebouncedBounds({
-        north: mapBounds.getNorth(),
-        south: mapBounds.getSouth(),
-        east: mapBounds.getEast(),
-        west: mapBounds.getWest(),
-      });
-    }, 50); // 50ms debounce - fast enough to feel responsive, slow enough to prevent flickering
-
-    return () => clearTimeout(timer);
-  }, [viewport]);
-
-  // Create clusters based on zoom level
-  const { clusters, points } = useMemo(() => {
-    // Filter points to only those in viewport (accounting for longitude wrapping)
-    const visiblePoints = debouncedBounds
-      ? wordPoints.filter((point) => {
-          const inLatRange = point.lat >= debouncedBounds.south && point.lat <= debouncedBounds.north;
-
-          // Handle longitude wrapping around 180/-180
-          let inLngRange;
-          if (debouncedBounds.west <= debouncedBounds.east) {
-            // Normal case: bounds don't cross antimeridian
-            inLngRange = point.lng >= debouncedBounds.west && point.lng <= debouncedBounds.east;
-          } else {
-            // Bounds cross antimeridian
-            inLngRange = point.lng >= debouncedBounds.west || point.lng <= debouncedBounds.east;
-          }
-
-          return inLatRange && inLngRange;
-        })
-      : wordPoints;
-
-    if (viewport.zoom > 4) {
-      // At high zoom, show individual points
-      return { clusters: [], points: visiblePoints };
-    }
-
-    // Cluster radius based on zoom (larger radius at lower zoom)
-    const clusterRadius = 35 / Math.pow(viewport.zoom, 1.2);
-
-    const clustered: Cluster[] = [];
-    const unclustered: WordPoint[] = [];
-    const processed = new Set<number>();
-
-    visiblePoints.forEach((point, i) => {
-      if (processed.has(i)) return;
-
-      const nearby: WordPoint[] = [point];
-      processed.add(i);
-
-      visiblePoints.forEach((other, j) => {
-        if (i === j || processed.has(j)) return;
-        if (
-          distance(point.lat, point.lng, other.lat, other.lng) < clusterRadius
-        ) {
-          nearby.push(other);
-          processed.add(j);
-        }
-      });
-
-      if (nearby.length > 1) {
-        // Average position for cluster
-        const avgLat =
-          nearby.reduce((sum, p) => sum + p.lat, 0) / nearby.length;
-        const avgLng =
-          nearby.reduce((sum, p) => sum + p.lng, 0) / nearby.length;
-
-        clustered.push({
-          words: nearby,
-          lat: avgLat,
-          lng: avgLng,
-          count: nearby.length,
-        });
-      } else {
-        unclustered.push(point);
-      }
-    });
-
-    return { clusters: clustered, points: unclustered };
-  }, [wordPoints, viewport.zoom, debouncedBounds]);
 
   // Auto-fit map bounds when words change
   useEffect(() => {
-    if (!mapRef.current || wordPoints.length === 0) return;
+    if (!mapRef.current || geojsonData.features.length === 0) return;
 
-    // Calculate bounds from all word points
-    const lats = wordPoints.map(p => p.lat);
-    const lngs = wordPoints.map(p => p.lng);
-    
+    // Calculate bounds from all features
+    const coords = geojsonData.features.map(f => f.geometry.coordinates);
+    const lngs = coords.map(c => c[0]);
+    const lats = coords.map(c => c[1]);
+
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
     const minLng = Math.min(...lngs);
     const maxLng = Math.max(...lngs);
 
     // Handle single point case - add some padding
-    if (wordPoints.length === 1) {
+    if (geojsonData.features.length === 1) {
       const padding = 5; // degrees
       mapRef.current.fitBounds([
         [minLng - padding, minLat - padding],
@@ -199,18 +104,109 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         duration: 1000
       });
     }
-  }, [wordPoints]);
+  }, [geojsonData]);
 
-  const handleClusterClick = (cluster: Cluster) => {
-    // Zoom in on the cluster
-    setViewport({
-      latitude: cluster.lat,
-      longitude: cluster.lng,
-      zoom: Math.min(viewport.zoom + 2, 10),
+  // Handle clicks on clusters - zoom in
+  const onClusterClick = (event: any) => {
+    const feature = event.features?.[0];
+    if (!feature || !mapRef.current) return;
+
+    const clusterId = feature.properties.cluster_id;
+    const mapboxSource = mapRef.current.getMap().getSource('words');
+
+    if (!mapboxSource || mapboxSource.type !== 'geojson') return;
+
+    // @ts-ignore - getClusterExpansionZoom exists on GeoJSON source
+    mapboxSource.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
+      if (err) return;
+
+      setViewport({
+        ...viewport,
+        longitude: feature.geometry.coordinates[0],
+        latitude: feature.geometry.coordinates[1],
+        zoom: zoom,
+      });
     });
   };
 
+  // Handle clicks on individual points
+  const onPointClick = (event: any) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+
+    const wordData = feature.properties.wordData;
+    if (wordData) {
+      onWordClick(JSON.parse(wordData));
+    }
+  };
+
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+
+  // Layer styles for clusters
+  const clusterLayer: LayerProps = {
+    id: 'clusters',
+    type: 'circle',
+    source: 'words',
+    filter: ['has', 'point_count'],
+    paint: {
+      'circle-color': '#000000',
+      'circle-radius': [
+        'step',
+        ['get', 'point_count'],
+        15,  // radius for clusters with < 10 points
+        10, 20,  // radius for 10-99 points
+        100, 30  // radius for 100+ points
+      ],
+    },
+  };
+
+  // Layer for cluster counts
+  const clusterCountLayer: LayerProps = {
+    id: 'cluster-count',
+    type: 'symbol',
+    source: 'words',
+    filter: ['has', 'point_count'],
+    layout: {
+      'text-field': '{point_count_abbreviated}',
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 12,
+    },
+    paint: {
+      'text-color': '#fafafa',
+    },
+  };
+
+  // Layer for unclustered points (just circles)
+  const unclusteredPointLayer: LayerProps = {
+    id: 'unclustered-point',
+    type: 'circle',
+    source: 'words',
+    filter: ['!', ['has', 'point_count']],
+    paint: {
+      'circle-color': '#000000',
+      'circle-radius': 6,
+    },
+  };
+
+  // Layer for word labels
+  const wordLabelLayer: LayerProps = {
+    id: 'word-labels',
+    type: 'symbol',
+    source: 'words',
+    filter: ['!', ['has', 'point_count']],
+    layout: {
+      'text-field': ['get', 'word'],
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 12,
+      'text-offset': [0, 1.5],
+      'text-anchor': 'top',
+    },
+    paint: {
+      'text-color': '#000000',
+      'text-halo-color': '#ffffff',
+      'text-halo-width': 1,
+    },
+  };
 
   return (
     <div className="w-full h-[calc(100vh-120px)] relative">
@@ -250,74 +246,32 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: "100%", height: "100%" }}
         renderWorldCopies={false}
+        interactiveLayerIds={['clusters', 'unclustered-point']}
+        onClick={(event) => {
+          const features = event.features;
+          if (!features || features.length === 0) return;
+
+          const feature = features[0];
+          if (feature.layer.id === 'clusters') {
+            onClusterClick(event);
+          } else if (feature.layer.id === 'unclustered-point') {
+            onPointClick(event);
+          }
+        }}
       >
-        {/* Clusters */}
-        {clusters.map((cluster, i) => {
-          const size = 15 + Math.min(cluster.count * 1, 25);
-          const fontSize = 6 + Math.min(cluster.count * 0.2, 8);
-          const sampleWords = cluster.words.slice(0, 3).map(w => w.word.word).join(", ");
-          const label = cluster.count <= 3 ? sampleWords : `${sampleWords}...`;
-
-          return (
-            <Marker
-              key={`cluster-${i}`}
-              latitude={cluster.lat}
-              longitude={cluster.lng}
-              anchor="center"
-            >
-              <div 
-                className="relative flex items-center justify-center"
-                onMouseEnter={() => setHoveredCluster(i)}
-                onMouseLeave={() => setHoveredCluster(null)}
-              >
-                <button
-                  className="flex items-center justify-center bg-black text-[#fafafa] font-semibold transition-all duration-200 hover:scale-110"
-                  style={{
-                    width: `${size}px`,
-                    height: `${size}px`,
-                    fontSize: `${fontSize}px`,
-                  }}
-                  onClick={() => handleClusterClick(cluster)}
-                >
-                  {cluster.count}
-                </button>
-                {hoveredCluster === i && (
-                  <div 
-                    className="absolute bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm transition-opacity duration-200"
-                    style={{ 
-                      top: 'calc(50% + 8px)',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      pointerEvents: 'none'
-                    }}
-                  >
-                    {label}
-                  </div>
-                )}
-              </div>
-            </Marker>
-          );
-        })}
-
-        {/* Individual word points */}
-        {points.map((point, i) => (
-          <Marker
-            key={`word-${i}`}
-            latitude={point.lat}
-            longitude={point.lng}
-            anchor="center"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <button
-                className="flex items-center justify-center w-6 h-6 bg-black text-foreground text-xs font-semibold transition-all duration-200 hover:scale-110"
-                onClick={() => onWordClick(point.word)}
-              ></button>
-              <div className="bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
-                {point.word.word}
-              </div>
-            </div>
-          </Marker>
-        ))}
+        <Source
+          id="words"
+          type="geojson"
+          data={geojsonData}
+          cluster={true}
+          clusterMaxZoom={14}
+          clusterRadius={50}
+        >
+          <Layer {...clusterLayer} />
+          <Layer {...clusterCountLayer} />
+          <Layer {...unclusteredPointLayer} />
+          <Layer {...wordLabelLayer} />
+        </Source>
       </Map>
     </div>
   );
