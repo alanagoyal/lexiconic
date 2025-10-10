@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import Map, { Marker, type MapRef } from "react-map-gl";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
-import { LANGUAGE_COORDINATES } from "@/lib/language-coordinates";
+import { LOCATION_COORDINATES } from "@/lib/location-coordinates";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 interface MapViewProps {
@@ -50,8 +50,12 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   const wordPoints: WordPoint[] = useMemo(() => {
     return words
       .map((word) => {
-        const coords = LANGUAGE_COORDINATES[word.language];
-        if (!coords) return null;
+        // Use location field to get coordinates
+        const coords = word.location ? LOCATION_COORDINATES[word.location] : null;
+        if (!coords) {
+          console.warn(`No coordinates found for location: ${word.location} (word: ${word.word})`);
+          return null;
+        }
 
         // Add slight jitter to prevent exact overlaps using deterministic offset
         const jitter = 0.5;
