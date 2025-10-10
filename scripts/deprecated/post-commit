@@ -2,6 +2,11 @@
 
 # Post-commit hook to generate metadata, pronunciations, and embeddings when words.json is modified
 
+# Skip if this is an automated commit from the post-commit hook
+if git log -1 --pretty=%B | grep -q "\[skip-post-commit\]"; then
+    exit 0
+fi
+
 # Get the list of files changed in the last commit
 changed_files=$(git diff-tree --no-commit-id --name-only -r HEAD)
 
@@ -74,8 +79,9 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
     # Check if there are any staged files to commit
     if ! git diff --cached --quiet; then
         echo ""
-        echo "📝 Generated files have been staged. Please commit them:"
-        echo "   git commit -m 'chore: update embeddings, pronunciations, and definitions'"
+        echo "📝 Auto-committing generated files..."
+        git commit -m "chore: update metadata, pronunciations, and embeddings [skip-post-commit]"
+        echo "✅ Generated files committed successfully"
     fi
 else
     echo "📄 words.json was not modified, skipping post-commit scripts"

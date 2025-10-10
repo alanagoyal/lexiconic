@@ -2,11 +2,46 @@
 
 This folder contains scripts for managing the Lexiconic word database.
 
+## Quick Start
+
+To add a new word:
+```bash
+npm run add-word -- "word" "Language" "https://source-url"
+```
+
+This single command will add the word, generate all metadata, pronunciation, and embeddings automatically.
+
+---
+
 ## Core Scripts
+
+### `add-word.ts`
+
+CLI tool to add new words with automatic metadata, pronunciation, and embedding generation.
+
+**Usage:**
+```bash
+npm run add-word -- "jayus" "Indonesian" "https://example.com/source"
+```
+
+**What it does:**
+1. Validates inputs and checks for duplicates
+2. Creates a backup of `words.json`
+3. Adds the minimal word entry
+4. Runs metadata generation (via Braintrust)
+5. Generates pronunciation audio (via OpenAI TTS)
+6. Generates semantic embeddings (via OpenAI)
+7. Rolls back on error
+
+**Requirements:**
+- `BRAINTRUST_API_KEY` in `.env.local`
+- `OPENAI_API_KEY` in `.env.local`
+
+---
 
 ### `generate-metadata.ts`
 
-Generates comprehensive metadata for new words using the Braintrust `generate-metadata-4263` prompt. This replaces the separate `generate-phonetics.ts` and `generate-definitions.ts` scripts.
+Generates comprehensive metadata for new words using the Braintrust `generate-metadata-4263` prompt. Used internally by `add-word.ts` but can also be run standalone.
 
 **Usage:**
 ```bash
@@ -17,10 +52,6 @@ npm run generate-metadata
 npm run generate-metadata:all
 ```
 
-**When to run:**
-- Automatically runs via post-commit hook when `public/data/words.json` changes
-- Can also be run manually
-
 **What it generates:**
 - `phonetic` - IPA phonetic spelling
 - `definition` - Detailed word definition
@@ -30,13 +61,6 @@ npm run generate-metadata:all
 - `usage_notes` - Cultural context and usage
 - `english_approx` - English approximation
 
-**Behavior:**
-- Detects new words from the last git commit (or processes all words with `--all-words` flag)
-- Only generates metadata for words missing required fields
-- Skips words with existing valid metadata
-- Creates a backup of `words.json` before making changes
-- Updates `public/data/words.json` with new metadata
-
 **Requirements:**
 - `BRAINTRUST_API_KEY` in `.env.local`
 
@@ -44,16 +68,12 @@ npm run generate-metadata:all
 
 ### `generate-pronunciations.ts`
 
-Generates audio pronunciation files for new or changed words.
+Generates audio pronunciation files for new or changed words. Used internally by `add-word.ts` but can also be run standalone.
 
 **Usage:**
 ```bash
 npm run generate-pronunciations
 ```
-
-**When to run:**
-- Automatically runs via post-commit hook when `public/data/words.json` changes
-- Can also be run manually
 
 **Behavior:**
 - Detects new or changed words from the last git commit
@@ -68,16 +88,12 @@ npm run generate-pronunciations
 
 ### `generate-embeddings.ts`
 
-Generates semantic embeddings for words in `public/data/words.json` and outputs them to `public/data/words-with-embeddings.json`.
+Generates semantic embeddings for words in `public/data/words.json` and outputs them to `public/data/words-with-embeddings.json`. Used internally by `add-word.ts` but can also be run standalone.
 
 **Usage:**
 ```bash
 npm run generate-embeddings
 ```
-
-**When to run:**
-- Automatically runs via post-commit hook when `public/data/words.json` changes
-- Can also be run manually
 
 **Smart regeneration:**
 - Embeddings are based on: word, phonetic, language, category, definition, literal meaning, usage notes, English approximation, examples, and English paraphrase
@@ -87,31 +103,6 @@ npm run generate-embeddings
 
 **Requirements:**
 - `OPENAI_API_KEY` in `.env.local`
-
----
-
-## Git Hook
-
-### `post-commit`
-
-Post-commit hook that automatically runs metadata, pronunciation, and embedding generation when `public/data/words.json` is modified.
-
-**Setup:**
-
-To install the hook, run:
-```bash
-cp scripts/post-commit .git/hooks/post-commit
-chmod +x .git/hooks/post-commit
-```
-
-**What it does:**
-1. Detects if `public/data/words.json` was modified in the last commit
-2. Runs `generate-metadata.ts` for new words (generates phonetics, definitions, family, category, etc.)
-3. Runs `generate-pronunciations.ts` for new/changed words
-4. Runs `generate-embeddings.ts` to regenerate embeddings for words with changed semantic fields
-5. Automatically stages all updated files
-
-**Note:** The hook will skip steps if API keys are not configured.
 
 ---
 
@@ -128,9 +119,40 @@ BRAINTRUST_API_KEY=your_braintrust_key_here
 
 ## Workflow
 
-### Adding new words:
+### Adding new words (Recommended):
 
-1. Add a minimal word entry to `public/data/words.json` with `word`, `language`, and `sources`:
+Use the CLI to add words with automatic generation:
+
+```bash
+npm run add-word -- "jayus" "Indonesian" "https://example.com/source"
+```
+
+This will:
+1. Add the minimal word entry to `words.json`
+2. Generate comprehensive metadata (phonetic, definition, family, category, etc.)
+3. Generate audio pronunciation file
+4. Generate semantic embeddings
+5. Create a backup before making changes
+
+Then simply commit everything:
+```bash
+git add .
+git commit -m "add jayus"
+git push
+```
+
+**Benefits:**
+- Single command to add a word
+- Runs all generation steps in the correct order
+- Automatic rollback if any step fails
+- Clear progress output
+- No risk of double-execution
+
+### Alternative: Manual method
+
+You can also manually add words to `public/data/words.json`:
+
+1. Add a minimal entry with `word`, `language`, and `sources`:
    ```json
    {
      "word": "jayus",
@@ -138,15 +160,15 @@ BRAINTRUST_API_KEY=your_braintrust_key_here
      "sources": "https://example.com/source"
    }
    ```
-2. Commit your changes: `git add public/data/words.json && git commit -m "add jayus"`
-3. The post-commit hook automatically runs in this order:
-   - **Step 1: Generates comprehensive metadata** (phonetic, definition, family, category, literal, usage_notes, english_approx) and updates words.json
-   - **Step 2: Generates audio pronunciation** file and updates words.json with pronunciation field
-   - **Step 3: Generates semantic embedding** using the metadata from Step 1
-   - Stages all updated files (words.json, pronunciations/, words-with-embeddings.json)
-4. Review the generated content and commit: `git commit -m "chore: update metadata, pronunciations, and embeddings"`
-
-**Note:** Embeddings are generated AFTER metadata because they depend on the semantic fields (definition, category, usage_notes, etc.) to create accurate search vectors.
+2. Run generation manually:
+   ```bash
+   npm run generate:all
+   ```
+3. Commit the changes:
+   ```bash
+   git add .
+   git commit -m "add jayus"
+   ```
 
 ### Manual generation:
 

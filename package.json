@@ -7,6 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
+    "add-word": "tsx scripts/add-word.ts",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
     "generate-metadata:all": "tsx scripts/generate-metadata.ts --all-words",
     "generate-pronunciations": "tsx scripts/generate-pronunciations.ts",
