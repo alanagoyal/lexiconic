@@ -3,7 +3,7 @@
 import { ExternalLink, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import type { WordData } from "@/components/words-client";
+import type { WordData } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {
@@ -226,10 +226,10 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
                 </div>
               )}
 
-              {word.sources && word.sources !== "—" && (
+              {word.source && word.source !== "—" && (
                 <div>
                   <a
-                    href={word.sources}
+                    href={word.source}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"
@@ -286,10 +286,10 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
 
               <div className="col-span-3 p-4 border-l border-border">
                 <div className="space-y-2">
-                  {word.sources && word.sources !== "—" && (
+                  {word.source && word.source !== "—" && (
                     <div>
                       <a
-                        href={word.sources}
+                        href={word.source}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"

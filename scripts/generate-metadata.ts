@@ -5,6 +5,7 @@ import path from 'path';
 import { initLogger, invoke } from 'braintrust';
 import { z } from 'zod';
 import dotenv from 'dotenv';
+import type { PartialWordData, BraintrustMetadata } from '../types/word';
 
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
@@ -14,37 +15,6 @@ initLogger({
   projectName: "lexiconic",
   apiKey: process.env.BRAINTRUST_API_KEY,
 });
-
-interface WordData {
-  word: string;
-  language: string;
-  native_script?: string;
-  family?: string;
-  category?: string;
-  definition?: string;
-  literal?: string;
-  usage_notes?: string;
-  english_approx?: string;
-  phonetic?: string;
-  pronunciation?: string;
-  sources?: string;
-  [key: string]: any;
-}
-
-interface BraintrustMetadata {
-  word: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  english_approx: string;
-  phonetic: string;
-  location: string;
-  lat: number;
-  lng: number;
-}
 
 interface GenerationResult {
   updated: number;
@@ -102,7 +72,7 @@ async function getMetadataFromBraintrust(word: string, language: string): Promis
 /**
  * Check if a word needs metadata generation
  */
-function needsMetadata(word: WordData): boolean {
+function needsMetadata(word: PartialWordData): boolean {
   // A word needs metadata if any of the core fields don't exist or are empty
   const requiredFields = [
     'phonetic',
@@ -149,7 +119,7 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
   fs.copyFileSync(wordsPath, backupPath);
   console.log(`→ Created backup: ${path.relative(process.cwd(), backupPath)}`);
 
-  const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
+  const words: PartialWordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
   // Find ALL words that need metadata
   const wordsToProcess = words.filter(word => needsMetadata(word));
@@ -215,7 +185,6 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
 
   return { updated: updatedCount, metadata };
 }
-
 
 /**
  * Main function
