@@ -46,7 +46,7 @@ interface Word {
   disputed: string;
   region: string;
   closest_english_paraphrase: string;
-  sources: string;
+  source: string;
   needs_citation: string;
 }
 

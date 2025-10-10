@@ -20,7 +20,7 @@ export interface WordData {
   location: string;
   lat: number;
   lng: number;
-  sources: string;
+  source: string;
   pronunciation: string;
   phonetic: string;
   embedding: number[];
@@ -42,7 +42,7 @@ export interface WordWithEmbedding extends WordData {
 export interface PartialWordData {
   word: string;
   language: string;
-  sources: string;
+  source: string;
   family?: string;
   category?: string;
   definition?: string;

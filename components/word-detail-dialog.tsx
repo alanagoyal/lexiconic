@@ -108,11 +108,11 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
             </div>
           )}
 
-          {/* Sources */}
-          {word.sources && (
+          {/* Source */}
+          {word.source && (
             <div>
               <a
-                href={word.sources}
+                href={word.source}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"

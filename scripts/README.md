@@ -151,12 +151,12 @@ git push
 
 You can also manually add words to `public/data/words.json`:
 
-1. Add a minimal entry with `word`, `language`, and `sources`:
+1. Add a minimal entry with `word`, `language`, and `source`:
    ```json
    {
      "word": "jayus",
      "language": "Indonesian",
-     "sources": "https://example.com/source"
+     "source": "https://example.com/source"
    }
    ```
 2. Run generation manually:

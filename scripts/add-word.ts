@@ -167,10 +167,10 @@ async function addWord(word: string, language: string, source: string) {
     console.log('✅ Pronunciation generated\n');
 
     // Create complete word object
-    const completeWord: WordData = {
+    const completeWord: PartialWordData = {
       word,
       language,
-      sources: source,
+      source: source,
       family: metadata.family,
       category: metadata.category,
       definition: metadata.definition,

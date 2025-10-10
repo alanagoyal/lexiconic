@@ -161,7 +161,7 @@ When adding a new word to `/public/data/words.json`, you **must** manually provi
 {
   "word": "saudade",              // The word in its native script/romanization
   "language": "Portuguese",       // The language name
-  "sources": "https://..."        // Source URL
+  "source": "https://..."         // Source URL
 }
 ```
 
@@ -198,7 +198,7 @@ This single command handles everything automatically!
 
 ### Workflow: With Git Hook
 
-1. Edit `/public/data/words.json` and add your new word with minimal fields (word, language, sources)
+1. Edit `/public/data/words.json` and add your new word with minimal fields (word, language, source)
 2. Commit your changes: `git add public/data/words.json && git commit -m "add new words"`
 3. The post-commit hook automatically generates all metadata, pronunciations, and embeddings
 4. Review the staged changes and commit them when ready
