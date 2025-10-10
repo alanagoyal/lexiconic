@@ -61,6 +61,8 @@ npm run generate-metadata:all
 - `usage_notes` - Cultural context and usage
 - `english_approx` - English approximation
 - `location` - Geographic location or origin
+- `lat` - Latitude coordinate for the location
+- `lng` - Longitude coordinate for the location
 
 **Requirements:**
 - `BRAINTRUST_API_KEY` in `.env.local`

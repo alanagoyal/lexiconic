@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import Map, { Marker, type MapRef } from "react-map-gl";
 import type { WordWithEmbedding } from "@/lib/semantic-search";
-import { LOCATION_COORDINATES } from "@/lib/location-coordinates";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 interface MapViewProps {
@@ -50,10 +49,11 @@ export function MapView({ words, onWordClick }: MapViewProps) {
   const wordPoints: WordPoint[] = useMemo(() => {
     return words
       .map((word) => {
-        // Use location field to get coordinates
-        const coords = word.location ? LOCATION_COORDINATES[word.location] : null;
-        if (!coords) {
-          console.warn(`No coordinates found for location: ${word.location} (word: ${word.word})`);
+        // Read coordinates directly from word data
+        const { lat, lng } = word;
+        
+        if (typeof lat !== 'number' || typeof lng !== 'number') {
+          console.warn(`Missing coordinates for word: ${word.word} (location: ${word.location})`);
           return null;
         }
 
@@ -61,10 +61,10 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         const jitter = 0.5;
         // Use word string to generate stable pseudo-random offset
         const hash = word.word.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        const lat = coords.lat + ((hash % 1000) / 1000 - 0.5) * jitter;
-        const lng = coords.lng + ((hash % 1001) / 1001 - 0.5) * jitter;
+        const jitteredLat = lat + ((hash % 1000) / 1000 - 0.5) * jitter;
+        const jitteredLng = lng + ((hash % 1001) / 1001 - 0.5) * jitter;
 
-        return { word, lat, lng };
+        return { word, lat: jitteredLat, lng: jitteredLng };
       })
       .filter((p): p is WordPoint => p !== null);
   }, [words]);

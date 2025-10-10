@@ -47,6 +47,8 @@ export interface WordData {
   usage_notes: string;
   english_approx: string;
   location: string;
+  lat: number;
+  lng: number;
   sources: string;
   pronunciation: string;
   phonetic: string;

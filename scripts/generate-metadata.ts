@@ -43,6 +43,8 @@ interface BraintrustMetadata {
   english_approx: string;
   phonetic: string;
   location: string;
+  lat: number;
+  lng: number;
 }
 
 interface GenerationResult {
@@ -62,6 +64,8 @@ const metadataSchema = z.object({
   english_approx: z.string(),
   phonetic: z.string(),
   location: z.string(),
+  lat: z.number(),
+  lng: z.number(),
 });
 
 /**
@@ -109,7 +113,9 @@ function needsMetadata(word: WordData): boolean {
     'literal',
     'usage_notes',
     'english_approx',
-    'location'
+    'location',
+    'lat',
+    'lng'
   ];
 
   for (const field of requiredFields) {
@@ -225,6 +231,8 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
       word.english_approx = meta.english_approx;
       word.phonetic = meta.phonetic;
       word.location = meta.location;
+      word.lat = meta.lat;
+      word.lng = meta.lng;
       
       // Remove transliteration field if it exists (replaced by phonetic)
       if (word.transliteration) {
@@ -320,6 +328,8 @@ async function generateMetadataForNewWords(): Promise<GenerationResult> {
       word.english_approx = meta.english_approx;
       word.phonetic = meta.phonetic;
       word.location = meta.location;
+      word.lat = meta.lat;
+      word.lng = meta.lng;
       
       // Remove transliteration field if it exists (replaced by phonetic)
       if (word.transliteration) {
