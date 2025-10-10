@@ -4558,5 +4558,21 @@
     "lat": -12.0464,
     "lng": -77.0428,
     "pronunciation": "54f9d9738e3706839be637e5a1f07f2e.mp3"
+  },
+  {
+    "word": "friolento",
+    "language": "Spanish",
+    "sources": "https://latinamericanspanishcafe.com/unique-spanish-words/",
+    "family": "Romance",
+    "category": "sensation/trait",
+    "definition": "A person who is particularly sensitive to low temperatures and tends to feel cold easily, often preferring warmth, extra layers, or heated environments even when others are comfortable.",
+    "literal": "cold-natured",
+    "usage_notes": "Used with gender agreement (friolento/friolenta); common in Spain and Latin America as a casual self-description, akin to saying “I’m always cold,” and comparable to regional term friolero.",
+    "english_approx": "sensitive to cold",
+    "phonetic": "free·oh·LÉN·toh",
+    "location": "Spain",
+    "lat": 40.4168,
+    "lng": -3.7038,
+    "pronunciation": "027ab16f4f49856ffcf0b481fbc352a0.mp3"
   }
 ]
