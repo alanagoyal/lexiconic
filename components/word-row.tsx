@@ -100,7 +100,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
     <div className="word-row border-b border-border w-full">
       {/* Main Grid Layout - responsive design */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-12 min-h-[80px] md:min-h-[120px] cursor-pointer ${!isTouch ? 'hover:bg-muted/30 transition-colors' : ''}`}
+        className={`grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer ${!isTouch ? 'hover:bg-muted/30 transition-colors' : ''}`}
         onClick={onToggleExpand}
         role="button"
         tabIndex={0}
@@ -116,9 +116,9 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
         }`}
       >
         {/* Mobile Layout - stacked */}
-        <div className="md:hidden p-3 space-y-2">
-          <div className="text-left space-y-1">
-            <div className="native-script text-2xl text-foreground truncate">
+        <div className="md:hidden p-4 space-y-4">
+          <div className="text-left space-y-2 py-4">
+            <div className="native-script text-3xl text-foreground truncate">
               {word.word.toLowerCase()}
             </div>
             {word.phonetic &&
@@ -136,7 +136,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
               )}
           </div>
 
-          <div className="word-definition text-sm text-foreground leading-snug font-playfair">
+          <div className="word-definition text-base text-foreground leading-relaxed pt-2 font-playfair">
             {word.definition}
           </div>
         </div>
