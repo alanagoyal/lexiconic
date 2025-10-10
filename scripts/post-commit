@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Post-commit hook to generate pronunciations, phonetics, and definitions when words.json is modified
+# Post-commit hook to generate metadata, pronunciations, and embeddings when words.json is modified
 
 # Get the list of files changed in the last commit
 changed_files=$(git diff-tree --no-commit-id --name-only -r HEAD)
@@ -11,6 +11,25 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
 
     # Change to the repository root directory
     cd "$(git rev-parse --show-toplevel)"
+
+    # Generate metadata (phonetics, definitions, family, category, etc.) for new words
+    echo "📋 Generating metadata for new words..."
+    if [ -z "$BRAINTRUST_API_KEY" ] && [ ! -f ".env.local" ]; then
+        echo "⚠️  BRAINTRUST_API_KEY not found. Skipping metadata generation."
+        echo "   Add BRAINTRUST_API_KEY to your .env.local file to enable automatic metadata generation."
+    else
+        if npx tsx scripts/generate-metadata.ts; then
+            echo "✅ Metadata generated successfully"
+
+            # Check if words.json was updated
+            if ! git diff --quiet public/data/words.json; then
+                echo "📝 Staging updated metadata..."
+                git add public/data/words.json
+            fi
+        else
+            echo "⚠️  Failed to generate metadata (continuing anyway)"
+        fi
+    fi
 
     # Generate pronunciations for new/changed words
     echo "🔊 Generating pronunciations for new/changed words..."
@@ -28,44 +47,6 @@ if echo "$changed_files" | grep -q "public/data/words.json"; then
             fi
         else
             echo "⚠️  Failed to generate pronunciations (continuing anyway)"
-        fi
-    fi
-
-    # Generate phonetic spellings for new words
-    echo "🔤 Generating phonetic spellings for new words..."
-    if [ -z "$BRAINTRUST_API_KEY" ] && [ ! -f ".env.local" ]; then
-        echo "⚠️  BRAINTRUST_API_KEY not found. Skipping phonetic spelling generation."
-        echo "   Add BRAINTRUST_API_KEY to your .env.local file to enable automatic phonetic spelling generation."
-    else
-        if npx tsx scripts/generate-phonetics.ts; then
-            echo "✅ Phonetic spellings generated successfully"
-
-            # Check if words.json was updated
-            if ! git diff --quiet public/data/words.json; then
-                echo "📝 Staging updated phonetic spellings..."
-                git add public/data/words.json
-            fi
-        else
-            echo "⚠️  Failed to generate phonetic spellings (continuing anyway)"
-        fi
-    fi
-
-    # Generate definitions for new words
-    echo "📖 Generating definitions for new words..."
-    if [ -z "$BRAINTRUST_API_KEY" ] && [ ! -f ".env.local" ]; then
-        echo "⚠️  BRAINTRUST_API_KEY not found. Skipping definition generation."
-        echo "   Add BRAINTRUST_API_KEY to your .env.local file to enable automatic definition generation."
-    else
-        if npx tsx scripts/generate-definitions.ts; then
-            echo "✅ Definitions generated successfully"
-
-            # Check if words.json was updated
-            if ! git diff --quiet public/data/words.json; then
-                echo "📝 Staging updated definitions..."
-                git add public/data/words.json
-            fi
-        else
-            echo "⚠️  Failed to generate definitions (continuing anyway)"
         fi
     fi
 
