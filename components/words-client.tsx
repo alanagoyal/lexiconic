@@ -13,6 +13,7 @@ import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
+import type { WordData } from "@/types/word";
 
 const MapView = dynamic(
   () =>
@@ -36,25 +37,6 @@ const MapView = dynamic(
     ),
   }
 );
-
-export interface WordData {
-  word: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  english_approx: string;
-  location: string;
-  lat: number;
-  lng: number;
-  sources: string;
-  pronunciation: string;
-  phonetic: string;
-  embedding: number[];
-  embeddingHash: string;
-}
 
 interface WordsClientProps {
   words: WordWithEmbedding[];

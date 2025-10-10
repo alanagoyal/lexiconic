@@ -3,7 +3,7 @@
 import { ExternalLink, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import type { WordData } from "@/components/words-client";
+import type { WordData } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {

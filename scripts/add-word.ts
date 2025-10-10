@@ -7,6 +7,7 @@ import { initLogger, invoke } from 'braintrust';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import type { PartialWordData, BraintrustMetadata } from '../types/word';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
@@ -16,38 +17,6 @@ initLogger({
   projectName: "lexiconic",
   apiKey: process.env.BRAINTRUST_API_KEY,
 });
-
-interface WordData {
-  word: string;
-  language: string;
-  sources: string;
-  family?: string;
-  category?: string;
-  definition?: string;
-  literal?: string;
-  usage_notes?: string;
-  english_approx?: string;
-  phonetic?: string;
-  pronunciation?: string;
-  embedding?: number[];
-  embeddingHash?: string;
-  [key: string]: any;
-}
-
-interface BraintrustMetadata {
-  word: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  english_approx: string;
-  phonetic: string;
-  location: string;
-  lat: number;
-  lng: number;
-}
 
 const metadataSchema = z.object({
   word: z.string(),
@@ -108,7 +77,7 @@ async function generatePronunciation(word: string): Promise<string> {
   return fileName;
 }
 
-async function generateEmbedding(wordData: WordData): Promise<{ embedding: number[], hash: string }> {
+async function generateEmbedding(wordData: PartialWordData): Promise<{ embedding: number[], hash: string }> {
   console.log(`  • Generating embedding for: ${wordData.word}`);
   
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

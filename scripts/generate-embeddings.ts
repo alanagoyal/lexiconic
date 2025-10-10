@@ -28,6 +28,7 @@ function loadEnvLocal() {
 // Load .env.local before using environment variables
 loadEnvLocal();
 
+// Extended Word interface for this script that includes additional fields
 interface Word {
   word: string;
   phonetic: string;
