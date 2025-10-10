@@ -31,7 +31,7 @@ export function WordDetailDialog({ word, open, onClose }: WordDetailDialogProps)
       >
         <DialogHeader>
           <DialogTitle className="native-script text-3xl md:text-4xl font-medium text-foreground mb-2">
-            {word.native_script}
+            {word.word}
           </DialogTitle>
         </DialogHeader>
 

@@ -39,7 +39,6 @@ const MapView = dynamic(
 
 export interface WordData {
   word: string;
-  native_script: string;
   language: string;
   family: string;
   category: string;
@@ -207,7 +206,6 @@ export function WordsClient({
     return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
-        word.native_script.toLowerCase().includes(searchLower) ||
         word.definition.toLowerCase().includes(searchLower) ||
         word.language.toLowerCase().includes(searchLower) ||
         word.phonetic.toLowerCase().includes(searchLower) ||

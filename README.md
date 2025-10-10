@@ -161,7 +161,6 @@ When adding a new word to `/public/data/words.json`, you **must** manually provi
 ```json
 {
   "word": "saudade",              // The word in its native script/romanization
-  "native_script": "saudade",     // The word in native script (same as word if Latin alphabet)
   "language": "Portuguese",       // The language name
   "family": "Indo-European",      // The language family
   "category": "emotion/longing",  // Category (e.g., emotion, time, social, nature)
