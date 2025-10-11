@@ -37,7 +37,7 @@ export function SearchFilter({
           )}
           <button
             onClick={onClear}
-            className="hover:text-foreground transition-colors cursor-pointer text-base"
+            className="hover:text-foreground transition-colors cursor-pointer text-xl min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mb-2"
             aria-label="Clear search"
           >
             ×
