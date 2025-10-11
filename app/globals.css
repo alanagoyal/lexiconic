@@ -183,13 +183,19 @@
 
 /* Progress bar animation for map loading */
 @keyframes progress-bar {
-  0% { 
-    transform: scaleX(0); 
+  0% {
+    transform: scaleX(0);
   }
-  50% { 
-    transform: scaleX(0.7); 
+  50% {
+    transform: scaleX(0.7);
   }
-  100% { 
-    transform: scaleX(1); 
+  100% {
+    transform: scaleX(1);
   }
+}
+
+/* Hide Mapbox logo and attribution */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+  display: none !important;
 }
