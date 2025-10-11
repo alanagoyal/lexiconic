@@ -14,6 +14,7 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
 import type { WordData } from "@/types/word";
+import { Footer } from "@/components/footer";
 
 const MapView = dynamic(
   () =>
@@ -379,7 +380,7 @@ export function WordsClient({
       </div>
 
       {/* Content - either list, grid, or map view */}
-      <main className={`min-h-[calc(100vh-120px)] ${isIOS ? '' : 'pb-16'}`}>
+      <main className="min-h-[calc(100vh-120px)]">
         {viewMode === "map" ? (
           <MapView
             words={displayedWords}
@@ -402,6 +403,9 @@ export function WordsClient({
         open={selectedWord !== null}
         onClose={() => setSelectedWord(null)}
       />
+
+      {/* Footer - sticky only on map view */}
+      <Footer isMapView={viewMode === "map"} />
     </div>
   );
 }
