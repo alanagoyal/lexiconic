@@ -5,7 +5,6 @@ import { GeistMono } from "geist/font/mono"
 import { Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
-import { Footer } from "@/components/footer"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -57,7 +56,6 @@ html {
       <body className={`${playfair.variable}`}>
         <NuqsAdapter>
           {children}
-          <Footer />
         </NuqsAdapter>
       </body>
     </html>

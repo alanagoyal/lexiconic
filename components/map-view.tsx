@@ -262,7 +262,7 @@ export function MapView({ words, onWordClick }: MapViewProps) {
         interactiveLayerIds={['unclustered-point', 'clusters']}
         mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", display: "block" }}
         renderWorldCopies={false}
         // Enable WebGPU rendering
         antialias={true}
