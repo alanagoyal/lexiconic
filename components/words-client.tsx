@@ -120,6 +120,9 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
+  // Track the last search term to avoid re-running search on sort changes
+  const lastSearchTerm = useRef(deferredSearchTerm);
+
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
@@ -260,8 +263,14 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing
+  // Simple search effect with debouncing - ONLY runs when search term actually changes
   useEffect(() => {
+    // Skip if search term hasn't actually changed
+    if (lastSearchTerm.current === deferredSearchTerm) {
+      return;
+    }
+    lastSearchTerm.current = deferredSearchTerm;
+
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
       return;
@@ -274,7 +283,6 @@ export function WordsClient({
     }
 
     if (!deferredSearchTerm.trim()) {
-      setIsSearching(false);
       setSearchResults([]);
       initialSearchCompleted.current = true;
       return;
