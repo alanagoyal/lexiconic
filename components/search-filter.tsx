@@ -29,11 +29,11 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute bottom-0 right-0 text-xs text-muted-foreground flex items-center gap-1">
+        <div className="absolute inset-y-0 right-0 text-xs text-muted-foreground flex items-center gap-1 pr-2">
           {isSearching ? (
             <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <span className="ml-2">Showing {filteredCount} of {totalWords}</span>
+            <span>Showing {filteredCount} of {totalWords}</span>
           )}
           <button
             onClick={onClear}
