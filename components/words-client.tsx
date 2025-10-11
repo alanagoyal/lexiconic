@@ -242,21 +242,12 @@ export function WordsClient({
 
   // Search effect - stores results by relevance, no sorting
   useEffect(() => {
-    console.log('🔍 Search effect triggered:', { 
-      searchTerm,
-      embeddingsLoading, 
-      initialSearchCompleted: initialSearchCompleted.current,
-      activeWordsCount: activeWords.length 
-    });
-    
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
-      console.log('⏸️  Waiting for embeddings to load');
       return;
     }
     
     if (!searchTerm.trim()) {
-      console.log('🧹 Clearing search, setting isSearching=false');
       setIsSearching(false);
       // When clearing search, set search results to all words
       setSearchResults(activeWords);
@@ -264,19 +255,15 @@ export function WordsClient({
       return;
     }
 
-    console.log('🔎 Starting search, setting isSearching=true');
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
       try {
-        console.log('🔎 Performing semantic search for:', searchTerm);
         const results = await performSemanticSearch(searchTerm);
         // Store search results by relevance (no sorting)
         setSearchResults(results);
         initialSearchCompleted.current = true;
-        console.log('✅ Search complete, found', results.length, 'results');
       } finally {
-        console.log('🏁 Setting isSearching=false');
         setIsSearching(false);
       }
     }, 300);
@@ -289,15 +276,8 @@ export function WordsClient({
   const prevActiveWordsRef = useRef(activeWords);
   
   useEffect(() => {
-    console.log('🔄 activeWords effect check:', { 
-      count: activeWords.length, 
-      hasSearchTerm: !!searchTerm.trim(),
-      changed: prevActiveWordsRef.current !== activeWords
-    });
-    
     // Only proceed if activeWords actually changed
     if (prevActiveWordsRef.current === activeWords) {
-      console.log('⏭️  activeWords ref unchanged, skipping');
       return;
     }
     
@@ -305,7 +285,6 @@ export function WordsClient({
     
     // If no search term, just update to all words
     if (!searchTerm.trim()) {
-      console.log('📝 No search term - updating search results to all words');
       setSearchResults(activeWords);
       return;
     }
@@ -313,13 +292,9 @@ export function WordsClient({
     // If there's a search term and embeddings just loaded, re-search with better data
     // But only if this is the initial embeddings load (wordsWithEmbeddings becoming available)
     if (searchTerm.trim() && wordsWithEmbeddings && activeWords === wordsWithEmbeddings) {
-      console.log('🔄 Embeddings loaded during search - re-searching silently with embeddings');
       performSemanticSearch(searchTerm).then(results => {
         setSearchResults(results);
-        console.log('✅ Silent re-search with embeddings complete:', results.length, 'results');
       });
-    } else {
-      console.log('⏭️  Skipping re-search - not initial embeddings load');
     }
   }, [activeWords, searchTerm, wordsWithEmbeddings]);
 
@@ -361,21 +336,16 @@ export function WordsClient({
 
   // Separate sorting effect - applies current sort mode to search results
   useEffect(() => {
-    console.log('🔄 Sorting effect triggered:', { sortMode, seed, searchResultsCount: searchResults.length, isShuffling });
     // Don't apply sorting during shuffle animation
     if (isShuffling) {
-      console.log('⏸️  Skipping sort - shuffling in progress');
       return;
     }
     
     const sorted = sortWords(searchResults, sortMode, seed);
     setDisplayedWords(sorted);
-    console.log('✅ Sorting complete, displayed', sorted.length, 'words');
   }, [searchResults, sortMode, seed, isShuffling]);
 
   const handleSortModeChange = (newSortMode: SortMode) => {
-    console.log('🎛️  Sort mode change requested:', { from: sortMode, to: newSortMode });
-    
     if (newSortMode === "none") {
       setSortMode("asc");
       updateURLParams({ sort: "asc" });
@@ -386,7 +356,6 @@ export function WordsClient({
     if (newSortMode === "random" && isShuffling) return;
 
     setSortMode(newSortMode);
-    console.log('✅ Sort mode updated to:', newSortMode);
 
     // Only do shuffle animation for random mode
     if (newSortMode === "random") {
