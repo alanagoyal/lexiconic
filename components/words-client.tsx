@@ -123,6 +123,7 @@ export function WordsClient({
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]); // Unsorted search results
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -244,16 +245,17 @@ export function WordsClient({
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
       return;
     }
-    
+
     // If deferred hasn't caught up to initial search term, skip this effect run
     // This prevents the race condition where deferredSearchTerm is empty on first render
     if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
       return;
     }
-    
+
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
-      setDisplayedWords(words);
+      setSearchResults([]);
+      setDisplayedWords(sortWords(words, sortMode, seed));
       initialSearchCompleted.current = true;
       return;
     }
@@ -263,8 +265,10 @@ export function WordsClient({
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
+        // Store unsorted search results
+        setSearchResults(results);
         // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
+        const sortedResults = sortWords(results, sortMode, seed);
         setDisplayedWords(sortedResults);
         initialSearchCompleted.current = true;
       } finally {
@@ -273,7 +277,7 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -319,6 +323,9 @@ export function WordsClient({
 
     setSortMode(newSortMode);
 
+    // Determine which words to sort: search results if searching, all words otherwise
+    const wordsToSort = searchResults.length > 0 ? searchResults : words;
+
     // Only do shuffle animation for random mode
     if (newSortMode === "random") {
       const currentScrollY = window.scrollY;
@@ -329,7 +336,7 @@ export function WordsClient({
       setSeed(newSeed);
 
       const shuffleInterval = setInterval(() => {
-        const tempShuffled = sortWords(displayedWords, "random");
+        const tempShuffled = sortWords(wordsToSort, "random");
         setDisplayedWords(tempShuffled);
         window.scrollTo(0, currentScrollY);
       }, 100);
@@ -337,7 +344,7 @@ export function WordsClient({
       setTimeout(() => {
         clearInterval(shuffleInterval);
         // Set final seeded order
-        const finalOrder = sortWords(displayedWords, "random", newSeed);
+        const finalOrder = sortWords(wordsToSort, "random", newSeed);
         setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
@@ -345,6 +352,9 @@ export function WordsClient({
         updateURLParams({ sort: "random", seed: newSeed });
       }, 1000);
     } else {
+      // Instant sort (no loading spinner)
+      const sortedResults = sortWords(wordsToSort, newSortMode);
+      setDisplayedWords(sortedResults);
       updateURLParams({ sort: newSortMode });
     }
   };
