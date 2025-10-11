@@ -4830,5 +4830,21 @@
     "lat": 43.6532,
     "lng": -79.3832,
     "pronunciation": "216e96add5db893746dd569166be9f10.mp3"
+  },
+  {
+    "word": "dérive",
+    "language": "French",
+    "source": "https://en.wikipedia.org/wiki/D%C3%A9rive",
+    "family": "Indo-European (Romance)",
+    "category": "behavior/exploration",
+    "definition": "A method of spontaneous, goal-free wandering through urban environments, allowing the city’s atmospheres and chance encounters to guide movement in order to investigate psychological effects and reveal spatial patterns.",
+    "literal": "drift",
+    "usage_notes": "Coined in Situationist psychogeography (1950s); denotes exploratory urban wandering guided by ambience; akin to flânerie but more methodical and often collective.",
+    "english_approx": "urban drifting",
+    "phonetic": "deh·REEV",
+    "location": "Paris, France",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "pronunciation": "4dc4f47095977b1258ddb369a5f91852.mp3"
   }
 ]
