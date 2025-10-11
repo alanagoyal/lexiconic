@@ -376,7 +376,7 @@ export function WordsClient({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
@@ -401,7 +401,7 @@ export function WordsClient({
       </div>
 
       {/* Content - either list, grid, or map view */}
-      <main className="min-h-[calc(100vh-120px)]">
+      <main className="flex-grow">
         {viewMode === "map" ? (
           <MapView
             words={displayedWords}
