@@ -120,11 +120,11 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
-  // Track the last search term to avoid re-running search on sort changes
-  const lastSearchTerm = useRef(deferredSearchTerm);
-
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
+
+  // Track the last search term to avoid re-running search on sort changes
+  const lastSearchTerm = useRef(deferredSearchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]);
