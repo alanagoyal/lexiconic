@@ -1,7 +1,6 @@
 "use client";
 
 import { ExternalLink, Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { WordData } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
@@ -116,8 +115,8 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
         }`}
       >
         {/* Mobile Layout - stacked */}
-        <div className="md:hidden p-3 space-y-2">
-          <div className="text-left space-y-2">
+        <div className="md:hidden p-4 space-y-4">
+          <div className="text-left space-y-2 py-4">
             <div className="native-script text-3xl text-foreground truncate">
               {word.word.toLowerCase()}
             </div>
