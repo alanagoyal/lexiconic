@@ -11,10 +11,9 @@ interface WordRowProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   viewMode?: "list" | "grid";
-  isLast?: boolean;
 }
 
-export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list", isLast = false }: WordRowProps) {
+export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }: WordRowProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const { isTouch } = useDeviceType();
 
@@ -59,7 +58,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list", i
 
   if (viewMode === "grid") {
     return (
-      <div className={`word-card border-r ${isLast ? '' : 'border-b'} border-border p-4 space-y-3 h-full`}>
+      <div className="word-card border-r border-b border-border p-4 space-y-3 h-full">
         {/* Language and Category */}
         <div className="space-y-1 text-sm">
           <div className="text-foreground font-medium">{word.language}</div>
@@ -98,7 +97,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list", i
 
   // Original list view layout
   return (
-    <div className={`word-row ${isLast ? '' : 'border-b'} border-border w-full`}>
+    <div className="word-row border-b border-border w-full">
       {/* Main Grid Layout - responsive design */}
       <div
         className={`grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer ${!isTouch ? 'hover:bg-muted/30 transition-colors' : ''}`}
