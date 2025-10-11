@@ -33,11 +33,11 @@ export function SearchFilter({
           {isSearching ? (
             <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <span>Showing {filteredCount} of {totalWords}</span>
+            <span className="pt-0.5">Showing {filteredCount} of {totalWords}</span>
           )}
           <button
             onClick={onClear}
-            className="hover:text-foreground transition-colors cursor-pointer text-base"
+            className="hover:text-foreground transition-colors cursor-pointer text-base pr-2"
             aria-label="Clear search"
           >
             ×
