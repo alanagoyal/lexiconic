@@ -96,7 +96,7 @@ export function WordsClient({
   initialSearchQuery,
 }: WordsClientProps) {
   const router = useRouter();
-  const { isMobile, isIOS } = useDeviceType();
+  const { isMobile } = useDeviceType();
 
   // Force list view on mobile devices, even if URL says grid/map
   const sanitizedInitialView = (isMobile && (initialViewMode === "grid" || initialViewMode === "map"))
