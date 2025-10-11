@@ -25,7 +25,7 @@ export function SearchFilter({
         placeholder="Search words, definitions, or languages..."
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
       />
       
       {searchTerm && (
