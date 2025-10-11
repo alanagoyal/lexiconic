@@ -44,7 +44,7 @@ export function LexiconicHeader({
             LEXICONIC
           </button>
           <div className="flex items-center gap-2">
-            {(viewMode === "list" || viewMode === "grid") && (
+            {mounted && (viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
                 <Button
                   variant={sortMode === "random" ? "default" : "ghost"}
