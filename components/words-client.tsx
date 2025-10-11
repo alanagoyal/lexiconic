@@ -132,8 +132,6 @@ export function WordsClient({
   const lastUrlSearchTerm = useRef(initialSearchQuery);
   // Track if initial search from URL has completed
   const initialSearchCompleted = useRef(!initialSearchQuery);
-  // Track if we currently have an active search
-  const hasActiveSearch = useRef(!!initialSearchQuery);
 
   // Force list view when on mobile and prevent grid/map views
   useEffect(() => {
@@ -261,7 +259,7 @@ export function WordsClient({
     }
   };
 
-  // Search effect - only runs when search term changes
+  // Search effect - ONLY handles searching, not sorting
   useEffect(() => {
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
@@ -274,9 +272,9 @@ export function WordsClient({
       return;
     }
 
-    // No search term - show all words with current sort
+    // No search term - show all words (will be sorted by separate effect)
     if (!deferredSearchTerm.trim()) {
-      setDisplayedWords(sortWords(words, sortMode, seed));
+      setDisplayedWords(activeWords);
       initialSearchCompleted.current = true;
       return;
     }
@@ -296,7 +294,15 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm]);
+  }, [deferredSearchTerm, activeWords, searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Sort effect - applies current sort to displayed words when sort mode changes
+  useEffect(() => {
+    // Only apply sorting when there's no active search (searchTerm is empty)
+    if (!searchTerm.trim()) {
+      setDisplayedWords(sortWords(displayedWords, sortMode, seed));
+    }
+  }, [sortMode, seed]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
