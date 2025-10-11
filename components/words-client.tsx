@@ -283,9 +283,8 @@ export function WordsClient({
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
-        setDisplayedWords(sortedResults);
+        // Don't apply sort mode to search results - preserve relevance ordering
+        setDisplayedWords(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
