@@ -292,23 +292,30 @@ export function WordsClient({
     // If there's a search term and embeddings just loaded, re-search with better data
     // But only if this is the initial embeddings load (wordsWithEmbeddings becoming available)
     if (searchTerm.trim() && wordsWithEmbeddings && activeWords === wordsWithEmbeddings) {
+      // Re-search silently in background without showing spinner
+      // This improves results when embeddings finish loading during a search
       performSemanticSearch(searchTerm).then(results => {
         setSearchResults(results);
+      }).catch(error => {
+        console.error('Background re-search with embeddings failed:', error);
       });
     }
   }, [activeWords, searchTerm, wordsWithEmbeddings]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
-    // Set searching state immediately if there's a term
+    // Set searching state immediately based on whether there's a term
     if (term.trim()) {
       setIsSearching(true);
+    } else {
+      // Immediately clear searching state when input is cleared
+      setIsSearching(false);
     }
   };
 
   const handleClear = () => {
     setSearchTerm("");
-    // Let the useEffect handle URL update
+    setIsSearching(false);
   };
 
   const handleRowExpand = (wordId: string) => {
