@@ -124,7 +124,6 @@ export function WordsClient({
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]); // Unsorted search results
-  const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
@@ -239,7 +238,7 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing - only triggers on search term changes
+  // Search effect - only triggers on search term changes
   useEffect(() => {
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
@@ -255,7 +254,6 @@ export function WordsClient({
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
       setSearchResults([]);
-      setDisplayedWords(sortWords(words, sortMode, seed));
       initialSearchCompleted.current = true;
       return;
     }
@@ -265,9 +263,8 @@ export function WordsClient({
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Store unsorted search results (don't sort here - let handleSortModeChange do it)
+        // Store search results in semantic order (no user sorting applied)
         setSearchResults(results);
-        setDisplayedWords(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
@@ -275,17 +272,14 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm, activeWords, searchTerm, initialSearchQuery, embeddingsLoading]);
 
-  // Separate effect to apply sorting when sort mode changes
-  useEffect(() => {
-    // Only apply sorting if we're not currently searching
-    if (isSearching) return;
-
+  // Compute displayed words based on search results and sort mode
+  // This is derived state, not stored in an effect
+  const displayedWords = (() => {
     const wordsToSort = searchResults.length > 0 ? searchResults : words;
-    const sorted = sortWords(wordsToSort, sortMode, seed);
-    setDisplayedWords(sorted);
-  }, [sortMode, seed, searchResults, words, isSearching]);
+    return sortWords(wordsToSort, sortMode, seed);
+  })();
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -337,12 +331,7 @@ export function WordsClient({
       // Generate new seed for new random order
       const newSeed = Date.now().toString();
 
-      // Determine which words to sort: search results if searching, all words otherwise
-      const wordsToSort = searchResults.length > 0 ? searchResults : words;
-
       const shuffleInterval = setInterval(() => {
-        const tempShuffled = sortWords(wordsToSort, "random");
-        setDisplayedWords(tempShuffled);
         window.scrollTo(0, currentScrollY);
       }, 100);
 
@@ -350,14 +339,14 @@ export function WordsClient({
         clearInterval(shuffleInterval);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
-        // Set state which will trigger the sorting effect
+        // Update state - displayedWords will automatically recompute
         setSortMode(newSortMode);
         setSeed(newSeed);
         // Update URL after shuffle animation completes
         updateURLParams({ sort: "random", seed: newSeed });
       }, 1000);
     } else {
-      // Instant sort - just update state, the effect will handle the actual sorting
+      // Instant sort - just update state, displayedWords will automatically recompute
       setSortMode(newSortMode);
       updateURLParams({ sort: newSortMode });
     }
