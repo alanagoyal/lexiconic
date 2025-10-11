@@ -9,7 +9,6 @@ import {
   Map as MapIcon,
   Grid3X3,
 } from "lucide-react";
-import { useDeviceType } from "@/hooks/use-device-type";
 
 interface LexiconicHeaderProps {
   viewMode: "list" | "map" | "grid";
@@ -26,8 +25,6 @@ export function LexiconicHeader({
   onSortModeChange,
   onClearSearch,
 }: LexiconicHeaderProps) {
-  const { isMobile } = useDeviceType();
-
   const handleLogoClick = () => {
     onViewModeChange("list");
     onClearSearch();
@@ -79,9 +76,8 @@ export function LexiconicHeader({
               </div>
             )}
 
-            {/* View toggle buttons - only show on desktop (based on screen size) */}
-            {!isMobile && (
-            <div className="flex items-center gap-1 border border-border rounded-md p-1">
+            {/* View toggle buttons - hide on mobile using CSS media query */}
+            <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="icon"
@@ -113,7 +109,6 @@ export function LexiconicHeader({
                 <MapIcon className="h-4 w-4" />
               </Button>
             </div>
-            )}
           </div>
         </div>
       </div>

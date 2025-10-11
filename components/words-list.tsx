@@ -33,6 +33,7 @@ export function WordsList({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
         {words.map((word, index) => {
           const wordId = `${word.word}-${index}`;
+          const isLast = index === words.length - 1;
           return (
             <div key={wordId} className="word-grid-item">
               <WordRow
@@ -40,6 +41,7 @@ export function WordsList({
                 isExpanded={expandedRowId === wordId}
                 onToggleExpand={() => onToggleExpand?.(wordId)}
                 viewMode="grid"
+                isLast={isLast}
               />
             </div>
           );
@@ -52,6 +54,7 @@ export function WordsList({
     <div>
       {words.map((word, index) => {
         const wordId = `${word.word}-${index}`;
+        const isLast = index === words.length - 1;
         return (
           <div key={wordId}>
             <WordRow
@@ -59,6 +62,7 @@ export function WordsList({
               isExpanded={expandedRowId === wordId}
               onToggleExpand={() => onToggleExpand?.(wordId)}
               viewMode="list"
+              isLast={isLast}
             />
           </div>
         );
