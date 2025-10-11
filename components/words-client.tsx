@@ -118,7 +118,7 @@ export function WordsClient({
   );
 
   // Use words with embeddings if available, otherwise use initial words
-  const activeWords = wordsWithEmbeddings || words;
+  const activeWords = useMemo(() => wordsWithEmbeddings || words, [wordsWithEmbeddings, words]);
 
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
@@ -274,20 +274,14 @@ export function WordsClient({
       return;
     }
 
-    // No search term - only update if we're transitioning from search to no-search
+    // No search term - show all words with current sort
     if (!deferredSearchTerm.trim()) {
-      if (hasActiveSearch.current) {
-        // Transitioning from search to no search - restore sorted word list
-        const sorted = sortWords(words, sortMode, seed);
-        setDisplayedWords(sorted);
-        hasActiveSearch.current = false;
-      }
+      setDisplayedWords(sortWords(words, sortMode, seed));
       initialSearchCompleted.current = true;
       return;
     }
 
-    // We have a search term
-    hasActiveSearch.current = true;
+    // We have a search term - perform search
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -302,7 +296,7 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
