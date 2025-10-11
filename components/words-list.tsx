@@ -30,7 +30,7 @@ export function WordsList({
 
   if (viewMode === "grid") {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-border [&>*:last-child>*]:border-b-0">
         {words.map((word, index) => {
           const wordId = `${word.word}-${index}`;
           return (
@@ -49,7 +49,7 @@ export function WordsList({
   }
 
   return (
-    <div>
+    <div className="[&>*:last-child>*]:border-b-0">
       {words.map((word, index) => {
         const wordId = `${word.word}-${index}`;
         return (
