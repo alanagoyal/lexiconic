@@ -9,7 +9,6 @@ import {
   Map as MapIcon,
   Grid3X3,
 } from "lucide-react";
-import { useDeviceType } from "@/hooks/use-device-type";
 
 interface LexiconicHeaderProps {
   viewMode: "list" | "map" | "grid";
@@ -26,8 +25,6 @@ export function LexiconicHeader({
   onSortModeChange,
   onClearSearch,
 }: LexiconicHeaderProps) {
-  const { isMobile, mounted } = useDeviceType();
-
   const handleLogoClick = () => {
     onViewModeChange("list");
     onClearSearch();
@@ -44,7 +41,7 @@ export function LexiconicHeader({
             LEXICONIC
           </button>
           <div className="flex items-center gap-2">
-            {mounted && (viewMode === "list" || viewMode === "grid") && (
+            {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center gap-1 border border-border rounded-md p-1">
                 <Button
                   variant={sortMode === "random" ? "default" : "ghost"}
@@ -79,37 +76,8 @@ export function LexiconicHeader({
               </div>
             )}
 
-            {/* View toggle buttons - only show on desktop (based on screen size) */}
-            {!mounted ? (
-              // Reserve space during mount to prevent layout shift
-              <div className="flex items-center gap-1 border border-border rounded-md p-1 invisible">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  disabled
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  disabled
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  disabled
-                >
-                  <MapIcon className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : !isMobile ? (
-            <div className="flex items-center gap-1 border border-border rounded-md p-1">
+            {/* View toggle buttons - hide on mobile using CSS media query */}
+            <div className="hidden md:flex items-center gap-1 border border-border rounded-md p-1">
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="icon"
@@ -141,7 +109,6 @@ export function LexiconicHeader({
                 <MapIcon className="h-4 w-4" />
               </Button>
             </div>
-            ) : null}
           </div>
         </div>
       </div>
