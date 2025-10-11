@@ -239,7 +239,7 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing
+  // Simple search effect with debouncing - only triggers on search term changes
   useEffect(() => {
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
@@ -265,11 +265,9 @@ export function WordsClient({
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Store unsorted search results
+        // Store unsorted search results (don't sort here - let handleSortModeChange do it)
         setSearchResults(results);
-        // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode, seed);
-        setDisplayedWords(sortedResults);
+        setDisplayedWords(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
@@ -278,6 +276,16 @@ export function WordsClient({
 
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Separate effect to apply sorting when sort mode changes
+  useEffect(() => {
+    // Only apply sorting if we're not currently searching
+    if (isSearching) return;
+
+    const wordsToSort = searchResults.length > 0 ? searchResults : words;
+    const sorted = sortWords(wordsToSort, sortMode, seed);
+    setDisplayedWords(sorted);
+  }, [sortMode, seed, searchResults, words, isSearching]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -321,11 +329,6 @@ export function WordsClient({
     // Don't allow shuffle animation if already shuffling
     if (newSortMode === "random" && isShuffling) return;
 
-    setSortMode(newSortMode);
-
-    // Determine which words to sort: search results if searching, all words otherwise
-    const wordsToSort = searchResults.length > 0 ? searchResults : words;
-
     // Only do shuffle animation for random mode
     if (newSortMode === "random") {
       const currentScrollY = window.scrollY;
@@ -333,7 +336,9 @@ export function WordsClient({
 
       // Generate new seed for new random order
       const newSeed = Date.now().toString();
-      setSeed(newSeed);
+
+      // Determine which words to sort: search results if searching, all words otherwise
+      const wordsToSort = searchResults.length > 0 ? searchResults : words;
 
       const shuffleInterval = setInterval(() => {
         const tempShuffled = sortWords(wordsToSort, "random");
@@ -343,18 +348,17 @@ export function WordsClient({
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
-        // Set final seeded order
-        const finalOrder = sortWords(wordsToSort, "random", newSeed);
-        setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
+        // Set state which will trigger the sorting effect
+        setSortMode(newSortMode);
+        setSeed(newSeed);
         // Update URL after shuffle animation completes
         updateURLParams({ sort: "random", seed: newSeed });
       }, 1000);
     } else {
-      // Instant sort (no loading spinner)
-      const sortedResults = sortWords(wordsToSort, newSortMode);
-      setDisplayedWords(sortedResults);
+      // Instant sort - just update state, the effect will handle the actual sorting
+      setSortMode(newSortMode);
       updateURLParams({ sort: newSortMode });
     }
   };
