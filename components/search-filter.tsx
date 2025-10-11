@@ -29,7 +29,7 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute inset-y-0 right-0 text-xs text-muted-foreground flex items-center gap-1 pr-2">
+        <div className="absolute inset-y-0 right-0 text-xs text-muted-foreground flex items-center pr-2">
           {isSearching ? (
             <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
           ) : (
@@ -37,7 +37,7 @@ export function SearchFilter({
           )}
           <button
             onClick={onClear}
-            className="hover:text-foreground transition-colors cursor-pointer text-xl min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="hover:text-foreground transition-colors cursor-pointer text-xl min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2"
             aria-label="Clear search"
           >
             ×
