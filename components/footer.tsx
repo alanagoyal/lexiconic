@@ -1,15 +1,10 @@
-"use client";
+interface FooterProps {
+  isMapView?: boolean;
+}
 
-import { useDeviceType } from "@/hooks/use-device-type";
-
-export function Footer() {
-  const { isIOS } = useDeviceType();
-
+export function Footer({ isMapView = false }: FooterProps) {
   return (
-    <footer
-      className={`${isIOS ? '' : 'fixed bottom-0 left-0 right-0 z-10'} bg-background ${isIOS ? '' : 'border-t border-border'}`}
-      style={!isIOS ? { paddingBottom: 'env(safe-area-inset-bottom)' } : undefined}
-    >
+    <footer className={`bg-background border-t border-border ${isMapView ? 'fixed bottom-0 left-0 right-0 z-10' : '-mt-px'}`}>
       <div className="p-6 text-center">
         <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
           A digital exploration of linguistic untranslatability

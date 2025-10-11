@@ -28,9 +28,9 @@ function loadEnvLocal() {
 // Load .env.local before using environment variables
 loadEnvLocal();
 
+// Extended Word interface for this script that includes additional fields
 interface Word {
   word: string;
-  native_script: string;
   phonetic: string;
   language: string;
   family: string;
@@ -38,6 +38,7 @@ interface Word {
   definition: string;
   literal: string;
   usage_notes: string;
+  location: string;
   example_native: string;
   example_gloss: string;
   english_approx: string;
@@ -45,7 +46,7 @@ interface Word {
   disputed: string;
   region: string;
   closest_english_paraphrase: string;
-  sources: string;
+  source: string;
   needs_citation: string;
 }
 

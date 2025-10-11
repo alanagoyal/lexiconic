@@ -1,8 +1,6 @@
-import type { WordData } from '@/components/words-client'
+import type { WordData, WordWithEmbedding } from '@/types/word'
 
-export interface WordWithEmbedding extends WordData {
-  searchableText?: string
-}
+export type { WordWithEmbedding }
 
 // Cosine similarity calculation
 export function cosineSimilarity(a: number[], b: number[]): number {

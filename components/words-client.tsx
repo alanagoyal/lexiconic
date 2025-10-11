@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -13,6 +13,8 @@ import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
+import type { WordData } from "@/types/word";
+import { Footer } from "@/components/footer";
 
 const MapView = dynamic(
   () =>
@@ -36,23 +38,6 @@ const MapView = dynamic(
     ),
   }
 );
-
-export interface WordData {
-  word: string;
-  native_script: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  english_approx: string;
-  sources: string;
-  pronunciation: string;
-  phonetic: string;
-  embedding: number[];
-  embeddingHash: string;
-}
 
 interface WordsClientProps {
   words: WordWithEmbedding[];
@@ -111,7 +96,7 @@ export function WordsClient({
   initialSearchQuery,
 }: WordsClientProps) {
   const router = useRouter();
-  const { isMobile, isIOS } = useDeviceType();
+  const { isMobile } = useDeviceType();
 
   // Force list view on mobile devices, even if URL says grid/map
   const sanitizedInitialView = (isMobile && (initialViewMode === "grid" || initialViewMode === "map"))
@@ -136,8 +121,10 @@ export function WordsClient({
   const activeWords = wordsWithEmbeddings || words;
 
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
-  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  // Search results stored by relevance (unsorted)
+  const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>(words);
+  // Displayed words are search results + sorting applied
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -207,7 +194,6 @@ export function WordsClient({
     return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
-        word.native_script.toLowerCase().includes(searchLower) ||
         word.definition.toLowerCase().includes(searchLower) ||
         word.language.toLowerCase().includes(searchLower) ||
         word.phonetic.toLowerCase().includes(searchLower) ||
@@ -234,7 +220,7 @@ export function WordsClient({
       const semanticResults = searchWordsBySimilarity(
         activeWords,
         embedding,
-        0.25,
+        0.3,
         30
       );
       const keywordResults = performKeywordSearch(query);
@@ -254,22 +240,17 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing
+  // Search effect - stores results by relevance, no sorting
   useEffect(() => {
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
       return;
     }
     
-    // If deferred hasn't caught up to initial search term, skip this effect run
-    // This prevents the race condition where deferredSearchTerm is empty on first render
-    if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
-      return;
-    }
-    
-    if (!deferredSearchTerm.trim()) {
+    if (!searchTerm.trim()) {
       setIsSearching(false);
-      setDisplayedWords(words);
+      // When clearing search, set search results to all words
+      setSearchResults(activeWords);
       initialSearchCompleted.current = true;
       return;
     }
@@ -278,10 +259,9 @@ export function WordsClient({
 
     const timeoutId = setTimeout(async () => {
       try {
-        const results = await performSemanticSearch(deferredSearchTerm);
-        // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
-        setDisplayedWords(sortedResults);
+        const results = await performSemanticSearch(searchTerm);
+        // Store search results by relevance (no sorting)
+        setSearchResults(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
@@ -289,15 +269,29 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Update search results when activeWords changes (embeddings load) and no active search
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setSearchResults(activeWords);
+    }
+  }, [activeWords, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    // Set searching state immediately based on whether there's a term
+    if (term.trim()) {
+      setIsSearching(true);
+    } else {
+      // Immediately clear searching state when input is cleared
+      setIsSearching(false);
+    }
   };
 
   const handleClear = () => {
     setSearchTerm("");
-    // Let the useEffect handle URL update
+    setIsSearching(false);
   };
 
   const handleRowExpand = (wordId: string) => {
@@ -323,6 +317,17 @@ export function WordsClient({
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
+  // Separate sorting effect - applies current sort mode to search results
+  useEffect(() => {
+    // Don't apply sorting during shuffle animation
+    if (isShuffling) {
+      return;
+    }
+    
+    const sorted = sortWords(searchResults, sortMode, seed);
+    setDisplayedWords(sorted);
+  }, [searchResults, sortMode, seed, isShuffling]);
+
   const handleSortModeChange = (newSortMode: SortMode) => {
     if (newSortMode === "none") {
       setSortMode("asc");
@@ -345,7 +350,7 @@ export function WordsClient({
       setSeed(newSeed);
 
       const shuffleInterval = setInterval(() => {
-        const tempShuffled = sortWords(displayedWords, "random");
+        const tempShuffled = sortWords(searchResults, "random");
         setDisplayedWords(tempShuffled);
         window.scrollTo(0, currentScrollY);
       }, 100);
@@ -353,7 +358,7 @@ export function WordsClient({
       setTimeout(() => {
         clearInterval(shuffleInterval);
         // Set final seeded order
-        const finalOrder = sortWords(displayedWords, "random", newSeed);
+        const finalOrder = sortWords(searchResults, "random", newSeed);
         setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
@@ -371,7 +376,7 @@ export function WordsClient({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header and Search - sticky together */}
       <div className="sticky top-0 z-10 bg-background">
         <LexiconicHeader
@@ -396,7 +401,7 @@ export function WordsClient({
       </div>
 
       {/* Content - either list, grid, or map view */}
-      <main className={`min-h-[calc(100vh-120px)] ${isIOS ? '' : 'pb-16'}`}>
+      <main className="flex-grow">
         {viewMode === "map" ? (
           <MapView
             words={displayedWords}
@@ -419,6 +424,9 @@ export function WordsClient({
         open={selectedWord !== null}
         onClose={() => setSelectedWord(null)}
       />
+
+      {/* Footer - sticky only on map view */}
+      <Footer isMapView={viewMode === "map"} />
     </div>
   );
 }

@@ -41,9 +41,10 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Minimal word interface for pronunciation generation
+// This script only needs these specific fields
 interface Word {
   word: string;
-  native_script: string;
   transliteration: string;
   language: string;
   pronunciation?: string;

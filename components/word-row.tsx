@@ -3,7 +3,7 @@
 import { ExternalLink, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import type { WordData } from "@/components/words-client";
+import type { WordData } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {
@@ -58,7 +58,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
 
   if (viewMode === "grid") {
     return (
-      <div className="word-card border-r border-b border-border p-4 space-y-3 h-full">
+      <div className={`word-card border-r border-b border-border p-4 space-y-3 h-full`}>
         {/* Language and Category */}
         <div className="space-y-1 text-sm">
           <div className="text-foreground font-medium">{word.language}</div>
@@ -97,7 +97,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
 
   // Original list view layout
   return (
-    <div className="word-row border-b border-border w-full">
+    <div className={`word-row border-b border-border w-full`}>
       {/* Main Grid Layout - responsive design */}
       <div
         className={`grid grid-cols-1 md:grid-cols-12 min-h-[120px] md:min-h-[120px] cursor-pointer ${!isTouch ? 'hover:bg-muted/30 transition-colors' : ''}`}
@@ -224,10 +224,10 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
                 </div>
               )}
 
-              {word.sources && word.sources !== "—" && (
+              {word.source && word.source !== "—" && (
                 <div>
                   <a
-                    href={word.sources}
+                    href={word.source}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"
@@ -284,10 +284,10 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
 
               <div className="col-span-3 p-4 border-l border-border">
                 <div className="space-y-2">
-                  {word.sources && word.sources !== "—" && (
+                  {word.source && word.source !== "—" && (
                     <div>
                       <a
-                        href={word.sources}
+                        href={word.source}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium mb-2 text-muted-foreground inline-flex items-center gap-1"
