@@ -1,7 +1,6 @@
 "use client";
 
 import { ExternalLink, Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { WordData } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
@@ -117,15 +116,6 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
       >
         {/* Mobile Layout - stacked */}
         <div className="md:hidden p-4 space-y-4">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1 text-sm">
-              <div className="text-foreground font-medium">{word.language}</div>
-              {word.category && word.category !== "—" && (
-                <div className="text-muted-foreground">{word.category}</div>
-              )}
-            </div>
-          </div>
-
           <div className="text-left space-y-2 py-4">
             <div className="native-script text-3xl text-foreground truncate">
               {word.word.toLowerCase()}
@@ -145,7 +135,7 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
               )}
           </div>
 
-          <div className="word-definition text-base text-foreground leading-relaxed pt-2 font-playfair">
+          <div className="word-definition text-base text-foreground leading-relaxed font-playfair">
             {word.definition}
           </div>
         </div>
@@ -197,6 +187,13 @@ export function WordRow({ word, isExpanded, onToggleExpand, viewMode = "list" }:
           {/* Mobile Expanded Content */}
           <div className="md:hidden p-4">
             <div className="space-y-4">
+              <div className="space-y-0.5 text-sm">
+                <div className="text-foreground font-medium">{word.language}</div>
+                {word.category && word.category !== "—" && (
+                  <div className="text-muted-foreground">{word.category}</div>
+                )}
+              </div>
+
               {word.literal && word.literal !== "—" && (
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">
