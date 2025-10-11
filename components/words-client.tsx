@@ -259,7 +259,8 @@ export function WordsClient({
     }
   };
 
-  // Search effect - ONLY handles searching, not sorting
+  // Search effect - ONLY handles searching
+  // Sets displayedWords to either search results (relevance order) or all words (unsorted)
   useEffect(() => {
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
@@ -272,15 +273,14 @@ export function WordsClient({
       return;
     }
 
-    // No search term - show all words sorted by current sort mode
+    // No search term - show all words (unsorted, will be sorted by sort effect below)
     if (!deferredSearchTerm.trim()) {
-      setDisplayedWords(sortWords(activeWords, sortMode, seed));
+      setDisplayedWords(activeWords);
       initialSearchCompleted.current = true;
       return;
     }
 
     // We have a search term - perform search
-    // But don't re-run search if only sortMode/seed changed (user is just sorting results)
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -296,6 +296,15 @@ export function WordsClient({
 
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Sort effect - applies sorting to displayed words when NOT actively searching
+  // This handles: initial page load sort, sort changes when no search active, and clearing search
+  useEffect(() => {
+    // Only sort when there's no active search term
+    if (!searchTerm.trim() && displayedWords.length > 0) {
+      setDisplayedWords(prev => sortWords(prev, sortMode, seed));
+    }
+  }, [sortMode, seed, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
