@@ -106,7 +106,7 @@ export function WordsClient({
   const [viewMode, setViewMode] = useState(sanitizedInitialView);
   const [sortMode, setSortMode] = useState(initialSortMode);
   const [seed, setSeed] = useState(initialSeed);
-  const [sortModeBeforeSearch, setSortModeBeforeSearch] = useState<SortMode | null>(null);
+  const sortModeBeforeSearchRef = useRef<SortMode | null>(null);
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
@@ -278,20 +278,26 @@ export function WordsClient({
       setIsSearching(false);
       setSearchResults([]);
       // Restore pre-search sort mode if we had one
-      const modeToUse = sortModeBeforeSearch !== null ? sortModeBeforeSearch : sortMode;
-      if (sortModeBeforeSearch !== null) {
-        setSortMode(sortModeBeforeSearch);
-        setSortModeBeforeSearch(null);
+      if (sortModeBeforeSearchRef.current !== null) {
+        setSortMode(sortModeBeforeSearchRef.current);
+        sortModeBeforeSearchRef.current = null;
       }
-      setDisplayedWords(sortWords(words, modeToUse, seed));
       initialSearchCompleted.current = true;
       return;
     }
 
-    // When starting a search, save current sort mode and switch to "none" for relevance
-    if (sortModeBeforeSearch === null && sortMode !== "none") {
-      setSortModeBeforeSearch(sortMode);
+    // When starting a NEW search (no results yet), save current sort mode and switch to "none" for relevance
+    // But if we already have search results, don't interfere with user's sort preference
+    const hasExistingResults = searchResults.length > 0;
+    if (!hasExistingResults && sortModeBeforeSearchRef.current === null && sortMode !== "none") {
+      sortModeBeforeSearchRef.current = sortMode;
       setSortMode("none");
+      return; // Exit early, will re-run once sortMode is updated
+    }
+
+    // If user changed sort mode while viewing search results, don't re-run the search
+    if (hasExistingResults) {
+      return;
     }
 
     setIsSearching(true);
@@ -308,7 +314,7 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading, sortMode, seed, searchResults.length]);
 
   // Apply sort mode changes without re-running search
   useEffect(() => {
