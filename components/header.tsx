@@ -80,7 +80,35 @@ export function LexiconicHeader({
             )}
 
             {/* View toggle buttons - only show on desktop (based on screen size) */}
-            {mounted && !isMobile && (
+            {!mounted ? (
+              // Reserve space during mount to prevent layout shift
+              <div className="flex items-center gap-1 border border-border rounded-md p-1 invisible">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  disabled
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  disabled
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  disabled
+                >
+                  <MapIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : !isMobile ? (
             <div className="flex items-center gap-1 border border-border rounded-md p-1">
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
@@ -113,7 +141,7 @@ export function LexiconicHeader({
                 <MapIcon className="h-4 w-4" />
               </Button>
             </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
