@@ -271,36 +271,12 @@ export function WordsClient({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, initialSearchQuery, embeddingsLoading]);
 
-  // Update search results when activeWords changes (embeddings load)
-  // Track previous activeWords to detect actual changes
-  const prevActiveWordsRef = useRef(activeWords);
-  
+  // Update search results when activeWords changes (embeddings load) and no active search
   useEffect(() => {
-    // Only proceed if activeWords actually changed
-    if (prevActiveWordsRef.current === activeWords) {
-      return;
-    }
-    
-    prevActiveWordsRef.current = activeWords;
-    
-    // If no search term, just update to all words
     if (!searchTerm.trim()) {
       setSearchResults(activeWords);
-      return;
     }
-    
-    // If there's a search term and embeddings just loaded, re-search with better data
-    // But only if this is the initial embeddings load (wordsWithEmbeddings becoming available)
-    if (searchTerm.trim() && wordsWithEmbeddings && activeWords === wordsWithEmbeddings) {
-      // Re-search silently in background without showing spinner
-      // This improves results when embeddings finish loading during a search
-      performSemanticSearch(searchTerm).then(results => {
-        setSearchResults(results);
-      }).catch(error => {
-        console.error('Background re-search with embeddings failed:', error);
-      });
-    }
-  }, [activeWords, searchTerm, wordsWithEmbeddings]);
+  }, [activeWords, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
