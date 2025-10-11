@@ -272,14 +272,15 @@ export function WordsClient({
       return;
     }
 
-    // No search term - show all words (will be sorted by separate effect)
+    // No search term - show all words sorted by current sort mode
     if (!deferredSearchTerm.trim()) {
-      setDisplayedWords(activeWords);
+      setDisplayedWords(sortWords(activeWords, sortMode, seed));
       initialSearchCompleted.current = true;
       return;
     }
 
     // We have a search term - perform search
+    // But don't re-run search if only sortMode/seed changed (user is just sorting results)
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -295,14 +296,6 @@ export function WordsClient({
 
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, searchTerm, initialSearchQuery, embeddingsLoading]);
-
-  // Sort effect - applies current sort to displayed words when sort mode changes
-  useEffect(() => {
-    // Only apply sorting when there's no active search (searchTerm is empty)
-    if (!searchTerm.trim()) {
-      setDisplayedWords(sortWords(displayedWords, sortMode, seed));
-    }
-  }, [sortMode, seed]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
