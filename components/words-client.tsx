@@ -106,6 +106,7 @@ export function WordsClient({
   const [viewMode, setViewMode] = useState(sanitizedInitialView);
   const [sortMode, setSortMode] = useState(initialSortMode);
   const [seed, setSeed] = useState(initialSeed);
+  const [sortModeBeforeSearch, setSortModeBeforeSearch] = useState<SortMode | null>(null);
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
@@ -124,6 +125,7 @@ export function WordsClient({
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
+  const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
@@ -265,18 +267,31 @@ export function WordsClient({
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
       return;
     }
-    
+
     // If deferred hasn't caught up to initial search term, skip this effect run
     // This prevents the race condition where deferredSearchTerm is empty on first render
     if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
       return;
     }
-    
+
     if (!deferredSearchTerm.trim()) {
       setIsSearching(false);
-      setDisplayedWords(words);
+      setSearchResults([]);
+      // Restore pre-search sort mode if we had one
+      const modeToUse = sortModeBeforeSearch !== null ? sortModeBeforeSearch : sortMode;
+      if (sortModeBeforeSearch !== null) {
+        setSortMode(sortModeBeforeSearch);
+        setSortModeBeforeSearch(null);
+      }
+      setDisplayedWords(sortWords(words, modeToUse, seed));
       initialSearchCompleted.current = true;
       return;
+    }
+
+    // When starting a search, save current sort mode and switch to "none" for relevance
+    if (sortModeBeforeSearch === null && sortMode !== "none") {
+      setSortModeBeforeSearch(sortMode);
+      setSortMode("none");
     }
 
     setIsSearching(true);
@@ -284,8 +299,8 @@ export function WordsClient({
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Don't apply sort mode to search results - preserve relevance ordering
-        setDisplayedWords(results);
+        // Store search results (in relevance order)
+        setSearchResults(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
@@ -293,7 +308,19 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Apply sort mode changes without re-running search
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      // We have search results, sort them by current sort mode
+      // (relevance order is preserved when sortMode is "none")
+      setDisplayedWords(sortWords(searchResults, sortMode, seed));
+    } else if (!searchTerm.trim()) {
+      // No search active, sort all words
+      setDisplayedWords(sortWords(words, sortMode, seed));
+    }
+  }, [sortMode, seed, searchResults, words, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
