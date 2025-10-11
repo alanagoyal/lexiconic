@@ -220,7 +220,7 @@ export function WordsClient({
       const semanticResults = searchWordsBySimilarity(
         activeWords,
         embedding,
-        0.25,
+        0.3,
         30
       );
       const keywordResults = performKeywordSearch(query);
