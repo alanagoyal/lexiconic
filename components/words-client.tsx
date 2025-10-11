@@ -122,12 +122,8 @@ export function WordsClient({
 
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
-
-  // Track the last search term to avoid re-running search on sort changes
-  const lastSearchTerm = useRef(deferredSearchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
-  const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
@@ -136,6 +132,8 @@ export function WordsClient({
   const lastUrlSearchTerm = useRef(initialSearchQuery);
   // Track if initial search from URL has completed
   const initialSearchCompleted = useRef(!initialSearchQuery);
+  // Track if we currently have an active search
+  const hasActiveSearch = useRef(!!initialSearchQuery);
 
   // Force list view when on mobile and prevent grid/map views
   useEffect(() => {
@@ -263,14 +261,8 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing - ONLY runs when search term actually changes
+  // Search effect - only runs when search term changes
   useEffect(() => {
-    // Skip if search term hasn't actually changed
-    if (lastSearchTerm.current === deferredSearchTerm) {
-      return;
-    }
-    lastSearchTerm.current = deferredSearchTerm;
-
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
       return;
@@ -282,19 +274,27 @@ export function WordsClient({
       return;
     }
 
+    // No search term - only update if we're transitioning from search to no-search
     if (!deferredSearchTerm.trim()) {
-      setSearchResults([]);
+      if (hasActiveSearch.current) {
+        // Transitioning from search to no search - restore sorted word list
+        const sorted = sortWords(words, sortMode, seed);
+        setDisplayedWords(sorted);
+        hasActiveSearch.current = false;
+      }
       initialSearchCompleted.current = true;
       return;
     }
 
+    // We have a search term
+    hasActiveSearch.current = true;
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
       try {
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Store search results (in relevance order)
-        setSearchResults(results);
+        // Set results directly - they come back in relevance order
+        setDisplayedWords(results);
         initialSearchCompleted.current = true;
       } finally {
         setIsSearching(false);
@@ -303,18 +303,6 @@ export function WordsClient({
 
     return () => clearTimeout(timeoutId);
   }, [deferredSearchTerm, activeWords, words, searchTerm, initialSearchQuery, embeddingsLoading]);
-
-  // Apply sort mode changes without re-running search
-  useEffect(() => {
-    if (searchResults.length > 0) {
-      // We have search results, sort them by current sort mode
-      // (relevance order is preserved when sortMode is "none")
-      setDisplayedWords(sortWords(searchResults, sortMode, seed));
-    } else if (!searchTerm.trim()) {
-      // No search active, sort all words
-      setDisplayedWords(sortWords(words, sortMode, seed));
-    }
-  }, [sortMode, seed, searchResults, words, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -351,6 +339,7 @@ export function WordsClient({
   const handleSortModeChange = (newSortMode: SortMode) => {
     if (newSortMode === "none") {
       setSortMode("asc");
+      setDisplayedWords(sortWords(displayedWords, "asc"));
       updateURLParams({ sort: "asc" });
       return;
     }
@@ -386,6 +375,8 @@ export function WordsClient({
         updateURLParams({ sort: "random", seed: newSeed });
       }, 1000);
     } else {
+      // For asc/desc, sort immediately
+      setDisplayedWords(sortWords(displayedWords, newSortMode));
       updateURLParams({ sort: newSortMode });
     }
   };
