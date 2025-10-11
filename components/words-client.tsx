@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue, useRef } from "react";
+import { useState, useEffect, useDeferredValue, useRef, useMemo } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
