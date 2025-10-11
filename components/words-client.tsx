@@ -123,6 +123,9 @@ export function WordsClient({
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  // Search results stored by relevance (unsorted)
+  const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>(words);
+  // Displayed words are search results + sorting applied
   const [displayedWords, setDisplayedWords] = useState<WordWithEmbedding[]>(words);
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -238,42 +241,96 @@ export function WordsClient({
     }
   };
 
-  // Simple search effect with debouncing
+  // Search effect - stores results by relevance, no sorting
   useEffect(() => {
+    console.log('🔍 Search effect triggered:', { 
+      deferredSearchTerm, 
+      searchTerm,
+      embeddingsLoading, 
+      initialSearchCompleted: initialSearchCompleted.current,
+      activeWordsCount: activeWords.length 
+    });
+    
     // Wait for embeddings to load before searching if we have an initial search query
     if (initialSearchQuery && embeddingsLoading && !initialSearchCompleted.current) {
+      console.log('⏸️  Waiting for embeddings to load');
       return;
     }
     
     // If deferred hasn't caught up to initial search term, skip this effect run
     // This prevents the race condition where deferredSearchTerm is empty on first render
     if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
+      console.log('⏸️  Deferred search term not caught up yet');
       return;
     }
     
     if (!deferredSearchTerm.trim()) {
+      console.log('🧹 Clearing search, setting isSearching=false');
       setIsSearching(false);
-      setDisplayedWords(words);
+      // When clearing search, set search results to all words
+      setSearchResults(activeWords);
       initialSearchCompleted.current = true;
       return;
     }
 
+    console.log('🔎 Starting search, setting isSearching=true');
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
       try {
+        console.log('🔎 Performing semantic search for:', deferredSearchTerm);
         const results = await performSemanticSearch(deferredSearchTerm);
-        // Apply current sort mode to search results
-        const sortedResults = sortWords(results, sortMode);
-        setDisplayedWords(sortedResults);
+        // Store search results by relevance (no sorting)
+        setSearchResults(results);
         initialSearchCompleted.current = true;
+        console.log('✅ Search complete, found', results.length, 'results');
       } finally {
+        console.log('🏁 Setting isSearching=false');
         setIsSearching(false);
       }
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, activeWords, sortMode, words, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [deferredSearchTerm, searchTerm, initialSearchQuery, embeddingsLoading]);
+
+  // Update search results when activeWords changes (embeddings load)
+  // Track previous activeWords to detect actual changes
+  const prevActiveWordsRef = useRef(activeWords);
+  
+  useEffect(() => {
+    console.log('🔄 activeWords effect check:', { 
+      count: activeWords.length, 
+      hasSearchTerm: !!searchTerm.trim(),
+      changed: prevActiveWordsRef.current !== activeWords
+    });
+    
+    // Only proceed if activeWords actually changed
+    if (prevActiveWordsRef.current === activeWords) {
+      console.log('⏭️  activeWords ref unchanged, skipping');
+      return;
+    }
+    
+    prevActiveWordsRef.current = activeWords;
+    
+    // If no search term, just update to all words
+    if (!searchTerm.trim()) {
+      console.log('📝 No search term - updating search results to all words');
+      setSearchResults(activeWords);
+      return;
+    }
+    
+    // If there's a search term and embeddings just loaded, re-search with better data
+    // But only if this is the initial embeddings load (wordsWithEmbeddings becoming available)
+    if (searchTerm.trim() && wordsWithEmbeddings && activeWords === wordsWithEmbeddings) {
+      console.log('🔄 Embeddings loaded during search - re-searching silently with embeddings');
+      performSemanticSearch(searchTerm).then(results => {
+        setSearchResults(results);
+        console.log('✅ Silent re-search with embeddings complete:', results.length, 'results');
+      });
+    } else {
+      console.log('⏭️  Skipping re-search - not initial embeddings load');
+    }
+  }, [activeWords, searchTerm, wordsWithEmbeddings]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -307,7 +364,23 @@ export function WordsClient({
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
+  // Separate sorting effect - applies current sort mode to search results
+  useEffect(() => {
+    console.log('🔄 Sorting effect triggered:', { sortMode, seed, searchResultsCount: searchResults.length, isShuffling });
+    // Don't apply sorting during shuffle animation
+    if (isShuffling) {
+      console.log('⏸️  Skipping sort - shuffling in progress');
+      return;
+    }
+    
+    const sorted = sortWords(searchResults, sortMode, seed);
+    setDisplayedWords(sorted);
+    console.log('✅ Sorting complete, displayed', sorted.length, 'words');
+  }, [searchResults, sortMode, seed, isShuffling]);
+
   const handleSortModeChange = (newSortMode: SortMode) => {
+    console.log('🎛️  Sort mode change requested:', { from: sortMode, to: newSortMode });
+    
     if (newSortMode === "none") {
       setSortMode("asc");
       updateURLParams({ sort: "asc" });
@@ -318,6 +391,7 @@ export function WordsClient({
     if (newSortMode === "random" && isShuffling) return;
 
     setSortMode(newSortMode);
+    console.log('✅ Sort mode updated to:', newSortMode);
 
     // Only do shuffle animation for random mode
     if (newSortMode === "random") {
@@ -329,7 +403,7 @@ export function WordsClient({
       setSeed(newSeed);
 
       const shuffleInterval = setInterval(() => {
-        const tempShuffled = sortWords(displayedWords, "random");
+        const tempShuffled = sortWords(searchResults, "random");
         setDisplayedWords(tempShuffled);
         window.scrollTo(0, currentScrollY);
       }, 100);
@@ -337,7 +411,7 @@ export function WordsClient({
       setTimeout(() => {
         clearInterval(shuffleInterval);
         // Set final seeded order
-        const finalOrder = sortWords(displayedWords, "random", newSeed);
+        const finalOrder = sortWords(searchResults, "random", newSeed);
         setDisplayedWords(finalOrder);
         setIsShuffling(false);
         window.scrollTo(0, currentScrollY);
