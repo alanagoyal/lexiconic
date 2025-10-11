@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useDeferredValue, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -121,7 +121,6 @@ export function WordsClient({
   const activeWords = wordsWithEmbeddings || words;
 
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
-  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   // Search results stored by relevance (unsorted)
   const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>(words);
@@ -244,7 +243,6 @@ export function WordsClient({
   // Search effect - stores results by relevance, no sorting
   useEffect(() => {
     console.log('🔍 Search effect triggered:', { 
-      deferredSearchTerm, 
       searchTerm,
       embeddingsLoading, 
       initialSearchCompleted: initialSearchCompleted.current,
@@ -257,14 +255,7 @@ export function WordsClient({
       return;
     }
     
-    // If deferred hasn't caught up to initial search term, skip this effect run
-    // This prevents the race condition where deferredSearchTerm is empty on first render
-    if (initialSearchQuery && !initialSearchCompleted.current && deferredSearchTerm !== searchTerm) {
-      console.log('⏸️  Deferred search term not caught up yet');
-      return;
-    }
-    
-    if (!deferredSearchTerm.trim()) {
+    if (!searchTerm.trim()) {
       console.log('🧹 Clearing search, setting isSearching=false');
       setIsSearching(false);
       // When clearing search, set search results to all words
@@ -278,8 +269,8 @@ export function WordsClient({
 
     const timeoutId = setTimeout(async () => {
       try {
-        console.log('🔎 Performing semantic search for:', deferredSearchTerm);
-        const results = await performSemanticSearch(deferredSearchTerm);
+        console.log('🔎 Performing semantic search for:', searchTerm);
+        const results = await performSemanticSearch(searchTerm);
         // Store search results by relevance (no sorting)
         setSearchResults(results);
         initialSearchCompleted.current = true;
@@ -291,7 +282,7 @@ export function WordsClient({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [deferredSearchTerm, searchTerm, initialSearchQuery, embeddingsLoading]);
+  }, [searchTerm, initialSearchQuery, embeddingsLoading]);
 
   // Update search results when activeWords changes (embeddings load)
   // Track previous activeWords to detect actual changes
@@ -334,6 +325,10 @@ export function WordsClient({
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    // Set searching state immediately if there's a term
+    if (term.trim()) {
+      setIsSearching(true);
+    }
   };
 
   const handleClear = () => {
