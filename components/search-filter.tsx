@@ -29,15 +29,15 @@ export function SearchFilter({
       />
       
       {searchTerm && (
-        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex items-center gap-2">
+        <div className="absolute bottom-0 right-0 text-xs text-muted-foreground flex items-center gap-1">
           {isSearching ? (
             <Loader2 aria-label="Searching" className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <span>Showing {filteredCount} of {totalWords}</span>
+            <span className="ml-2">Showing {filteredCount} of {totalWords}</span>
           )}
           <button
             onClick={onClear}
-            className="hover:text-foreground transition-colors cursor-pointer text-xl min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mb-2"
+            className="hover:text-foreground transition-colors cursor-pointer text-xl min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Clear search"
           >
             ×
