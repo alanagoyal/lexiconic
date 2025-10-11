@@ -126,6 +126,7 @@ export function WordsClient({
   const [searchResults, setSearchResults] = useState<WordWithEmbedding[]>([]); // Unsorted search results
   const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
   const [isShuffling, setIsShuffling] = useState(false);
+  const [shuffleDisplay, setShuffleDisplay] = useState<WordWithEmbedding[] | null>(null);
   const [selectedWord, setSelectedWord] = useState<WordWithEmbedding | null>(null);
   
   // Track last URL-synced search term to avoid unnecessary updates
@@ -275,8 +276,8 @@ export function WordsClient({
   }, [deferredSearchTerm, activeWords, searchTerm, initialSearchQuery, embeddingsLoading]);
 
   // Compute displayed words based on search results and sort mode
-  // This is derived state, not stored in an effect
-  const displayedWords = (() => {
+  // During shuffle animation, use the shuffleDisplay, otherwise compute from sort mode
+  const displayedWords = shuffleDisplay || (() => {
     const wordsToSort = searchResults.length > 0 ? searchResults : words;
     return sortWords(wordsToSort, sortMode, seed);
   })();
@@ -331,15 +332,22 @@ export function WordsClient({
       // Generate new seed for new random order
       const newSeed = Date.now().toString();
 
+      // Determine which words to shuffle
+      const wordsToShuffle = searchResults.length > 0 ? searchResults : words;
+
       const shuffleInterval = setInterval(() => {
+        // Show random shuffles during animation
+        const tempShuffled = sortWords(wordsToShuffle, "random");
+        setShuffleDisplay(tempShuffled);
         window.scrollTo(0, currentScrollY);
       }, 100);
 
       setTimeout(() => {
         clearInterval(shuffleInterval);
         setIsShuffling(false);
+        setShuffleDisplay(null); // Clear shuffle display so computed value takes over
         window.scrollTo(0, currentScrollY);
-        // Update state - displayedWords will automatically recompute
+        // Update state - displayedWords will automatically recompute with the seed
         setSortMode(newSortMode);
         setSeed(newSeed);
         // Update URL after shuffle animation completes
