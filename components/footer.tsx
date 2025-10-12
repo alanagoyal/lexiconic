@@ -21,10 +21,10 @@ export function Footer({ isMapView = false }: FooterProps) {
                 <Info className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent className="max-w-sm text-left normal-case font-sans">
+            <TooltipContent className="max-w-sm text-left normal-case">
               <p>
                 Please note that definitions, pronunciations, and other metadata were generated using OpenAI (GPT-5 and GPT-4o-mini-TTS) and may not be fully accurate or precisely translated. To suggest edits or improvements, please{" "}
-                <a href="mailto:hi@basecase.vc" className="underline hover:text-foreground">
+                <a href="mailto:hi@basecase.vc" className="hover:underline">
                   reach out
                 </a>{" "}
                 or submit a pull request.
