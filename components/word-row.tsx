@@ -2,11 +2,11 @@
 
 import { ExternalLink, Volume2 } from "lucide-react";
 import { useState } from "react";
-import type { WordData } from "@/types/word";
+import type { WordWithEmbedding } from "@/lib/semantic-search";
 import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {
-  word: WordData;
+  word: WordWithEmbedding;
   isExpanded: boolean;
   onToggleExpand: () => void;
   viewMode?: "list" | "grid";

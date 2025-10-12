@@ -13,7 +13,6 @@ import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
-import type { WordData } from "@/types/word";
 import { Footer } from "@/components/footer";
 
 const MapView = dynamic(
