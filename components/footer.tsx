@@ -14,10 +14,8 @@ export function Footer({ isMapView = false }: FooterProps) {
   return (
     <footer className={`bg-background border-t border-border ${isMapView ? 'fixed bottom-0 left-0 right-0 z-10' : '-mt-px'}`}>
       <div className="p-6 text-center">
-        <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
-          A digital exploration of linguistic untranslatability
-        </div>
-        <div className="mt-3 flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
+          <span>A digital exploration of linguistic untranslatability</span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -25,9 +23,13 @@ export function Footer({ isMapView = false }: FooterProps) {
                   <Info className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm text-left">
+              <TooltipContent className="max-w-sm text-left normal-case font-sans">
                 <p>
-                  Definitions and metadata for these words were generated from language models (OpenAI GPT-5) and may not be completely accurate. Voice pronunciations were generated from OpenAI language models (Text-to-Speech) and may not be completely accurate. If you have questions or would like to submit an edit or modification, don't hesitate to reach out or submit a pull request.
+                  Please note that definitions, pronunciations, and other metadata were generated using OpenAI (GPT-5 and GPT-4o-mini-TTS) and may not be fully accurate or precisely translated. To suggest edits or improvements, please{" "}
+                  <a href="mailto:hi@basecase.vc" className="underline hover:text-foreground">
+                    reach out
+                  </a>{" "}
+                  or submit a pull request.
                 </p>
               </TooltipContent>
             </Tooltip>
