@@ -2,7 +2,6 @@ import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -16,24 +15,22 @@ export function Footer({ isMapView = false }: FooterProps) {
       <div className="p-6 text-center">
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair">
           <span>A digital exploration of linguistic untranslatability</span>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="text-muted-foreground hover:text-foreground transition-colors">
-                  <Info className="h-4 w-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-sm text-left normal-case font-sans">
-                <p>
-                  Please note that definitions, pronunciations, and other metadata were generated using OpenAI (GPT-5 and GPT-4o-mini-TTS) and may not be fully accurate or precisely translated. To suggest edits or improvements, please{" "}
-                  <a href="mailto:hi@basecase.vc" className="underline hover:text-foreground">
-                    reach out
-                  </a>{" "}
-                  or submit a pull request.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="text-muted-foreground hover:text-foreground transition-colors">
+                <Info className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-sm text-left normal-case font-sans">
+              <p>
+                Please note that definitions, pronunciations, and other metadata were generated using OpenAI (GPT-5 and GPT-4o-mini-TTS) and may not be fully accurate or precisely translated. To suggest edits or improvements, please{" "}
+                <a href="mailto:hi@basecase.vc" className="underline hover:text-foreground">
+                  reach out
+                </a>{" "}
+                or submit a pull request.
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </footer>
