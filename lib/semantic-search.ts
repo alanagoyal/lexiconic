@@ -1,7 +1,5 @@
 import type { WordData, WordDataWithoutEmbedding, WordWithEmbedding } from '@/types/word'
 
-export type { WordWithEmbedding }
-
 // Cosine similarity calculation
 export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) return 0

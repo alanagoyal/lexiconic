@@ -2,7 +2,7 @@
 
 import { ExternalLink, Volume2 } from "lucide-react";
 import { useState } from "react";
-import type { WordWithEmbedding } from "@/lib/semantic-search";
+import type { WordWithEmbedding } from "@/types/word";
 import { useDeviceType } from "@/hooks/use-device-type";
 
 interface WordRowProps {
