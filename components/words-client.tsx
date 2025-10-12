@@ -4,16 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
-import {
-  searchWordsBySimilarity,
-  type WordWithEmbedding,
-} from "@/lib/semantic-search";
+import { searchWordsBySimilarity } from "@/lib/semantic-search";
+import type { WordWithEmbedding } from "@/types/word";
 import dynamic from "next/dynamic";
 import { WordDetailDialog } from "@/components/word-detail-dialog";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
-import type { WordData } from "@/types/word";
 import { Footer } from "@/components/footer";
 
 const MapView = dynamic(

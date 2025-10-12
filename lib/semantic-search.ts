@@ -1,6 +1,4 @@
-import type { WordData, WordWithEmbedding } from '@/types/word'
-
-export type { WordWithEmbedding }
+import type { WordData, WordDataWithoutEmbedding, WordWithEmbedding } from '@/types/word'
 
 // Cosine similarity calculation
 export function cosineSimilarity(a: number[], b: number[]): number {
@@ -21,8 +19,8 @@ export function cosineSimilarity(a: number[], b: number[]): number {
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))
 }
 
-// Create searchable text from word data
-export function createSearchableText(word: WordData): string {
+// Create searchable text from word data (doesn't need embedding fields)
+export function createSearchableText(word: WordDataWithoutEmbedding | WordData): string {
   const parts = [
     word.word,
     word.definition,

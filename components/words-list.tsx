@@ -1,5 +1,5 @@
 import { WordRow } from "@/components/word-row";
-import type { WordWithEmbedding } from "@/lib/semantic-search";
+import type { WordWithEmbedding } from "@/types/word";
 
 interface WordsListProps {
   words: WordWithEmbedding[];

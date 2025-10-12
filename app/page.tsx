@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { WordsClient } from "@/components/words-client";
 import { loadWords } from "@/lib/load-words";
-import type { WordWithEmbedding } from "@/lib/semantic-search";
+import type { WordWithEmbedding } from "@/types/word";
 
 type SortMode = "none" | "asc" | "desc" | "random";
 

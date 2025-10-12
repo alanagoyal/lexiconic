@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
-import type { WordWithEmbedding } from "@/lib/semantic-search"
+import type { WordWithEmbedding } from "@/types/word"
 
 interface WordDetailDialogProps {
   word: WordWithEmbedding | null

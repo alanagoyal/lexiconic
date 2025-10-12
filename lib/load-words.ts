@@ -1,4 +1,4 @@
-import type { WordWithEmbedding } from './semantic-search'
+import type { WordWithEmbedding, WordDataWithoutEmbedding } from '@/types/word'
 import { createSearchableText } from './semantic-search'
 import { readFileSync } from 'fs'
 import { join } from 'path'
@@ -7,14 +7,14 @@ import { join } from 'path'
 export async function loadWords(): Promise<WordWithEmbedding[]> {
   const filePath = join(process.cwd(), 'public', 'data', 'words.json')
   const fileContents = readFileSync(filePath, 'utf8')
-  const words: WordWithEmbedding[] = JSON.parse(fileContents)
+  const words: WordDataWithoutEmbedding[] = JSON.parse(fileContents)
   console.log('Loaded words without embeddings for fast initial load')
 
-  // Ensure searchableText exists, add empty embeddings
+  // Convert to WordWithEmbedding by adding empty embeddings and searchableText
   return words.map(word => ({
     ...word,
-    embedding: word.embedding || [],
-    embeddingHash: word.embeddingHash || '',
-    searchableText: word.searchableText || createSearchableText(word)
+    embedding: [],
+    embeddingHash: '',
+    searchableText: createSearchableText(word)
   }))
 }

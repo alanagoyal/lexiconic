@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import Map, { Source, Layer, type MapRef } from "react-map-gl";
-import type { WordWithEmbedding } from "@/lib/semantic-search";
+import type { WordWithEmbedding } from "@/types/word";
 import type {
   CircleLayerSpecification,
   SymbolLayerSpecification,
