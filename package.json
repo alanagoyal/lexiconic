@@ -82,6 +82,7 @@
     "@types/react": "19.1.12",
     "@types/react-dom": "^19",
     "postcss": "^8.5",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4.1.9",
     "tsx": "^4.19.2",
     "tw-animate-css": "1.3.3",
