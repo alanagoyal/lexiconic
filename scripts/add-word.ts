@@ -7,7 +7,7 @@ import { initLogger, invoke } from 'braintrust';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import type { PartialWordData, BraintrustMetadata } from '../types/word';
+import type { WordData, WordDataWithoutEmbedding, BraintrustMetadata } from '../types/word';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
@@ -77,7 +77,7 @@ async function generatePronunciation(word: string): Promise<string> {
   return fileName;
 }
 
-async function generateEmbedding(wordData: PartialWordData): Promise<{ embedding: number[], hash: string }> {
+async function generateEmbedding(wordData: WordDataWithoutEmbedding): Promise<{ embedding: number[], hash: string }> {
   console.log(`  • Generating embedding for: ${wordData.word}`);
   
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -132,7 +132,7 @@ async function addWord(word: string, language: string, source: string) {
   const embeddingsPath = path.join(__dirname, '../public/data/words-with-embeddings.json');
   
   // Read existing words
-  let words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
+  let words: WordDataWithoutEmbedding[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
   let wordsWithEmbeddings: WordData[] = [];
   try {
     wordsWithEmbeddings = JSON.parse(fs.readFileSync(embeddingsPath, 'utf8'));
@@ -167,7 +167,7 @@ async function addWord(word: string, language: string, source: string) {
     console.log('✅ Pronunciation generated\n');
 
     // Create complete word object
-    const completeWord: PartialWordData = {
+    const completeWord: WordDataWithoutEmbedding = {
       word,
       language,
       source: source,

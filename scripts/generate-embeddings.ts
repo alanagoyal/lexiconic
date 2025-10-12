@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 import OpenAI from 'openai';
+import type { WordData, WordDataWithoutEmbedding } from '../types/word';
 
 // Load environment variables from .env.local
 function loadEnvLocal() {
@@ -28,32 +29,7 @@ function loadEnvLocal() {
 // Load .env.local before using environment variables
 loadEnvLocal();
 
-// Extended Word interface for this script that includes additional fields
-interface Word {
-  word: string;
-  phonetic: string;
-  language: string;
-  family: string;
-  category: string;
-  definition: string;
-  literal: string;
-  usage_notes: string;
-  location: string;
-  example_native: string;
-  example_gloss: string;
-  english_approx: string;
-  loanword_in_english: string;
-  disputed: string;
-  region: string;
-  closest_english_paraphrase: string;
-  source: string;
-  needs_citation: string;
-}
-
-interface WordWithEmbedding extends Word {
-  embedding: number[];
-  embeddingHash?: string; // Hash of the text used to generate the embedding
-}
+// Use centralized types from /types/word.ts
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -72,7 +48,7 @@ async function generateEmbedding(text: string): Promise<number[]> {
   }
 }
 
-function createEmbeddingText(word: Word): string {
+function createEmbeddingText(word: WordDataWithoutEmbedding): string {
   // Create comprehensive text for embedding that includes all semantic information
   const parts = [
     `Word: ${word.word}`,
@@ -83,8 +59,6 @@ function createEmbeddingText(word: Word): string {
     word.literal && word.literal !== '—' ? `Literal meaning: ${word.literal}` : '',
     word.usage_notes ? `Usage: ${word.usage_notes}` : '',
     word.english_approx ? `Similar to: ${word.english_approx}` : '',
-    word.example_gloss ? `Example: ${word.example_gloss}` : '',
-    word.closest_english_paraphrase ? `English equivalent: ${word.closest_english_paraphrase}` : ''
   ].filter(Boolean);
   
   return parts.join('. ');
@@ -99,25 +73,25 @@ async function generateEmbeddingsForWords() {
     const wordsPath = join(process.cwd(), 'public', 'data', 'words.json');
     const embeddingsPath = join(process.cwd(), 'public', 'data', 'words-with-embeddings.json');
 
-    const wordsData = JSON.parse(readFileSync(wordsPath, 'utf8')) as Word[];
+    const wordsData = JSON.parse(readFileSync(wordsPath, 'utf8')) as WordDataWithoutEmbedding[];
 
     // Load existing embeddings if they exist
-    let existingEmbeddings: WordWithEmbedding[] = [];
+    let existingEmbeddings: WordData[] = [];
     try {
-      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as WordWithEmbedding[];
+      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as WordData[];
     } catch (error) {
       // No existing embeddings file
     }
 
     // Create a map of existing embeddings by word
-    const embeddingMap = new Map<string, WordWithEmbedding>();
+    const embeddingMap = new Map<string, WordData>();
     existingEmbeddings.forEach(item => {
       embeddingMap.set(item.word, item);
     });
 
     // First pass: determine what needs to be regenerated
-    const wordsNeedingGeneration: Word[] = [];
-    const wordsToReuse: Array<{ word: Word; existing: WordWithEmbedding }> = [];
+    const wordsNeedingGeneration: WordDataWithoutEmbedding[] = [];
+    const wordsToReuse: Array<{ word: WordDataWithoutEmbedding; existing: WordData }> = [];
 
     for (const word of wordsData) {
       const existing = embeddingMap.get(word.word);
@@ -141,7 +115,7 @@ async function generateEmbeddingsForWords() {
       console.log(`→ Processing ${wordsNeedingGeneration.length} embedding(s)`);
     }
 
-    const wordsWithEmbeddings: WordWithEmbedding[] = [];
+    const wordsWithEmbeddings: WordData[] = [];
     let processedCount = 0;
 
     // Process words that need generation

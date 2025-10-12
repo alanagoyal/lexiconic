@@ -6,6 +6,7 @@ import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
+import type { WordDataWithoutEmbedding } from '../types/word';
 
 // Load environment variables from .env.local
 function loadEnvLocal() {
@@ -41,15 +42,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Minimal word interface for pronunciation generation
-// This script only needs these specific fields
-interface Word {
-  word: string;
-  transliteration: string;
-  language: string;
-  pronunciation?: string;
-  [key: string]: any;
-}
+// Use centralized types from /types/word.ts
 
 // Generate a safe filename from a word
 function generateAudioFileName(word: string): string {
@@ -123,7 +116,7 @@ async function generatePronunciationsForChangedWords() {
     // Read words from JSON
     const wordsPath = path.join(process.cwd(), 'public/data/words.json');
     const wordsContent = await fs.readFile(wordsPath, 'utf-8');
-    const words: Word[] = JSON.parse(wordsContent);
+    const words: WordDataWithoutEmbedding[] = JSON.parse(wordsContent);
 
     // Create pronunciations directory if it doesn't exist
     const pronunciationsDir = path.join(process.cwd(), 'public/pronunciations');
