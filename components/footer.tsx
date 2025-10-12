@@ -18,12 +18,12 @@ export function Footer({ isMapView = false }: FooterProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <button className="inline-flex items-center hover:text-foreground transition-colors">
-                <Info className="h-3.5 w-3.5" />
+                <Info className="h-3 w-3" />
               </button>
             </TooltipTrigger>
             <TooltipContent
               side="top"
-              className="bg-black text-primary-foreground max-w-sm text-left"
+              className="bg-black text-primary-foreground max-w-sm text-left px-4 py-3"
               sideOffset={5}
             >
               <p className="text-xs leading-relaxed">
@@ -34,7 +34,16 @@ export function Footer({ isMapView = false }: FooterProps) {
                 >
                   reach out
                 </a>
-                {" "}or submit a pull request.
+                {" "}or{" "}
+                <a
+                  href="https://github.com/alanagoyal/lexiconic/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-4 hover:underline"
+                >
+                  submit a pull request
+                </a>
+                .
               </p>
             </TooltipContent>
           </Tooltip>
