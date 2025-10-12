@@ -5102,5 +5102,37 @@
     "lat": 60.1699,
     "lng": 24.9384,
     "pronunciation": "3b308c0d04d81e8198916ed859b655fe.mp3"
+  },
+  {
+    "word": "narskua",
+    "language": "Finnish",
+    "source": "https://www.kielitoimistonsanakirja.fi/",
+    "family": "Uralic",
+    "category": "sound/nature",
+    "definition": "A Finnish intransitive verb describing the harsh, crunchy or squeaky noise produced by packed snow underfoot, teeth grinding, or hard surfaces rubbing together, often associated with dry cold conditions.",
+    "literal": "to crunch; to creak/squeak",
+    "usage_notes": "Common in winter descriptions; frequently used with snow (lumi) or teeth (hampaat). Conveys an onomatopoetic nuance not fully captured by English verbs like crunch or creak.",
+    "english_approx": "to crunch (of snow); to squeak/creak",
+    "phonetic": "ˈnɑr·sku·ɑ",
+    "location": "Finland",
+    "lat": 60.1699,
+    "lng": 24.9384,
+    "pronunciation": "ddaa6b7239dfe569efed261b92daf32e.mp3"
+  },
+  {
+    "word": "hankikanto",
+    "language": "Finnish",
+    "source": "https://www.kielitoimistonsanakirja.fi/",
+    "family": "Uralic",
+    "category": "nature/weather",
+    "definition": "A late-winter snow condition in which overnight freezing forms a firm, load-bearing crust that allows people, animals, or vehicles to travel on top of the snow without sinking.",
+    "literal": "snow crust that carries",
+    "usage_notes": "Common in Finnish spring outdoor culture; prized for skiing, hiking, and snowmobiling when thaw–freeze cycles create supportive crust; akin to “supportive crust” in English ski jargon.",
+    "english_approx": "supportive snow crust",
+    "phonetic": "ˈhɑŋ.ki.kɑn.to",
+    "location": "Finland",
+    "lat": 60.1699,
+    "lng": 24.9384,
+    "pronunciation": "036f1b6bf52f3e58839fab5054199179.mp3"
   }
 ]
