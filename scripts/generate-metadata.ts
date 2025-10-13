@@ -45,7 +45,7 @@ async function getMetadataFromBraintrust(word: string, language: string): Promis
     // First try without schema validation to see what we get back
     const result = await invoke({
       projectName: "lexiconic",
-      slug: "generate-metadata-4263",
+      slug: "generate-metadata",
       input: { word, language },
     });
     

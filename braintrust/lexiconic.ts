@@ -12,11 +12,55 @@ const project = braintrust.projects.create({
   name: "lexiconic",
 });
 
-export const generateMetadata_4263 = project.prompts.create({
+export const generateUsageNote = project.prompts.create({
+  id: "1f6eb030-cb52-460b-900e-471efa04ed4b",
+  name: "generate-usage-note",
+  slug: "generate-usage-note",
+  version: "3e9aa7e0343275bd",
+  description: "",
+  model: "gpt-5-mini",
+  messages: [
+    {
+      content:
+        'Write a very short usage note to explain the the usage of the word "{{input.word}}" in {{input.language}} to someone who speaks English. The usage note should be concise (<20 words) piece of explanatory text that tells the reader how a word is actually used in real life, beyond just its dictionary definition. Your response should start with "Used", for example:\n- "Used teasingly among friends at lakes or the seaside."\n- "Used poetically for loved ones, including children and partners."',
+      role: "system",
+    },
+  ],
+  params: {
+    use_cache: true,
+    temperature: 0,
+  },
+});
+
+export const generateLocation = project.prompts.create({
+  id: "e0668923-7ead-4d89-bfa9-fca1d567c3c0",
+  name: "generate-location",
+  slug: "generate-location",
+  version: "454c8d605e045402",
+  description: "",
+  model: "gpt-5-mini",
+  messages: [
+    {
+      content:
+        "You are a linguistics and toponymy assistant. Given a word and its language, infer the single city or region most likely associated with the word’s origin. If multiple cities are plausible, choose the one with the strongest and most widely accepted association in reliable sources. Do not include country names or extra text. If you are unsure, return the most likely country based on the language.\n\nOutput rules:\n- Return ONLY the city name (e.g., “Athens”).",
+      role: "system",
+    },
+    {
+      content: "word: {{input.word}}\nlanguage: {{input.language}}",
+      role: "user",
+    },
+  ],
+  params: {
+    use_cache: true,
+    temperature: 0,
+  },
+});
+
+export const generateMetadata = project.prompts.create({
   id: "818dd7f3-9fb2-411a-86c6-ed47c0c1b6c5",
   name: "generate-metadata",
-  slug: "generate-metadata-4263",
-  version: "e8f726c6a0fea4b5",
+  slug: "generate-metadata",
+  version: "2d4b9da011d9595f",
   description: "",
   model: "gpt-5",
   messages: [
@@ -110,4 +154,44 @@ export const generateMetadata_4263 = project.prompts.create({
       },
     },
   ],
+});
+
+export const generateDefinition = project.prompts.create({
+  id: "43238e07-2c57-41a8-8185-755ac239f29f",
+  name: "generate-definition",
+  slug: "generate-definition",
+  version: "7dd0b6f8592b62ea",
+  description: "",
+  model: "gpt-5-nano",
+  messages: [
+    {
+      content:
+        'You are a lexicographer. Given the word "{{input}}" in {{language}}, write a single, one-sentence English definition.\n\n• Tone: neutral and formal, consistent across all definitions.\n• Length: between 20 and 30 words.\n\nProvide only the definition, with no extra commentary. Sentence case.',
+      role: "system",
+    },
+  ],
+  params: {
+    use_cache: true,
+    temperature: 0,
+  },
+});
+
+export const generatePhonetic = project.prompts.create({
+  id: "08634654-16dd-4479-a612-2e3080aa861f",
+  name: "generate-phonetic",
+  slug: "generate-phonetic",
+  version: "e5075f4c998ad17d",
+  description: "",
+  model: "gpt-5-mini",
+  messages: [
+    {
+      content:
+        "You are a phonetic transcription engine. Given a word, output a user-friendly phonetic respelling in English letters (no IPA).\n\nFormatting rules:\n- Use simple phonetic respelling in standard English letters only (no IPA or diacritics).\n- Hyphenate syllables.\n- Put the primary stressed syllable in ALL CAPS.\n- Keep it brief and readable.\n- Output only the respelling, with no extra text.\n\nExamples:\n- jantelagen → YAHN-teh-lah-gen\n- koselig → KOO-suh-lee\n\nWord: {{input.word}}\nPhonetic spelling:",
+      role: "system",
+    },
+  ],
+  params: {
+    use_cache: true,
+    temperature: 0,
+  },
 });

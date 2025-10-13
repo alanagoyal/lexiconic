@@ -30,7 +30,7 @@ interface GenerationResult {
 async function getDefinitionFromBraintrust(word: string, language: string): Promise<string> {
   const result = await invoke({
     projectName: "lexiconic",
-    slug: "translate-3bf0",
+    slug: "generate-definition",
     input: { word, language },
     schema: z.string(),
   });

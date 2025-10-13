@@ -32,7 +32,7 @@ interface GenerationResult {
 async function getPhoneticFromBraintrust(word: string): Promise<string> {
   const result = await invoke({
     projectName: "lexiconic",
-    slug: "phonetic-spelling",
+    slug: "generate-phonetic",
     input: { word },
     schema: z.string(),
   });

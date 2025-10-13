@@ -28,7 +28,7 @@ async function getLocationFromBraintrust(word: string, language: string): Promis
   try {
     const result = await invoke({
       projectName: "lexiconic",
-      slug: "generate-location-7320",
+      slug: "generate-location",
       input: { word, language },
     });
     
