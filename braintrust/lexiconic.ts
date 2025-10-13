@@ -60,9 +60,9 @@ export const generateMetadata = project.prompts.create({
   id: "818dd7f3-9fb2-411a-86c6-ed47c0c1b6c5",
   name: "generate-metadata",
   slug: "generate-metadata",
-  version: "2d4b9da011d9595f",
+  version: "61f5579f86aa2024",
   description: "",
-  model: "gpt-5",
+  model: "gpt-5-mini",
   messages: [
     {
       content:
@@ -160,9 +160,9 @@ export const generateDefinition = project.prompts.create({
   id: "43238e07-2c57-41a8-8185-755ac239f29f",
   name: "generate-definition",
   slug: "generate-definition",
-  version: "7dd0b6f8592b62ea",
+  version: "0515e4d29e312e2f",
   description: "",
-  model: "gpt-5-nano",
+  model: "gpt-5-mini",
   messages: [
     {
       content:
