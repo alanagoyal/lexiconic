@@ -5198,5 +5198,37 @@
     "lat": -35.2809,
     "lng": 149.13,
     "pronunciation": "76a61faae5bb4d080d880ad4174cb5f4.mp3"
+  },
+  {
+    "word": "stubby",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Indo-European",
+    "category": "food/drink",
+    "definition": "A short, squat 375-milliliter beer bottle commonly used in Australia, also colloquially extended to mean the beverage itself or related accessories like a stubby holder.",
+    "literal": "",
+    "usage_notes": "Used informally nationwide, especially in pubs and barbecues; also appears in compounds such as stubby holder.",
+    "english_approx": "short beer bottle (375 ml)",
+    "phonetic": "STUB-bee",
+    "location": "Australia",
+    "lat": -35.2809,
+    "lng": 149.13,
+    "pronunciation": "f30f041fc82e1b74d38c19e07230dc2b.mp3"
+  },
+  {
+    "word": "yarn",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Indo-European",
+    "category": "communication/behavior",
+    "definition": "A casual conversation or an engaging story, often informal and sometimes embellished, typically shared among friends or acquaintances during relaxed social interaction in Australian contexts.",
+    "literal": "spun thread",
+    "usage_notes": "Used informally for friendly chat or storytelling; 'have a yarn' for conversation, 'spin a yarn' for embellished tales.",
+    "english_approx": "chat; story",
+    "phonetic": "YAHN",
+    "location": "Australia",
+    "lat": -25.2744,
+    "lng": 133.7751,
+    "pronunciation": "bb3462b62cd8db3f9ba007d86f8d1c6d.mp3"
   }
 ]
