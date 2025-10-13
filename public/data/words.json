@@ -5166,5 +5166,21 @@
     "lat": -25.2744,
     "lng": 133.7751,
     "pronunciation": "3e98ad3774203ff63f4090879973bd7c.mp3"
+  },
+  {
+    "word": "arvo",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Indo-European",
+    "category": "time/day",
+    "definition": "A colloquial Australian English abbreviation for 'afternoon,' commonly used in casual speech and writing to refer to the period between midday and evening or activities occurring then.",
+    "literal": "afternoon",
+    "usage_notes": "Used informally across Australia, especially in casual scheduling or social plans.",
+    "english_approx": "afternoon",
+    "phonetic": "AR-voh",
+    "location": "Australia",
+    "lat": -25.2744,
+    "lng": 133.7751,
+    "pronunciation": "f9ba22fb1ff25fd8f83d48f361aea0a4.mp3"
   }
 ]
