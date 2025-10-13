@@ -87,7 +87,7 @@ npm run generate-pronunciations
 
 ### `generate-embeddings.ts`
 
-Generates semantic embeddings for words in `public/data/words.json` and outputs them to `public/data/words-with-embeddings.json`. Used internally by `add-word.ts` but can also be run standalone.
+Generates semantic embeddings for words in `public/data/words.json` and outputs them to `public/data/embeddings.json` as a map of word → embedding data. Used internally by `add-word.ts` but can also be run standalone.
 
 **Usage:**
 ```bash
@@ -95,10 +95,22 @@ npm run generate-embeddings
 ```
 
 **Smart regeneration:**
-- Embeddings are based on: word, phonetic, language, category, definition, literal meaning, usage notes, English approximation, examples, and English paraphrase
+- Embeddings are based on: word, phonetic, language, category, definition, literal meaning, usage notes, and English approximation
 - A hash of these fields is stored with each embedding
 - Only regenerates when the hash changes (i.e., semantic content changed)
 - Otherwise reuses existing embeddings for efficiency
+
+**Output format:**
+```json
+{
+  "word": {
+    "embedding": [0.123, -0.456, ...],
+    "embeddingHash": "abc123..."
+  }
+}
+```
+
+This separate file keeps `words.json` small (~236KB) and editable while `embeddings.json` (~14MB) is loaded in the background.
 
 **Requirements:**
 - `OPENAI_API_KEY` in `.env.local`
@@ -199,6 +211,7 @@ npm run generate-embeddings      # Generate semantic embeddings
 
 - **Metadata generation** uses a single Braintrust prompt to generate all metadata fields at once, making it faster and more consistent
 - **Embeddings** are intelligently regenerated only when semantic fields change
+- **Embeddings storage** is separated from word metadata: `words.json` contains all metadata (~236KB) while `embeddings.json` contains only embeddings (~14MB). This allows fast initial page loads and keeps the word file editable.
 - **Pronunciations** are generated for new or changed words using OpenAI TTS
 - All scripts gracefully handle missing API keys
 - Temporary backups are created during `add-word` operations but automatically cleaned up on success
