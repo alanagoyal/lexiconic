@@ -31,7 +31,7 @@ export function Footer({ isMapView = false }: FooterProps) {
             </TooltipTrigger>
             <TooltipContent
               side="top"
-              className="bg-black text-primary-foreground max-w-sm text-left px-4 py-3"
+              className="bg-black text-primary-foreground max-w-[calc(100vw-2rem)] sm:max-w-sm text-left px-4 py-3"
               sideOffset={5}
             >
               <p className="text-xs leading-relaxed">
