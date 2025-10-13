@@ -139,23 +139,9 @@ If you want to run it locally at the root path (recommended for local developmen
 
 ## Adding New Words
 
-### Quick Start
+### Method 1: CLI (Recommended)
 
-To add a new word, you only need to provide three fields:
-
-```json
-{
-  "word": "saudade",
-  "language": "Portuguese",
-  "source": "https://example.com/source"
-}
-```
-
-All other fields (metadata, pronunciation, embeddings) are generated automatically.
-
-### Method 1: CLI Tool (Recommended)
-
-The easiest way to add a word:
+The easiest way to add a word is to use the CLI tool:
 
 ```bash
 npm run add-word "saudade" "Portuguese" "https://example.com/source"
@@ -176,7 +162,7 @@ git commit -m "add saudade"
 git push
 ```
 
-### Method 2: Manual Add + Generate
+### Method 2: Manually Add + Generate Metadata
 
 If you prefer to manually edit the JSON:
 
@@ -205,55 +191,109 @@ git add .
 git commit -m "add saudade"
 ```
 
-**Benefits:**
-- Simple and straightforward
-- No wasted API calls (only processes new/changed words)
-- Each script creates backups and cleans them up automatically
+### Method 3: Manually Add Metadata
 
-### Generation Scripts
+If you have your own metadata but want to generate only pronunciation and embeddings:
 
-Each script can be run individually:
+**1. Add complete metadata entry to `/public/data/words.json`:**
+```json
+{
+  "word": "saudade",
+  "language": "Portuguese",
+  "source": "https://example.com/source",
+  "family": "Indo-European",
+  "category": "Emotion",
+  "definition": "A deep emotional state of nostalgic or profound melancholic longing for something or someone that one cares for and/or loves.",
+  "literal": "Longing, missing, nostalgia",
+  "usage_notes": "Often associated with Portuguese and Brazilian culture, expressing the feeling of missing something that may never return.",
+  "english_approx": "nostalgia, longing, yearning",
+  "phonetic": "saw-ˈdɑ-dʒi",
+  "location": "Portugal",
+  "lat": 39.3999,
+  "lng": -8.2245
+}
+```
 
-#### `npm run generate-metadata`
-Generates comprehensive metadata using Braintrust AI:
-- `phonetic` - IPA phonetic spelling
-- `definition` - Detailed word definition
-- `family` - Language family
-- `category` - Semantic category
-- `usage_notes` - Cultural context and usage
-- `english_approx` - English approximation
-- `location` - Geographic location
-- `lat`/`lng` - Coordinates
+**2. Generate only pronunciation and embeddings:**
+```bash
+# Generate just pronunciation audio
+npm run generate-pronunciations
 
-**Default:** Only processes words missing metadata  
-**Force all:** `npm run generate-metadata -- --all`
+# Generate just embeddings
+npm run generate-embeddings
+```
 
-#### `npm run generate-pronunciations`
-Generates audio pronunciation files using OpenAI TTS:
-- Creates MP3 files in `public/pronunciations/`
-- Updates the `pronunciation` field in `words.json`
+**3. Commit the changes:**
+```bash
+git add .
+git commit -m "add saudade"
+```
 
-**Default:** Only processes words missing pronunciation files  
-**Force all:** `npm run generate-pronunciations -- --all`
+## Updating Words
 
-#### `npm run generate-embeddings`
-Generates semantic embeddings using OpenAI:
-- Creates vector embeddings based on word content
-- Stores in separate `public/data/embeddings.json` file
-- Smart hash-based detection (only regenerates when content changes)
-
-**Default:** Only processes words with missing/changed embeddings  
-**Force all:** `npm run generate-embeddings -- --all`
-
-### Force Regenerate
-
-If you want to regenerate for all words (e.g., after updating prompts):
+If you want to regenerate metadata, pronunciations, or embeddings for all words (e.g., after updating prompts):
 
 ```bash
-npm run generate-metadata -- --all        # Regenerate all metadata
-npm run generate-pronunciations -- --all  # Regenerate all pronunciations
-npm run generate-embeddings -- --all      # Regenerate all embeddings
+# Regenerate all metadata
+npm run generate-metadata -- --all
+
+# Regenerate all pronunciations
+npm run generate-pronunciations -- --all
+
+# Regenerate all embeddings
+npm run generate-embeddings -- --all
 ```
+
+## Updating Specific Fields
+
+The `scripts/deprecated/` directory contains granular scripts for regenerating individual metadata fields. These are useful when you need to update or fix specific fields without regenerating all metadata:
+
+**Available Scripts:**
+
+- **`generate-definitions.ts`** - Regenerates only the `definition` field
+- **`generate-phonetics.ts`** - Regenerates only the `phonetic` field
+- **`generate-usage-notes.ts`** - Regenerates only the `usage_notes` field
+- **`generate-locations.ts`** - Regenerates only the `location` field
+
+**Requirements:**
+- `BRAINTRUST_API_KEY` must be set in `.env.local`
+- All scripts create automatic backups in `/public/data/backup/` before making changes (deleted on success)
+
+**Usage Examples:**
+
+```bash
+# Regenerate definitions for words missing this field only (default)
+npx tsx scripts/deprecated/generate-definitions.ts
+
+# Regenerate definitions for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-definitions.ts -- --all
+
+# Regenerate phonetics for words missing this field only (default)
+npx tsx scripts/deprecated/generate-phonetics.ts
+
+# Regenerate phonetics for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-phonetics.ts -- --all
+
+# Regenerate usage notes for words missing this field only (default)
+npx tsx scripts/deprecated/generate-usage-notes.ts
+
+# Regenerate usage notes for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-usage-notes.ts -- --all
+
+# Regenerate locations for words missing this field only (default)
+npx tsx scripts/deprecated/generate-locations.ts
+
+# Regenerate locations for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-locations.ts -- --all
+```
+
+**When to use:**
+- After updating a specific Braintrust prompt
+- To fix incorrect data in a specific field
+- To add a field to words that are missing it
+- When testing changes to field generation logic
+
+**Note:** These scripts are considered "deprecated" because the main workflow uses `generate-metadata.ts` which handles all fields at once. However, they remain useful for targeted updates.
 
 ## Project Structure
 
