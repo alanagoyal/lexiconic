@@ -8,7 +8,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  display: "swap",
+  weight: ["400"],
   variable: "--font-playfair",
 })
 
