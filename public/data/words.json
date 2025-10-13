@@ -5134,5 +5134,21 @@
     "lat": 60.1699,
     "lng": 24.9384,
     "pronunciation": "036f1b6bf52f3e58839fab5054199179.mp3"
+  },
+  {
+    "word": "larrikin",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Germanic",
+    "category": "behavior/personality",
+    "definition": "A boisterous, mischievous, and irreverent person who flouts social conventions with cheeky humor and rowdy behavior, often seen as good-naturedly rebellious rather than malicious in Australian contexts.",
+    "literal": "",
+    "usage_notes": "Used colloquially, often affectionately, for cheeky nonconformists; tone varies from admiring to mildly critical.",
+    "english_approx": "rascal",
+    "phonetic": "LARR-ih-kin",
+    "location": "Australia",
+    "lat": -35.2809,
+    "lng": 149.13,
+    "pronunciation": "b6600bd054d4ad1552d08c5881325b71.mp3"
   }
 ]
