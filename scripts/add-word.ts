@@ -89,7 +89,6 @@ async function generateEmbedding(wordData: WordDataWithoutEmbedding): Promise<{ 
     `Language: ${wordData.language}`,
     `Category: ${wordData.category}`,
     `Definition: ${wordData.definition}`,
-    wordData.literal && wordData.literal !== '—' ? `Literal meaning: ${wordData.literal}` : '',
     wordData.usage_notes ? `Usage: ${wordData.usage_notes}` : '',
     wordData.english_approx ? `Similar to: ${wordData.english_approx}` : '',
   ].filter(Boolean);
