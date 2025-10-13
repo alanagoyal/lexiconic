@@ -6,7 +6,7 @@ import { initLogger, invoke } from 'braintrust';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env.local
-dotenv.config({ path: path.join(__dirname, '../.env.local') });
+dotenv.config({ path: path.join(__dirname, '../../.env.local') });
 
 // Initialize Braintrust logger
 initLogger({
@@ -65,19 +65,19 @@ async function getLocationFromBraintrust(word: string, language: string): Promis
 }
 
 /**
- * Generate locations for all words
+ * Generate locations for words missing them or all words
  */
-async function generateLocations() {
+async function generateLocations(forceAll: boolean = false) {
   // Check if Braintrust API key is set
   if (!process.env.BRAINTRUST_API_KEY) {
     console.error('❌ BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
     process.exit(1);
   }
 
-  const wordsPath = path.join(__dirname, '../public/data/words.json');
+  const wordsPath = path.join(__dirname, '../../public/data/words.json');
   
   // Create backup before modifying
-  const backupPath = path.join(__dirname, '../public/data/backup/words-backup-' + Date.now() + '.json');
+  const backupPath = path.join(__dirname, '../../public/data/backup/words-backup-' + Date.now() + '.json');
   const backupDir = path.dirname(backupPath);
   if (!fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true });
@@ -87,15 +87,17 @@ async function generateLocations() {
 
   const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
-  // Filter words that don't already have a location
-  const wordsToProcess = words.filter(word => !word.location || word.location.trim() === '');
+  // Filter words that need processing
+  const wordsToProcess = forceAll ? words : words.filter(word => !word.location || word.location.trim() === '');
 
   if (wordsToProcess.length === 0) {
     console.log('→ All words already have locations');
+    fs.unlinkSync(backupPath);
+    console.log('→ Deleted backup (no changes needed)');
     return;
   }
 
-  console.log(`→ Processing ${wordsToProcess.length} word(s) to generate locations`);
+  console.log(`→ Processing ${wordsToProcess.length} location(s)${forceAll ? ' (all words)' : ' (missing only)'}`);
 
   let processedCount = 0;
   let successCount = 0;
@@ -103,7 +105,7 @@ async function generateLocations() {
   // Process each word
   for (const wordData of wordsToProcess) {
     processedCount++;
-    console.log(`  • [${processedCount}/${wordsToProcess.length}] Generating location for: ${wordData.word}`);
+    console.log(`  • [${processedCount}/${wordsToProcess.length}] Generating: ${wordData.word}`);
 
     const location = await getLocationFromBraintrust(wordData.word, wordData.language);
 
@@ -126,6 +128,10 @@ async function generateLocations() {
   if (successCount < wordsToProcess.length) {
     console.log(`⚠️  ${wordsToProcess.length - successCount} word(s) failed to generate locations`);
   }
+
+  // Delete backup on success
+  fs.unlinkSync(backupPath);
+  console.log('→ Deleted backup (completed successfully)');
 }
 
 /**
@@ -133,7 +139,9 @@ async function generateLocations() {
  */
 async function main() {
   try {
-    await generateLocations();
+    const args = process.argv.slice(2);
+    const forceAll = args.includes('--all');
+    await generateLocations(forceAll);
   } catch (error) {
     console.error('❌ Error:', (error as Error).message);
     process.exit(1);
