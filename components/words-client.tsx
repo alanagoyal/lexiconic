@@ -25,9 +25,9 @@ const MapView = dynamic(
         </div>
         <div className="w-64 h-px bg-border relative overflow-hidden">
           <div
-            className="absolute inset-0 bg-foreground origin-left animate-pulse"
+            className="absolute inset-0 bg-foreground origin-left"
             style={{
-              animation: "progress-bar 2s ease-in-out infinite",
+              animation: "progress-bar 2s ease-in-out forwards",
             }}
           />
         </div>
