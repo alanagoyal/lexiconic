@@ -51,7 +51,25 @@ html {
   --font-mono: ${GeistMono.variable};
   --font-playfair: ${playfair.variable};
 }
+body {
+  visibility: hidden;
+}
+body.ready {
+  visibility: visible;
+}
         `}</style>
+        <script dangerouslySetInnerHTML={{__html: `
+          (function() {
+            // Make body visible immediately after scroll restoration
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('ready');
+              });
+            } else {
+              document.body.classList.add('ready');
+            }
+          })();
+        `}} />
       </head>
       <body className={`${playfair.variable}`}>
         <NuqsAdapter>
