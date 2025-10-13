@@ -231,6 +231,8 @@ git commit -m "add saudade"
 
 ## Updating Words
 
+### Updating All Words
+
 If you want to regenerate metadata, pronunciations, or embeddings for all words (e.g., after updating prompts):
 
 ```bash
@@ -244,7 +246,7 @@ npm run generate-pronunciations -- --all
 npm run generate-embeddings -- --all
 ```
 
-## Updating Specific Fields
+### Updating Specific Fields
 
 The `scripts/deprecated/` directory contains granular scripts for regenerating individual metadata fields. These are useful when you need to update or fix specific fields without regenerating all metadata:
 
