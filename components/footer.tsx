@@ -11,23 +11,17 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDeviceType } from "@/hooks/use-device-type";
 
 interface FooterProps {
   isMapView?: boolean;
 }
 
 export function Footer({ isMapView = false }: FooterProps) {
-  const [isTouchDevice, setIsTouchDevice] = React.useState(false);
+  const { isTouch } = useDeviceType();
   const [dialogOpen, setDialogOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    // Detect if device supports touch
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
 
   const disclaimerContent = (
     <p className="text-xs leading-relaxed">
@@ -56,7 +50,7 @@ export function Footer({ isMapView = false }: FooterProps) {
       <div className="p-6 text-center">
         <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair flex items-center justify-center gap-1.5">
           A digital exploration of linguistic untranslatability
-          {isTouchDevice ? (
+          {isTouch ? (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <button className="inline-flex items-center hover:text-foreground transition-colors">
