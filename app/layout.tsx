@@ -8,9 +8,9 @@ import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  display: "block",
+  weight: ["400"],
+  display: "swap",
   variable: "--font-playfair",
-  preload: true,
 })
 
 export const metadata: Metadata = {
