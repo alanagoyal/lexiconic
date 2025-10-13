@@ -6,7 +6,7 @@ import { initLogger, invoke } from 'braintrust';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env.local
-dotenv.config({ path: path.join(__dirname, '../.env.local') });
+dotenv.config({ path: path.join(__dirname, '../../.env.local') });
 
 // Initialize Braintrust logger
 initLogger({
@@ -74,10 +74,10 @@ async function generateLocations() {
     process.exit(1);
   }
 
-  const wordsPath = path.join(__dirname, '../public/data/words.json');
+  const wordsPath = path.join(__dirname, '../../public/data/words.json');
   
   // Create backup before modifying
-  const backupPath = path.join(__dirname, '../public/data/backup/words-backup-' + Date.now() + '.json');
+  const backupPath = path.join(__dirname, '../../public/data/backup/words-backup-' + Date.now() + '.json');
   const backupDir = path.dirname(backupPath);
   if (!fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true });

@@ -19,35 +19,34 @@ initLogger({
 interface WordData {
   word: string;
   language: string;
-  transliteration?: string;
-  phonetic?: string;
+  usage_notes?: string;
 }
 
 interface GenerationResult {
   updated: number;
-  phonetics: Record<string, string>;
+  usageNotes: Record<string, string>;
 }
 
-// Helper function to get phonetic spelling using braintrust
-async function getPhoneticFromBraintrust(word: string): Promise<string> {
+// Helper function to get usage notes using braintrust
+async function getUsageNotesFromBraintrust(word: string, language: string): Promise<string> {
   const result = await invoke({
     projectName: "lexiconic",
-    slug: "phonetic-spelling",
-    input: { word },
+    slug: "generate-usage-note",
+    input: { word, language },
     schema: z.string(),
   });
   return result;
 }
 
 /**
- * Get phonetic spelling for a single word using Braintrust
+ * Get usage notes for a single word using Braintrust
  */
-async function getPhonetic(word: string, language: string): Promise<string | null> {
+async function getUsageNotes(word: string, language: string): Promise<string | null> {
   try {
-    const phonetic = await getPhoneticFromBraintrust(word);
-    return phonetic;
+    const usageNotes = await getUsageNotesFromBraintrust(word, language);
+    return usageNotes;
   } catch (error) {
-    console.error(`Error getting phonetic spelling for ${word} (${language}):`, (error as Error).message);
+    console.error(`Error getting usage notes for ${word} (${language}):`, (error as Error).message);
     return null;
   }
 }
@@ -89,9 +88,9 @@ function getNewWords(): string[] {
 }
 
 /**
- * Generate phonetic spellings for ALL words that don't have them
+ * Generate usage notes for ALL words
  */
-async function generatePhoneticsForAllWords(): Promise<GenerationResult> {
+async function generateUsageNotesForAllWords(): Promise<GenerationResult> {
   // Check if Braintrust API key is set
   if (!process.env.BRAINTRUST_API_KEY) {
     console.error('❌ BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
@@ -114,37 +113,33 @@ async function generatePhoneticsForAllWords(): Promise<GenerationResult> {
   // Process ALL words (force regeneration)
   const wordsToProcess = words;
 
-  console.log(`→ Processing ${wordsToProcess.length} word(s) to generate phonetic spellings`);
+  console.log(`→ Processing ${wordsToProcess.length} word(s) to generate usage notes`);
 
-  const phonetics: Record<string, string> = {};
+  const usageNotes: Record<string, string> = {};
   let processedCount = 0;
 
   // Process each word
   for (const wordData of wordsToProcess) {
     processedCount++;
-    console.log(`  • [${processedCount}/${wordsToProcess.length}] Generating phonetic for: ${wordData.word}`);
+    console.log(`  • [${processedCount}/${wordsToProcess.length}] Generating usage notes for: ${wordData.word}`);
 
-    const phonetic = await getPhonetic(wordData.word, wordData.language);
+    const notes = await getUsageNotes(wordData.word, wordData.language);
 
-    if (phonetic) {
-      phonetics[wordData.word] = phonetic;
+    if (notes) {
+      usageNotes[wordData.word] = notes;
     } else {
-      console.log(`   Error generating phonetic spelling for "${wordData.word}"`);
+      console.log(`   Error generating usage notes for "${wordData.word}"`);
     }
 
     // Rate limiting - be respectful to the API
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
-  // Update words.json file - add phonetic field and remove transliteration if it exists
+  // Update words.json file - add usage_notes field
   let updatedCount = 0;
   words.forEach(word => {
-    if (phonetics.hasOwnProperty(word.word)) {
-      word.phonetic = phonetics[word.word];
-      // Remove the transliteration field if it exists
-      if (word.transliteration) {
-        delete word.transliteration;
-      }
+    if (usageNotes.hasOwnProperty(word.word)) {
+      word.usage_notes = usageNotes[word.word];
       updatedCount++;
     }
   });
@@ -152,16 +147,16 @@ async function generatePhoneticsForAllWords(): Promise<GenerationResult> {
   if (updatedCount > 0) {
     // Write updated data back
     fs.writeFileSync(wordsPath, JSON.stringify(words, null, 2));
-    console.log(`→ Generated ${updatedCount} phonetic spelling(s)`);
+    console.log(`→ Generated ${updatedCount} usage note(s)`);
   }
 
-  return { updated: updatedCount, phonetics };
+  return { updated: updatedCount, usageNotes };
 }
 
 /**
- * Generate phonetic spellings for new words detected in the last commit
+ * Generate usage notes for new words detected in the last commit
  */
-async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
+async function generateUsageNotesForNewWords(): Promise<GenerationResult> {
   // Check if Braintrust API key is set
   if (!process.env.BRAINTRUST_API_KEY) {
     console.error('❌ BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
@@ -172,10 +167,10 @@ async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
 
   if (newWords.length === 0) {
     console.log('→ No new or changed words detected');
-    return { updated: 0, phonetics: {} };
+    return { updated: 0, usageNotes: {} };
   }
 
-  console.log(`→ Processing ${newWords.length} phonetic spelling(s)`);
+  console.log(`→ Processing ${newWords.length} usage note(s)`);
 
   const wordsPath = path.join(__dirname, '../../public/data/words.json');
   
@@ -190,7 +185,7 @@ async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
 
   const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
-  const phonetics: Record<string, string> = {};
+  const usageNotes: Record<string, string> = {};
 
   // Process each new word
   for (const newWord of newWords) {
@@ -200,24 +195,23 @@ async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
       continue;
     }
 
-    // Skip if word already has a phonetic spelling
-    if (wordData.phonetic &&
-        wordData.phonetic.trim() !== '' &&
-        wordData.phonetic !== '—' &&
-        !wordData.phonetic.startsWith('TODO:') &&
-        !wordData.phonetic.includes('[placeholder]')) {
+    // Skip if word already has usage notes
+    if (wordData.usage_notes &&
+        wordData.usage_notes.trim() !== '' &&
+        !wordData.usage_notes.startsWith('TODO:') &&
+        !wordData.usage_notes.includes('[placeholder]')) {
       console.log(`  ✓ Using existing: ${newWord}`);
       continue;
     }
 
     console.log(`  • Generating: ${wordData.word}`);
 
-    const phonetic = await getPhonetic(wordData.word, wordData.language);
+    const notes = await getUsageNotes(wordData.word, wordData.language);
 
-    if (phonetic) {
-      phonetics[wordData.word] = phonetic;
+    if (notes) {
+      usageNotes[wordData.word] = notes;
     } else {
-      console.log(`   Error generating phonetic spelling for "${wordData.word}"`);
+      console.log(`   Error generating usage notes for "${wordData.word}"`);
     }
 
     // Rate limiting - be respectful to the API
@@ -227,8 +221,8 @@ async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
   // Update words.json file
   let updatedCount = 0;
   words.forEach(word => {
-    if (phonetics.hasOwnProperty(word.word)) {
-      word.phonetic = phonetics[word.word];
+    if (usageNotes.hasOwnProperty(word.word)) {
+      word.usage_notes = usageNotes[word.word];
       updatedCount++;
     }
   });
@@ -238,13 +232,13 @@ async function generatePhoneticsForNewWords(): Promise<GenerationResult> {
     fs.writeFileSync(wordsPath, JSON.stringify(words, null, 2));
     const skippedCount = newWords.length - updatedCount;
     if (skippedCount > 0) {
-      console.log(`→ Generated ${updatedCount} phonetic spelling(s), used ${skippedCount} existing`);
+      console.log(`→ Generated ${updatedCount} usage note(s), used ${skippedCount} existing`);
     } else {
-      console.log(`→ Generated ${updatedCount} phonetic spelling(s)`);
+      console.log(`→ Generated ${updatedCount} usage note(s)`);
     }
   }
 
-  return { updated: updatedCount, phonetics };
+  return { updated: updatedCount, usageNotes };
 }
 
 /**
@@ -255,10 +249,10 @@ async function main(): Promise<GenerationResult> {
     // Check if we should process all words or just new words
     const args = process.argv.slice(2);
     if (args.includes('--all-words')) {
-      const result = await generatePhoneticsForAllWords();
+      const result = await generateUsageNotesForAllWords();
       return result;
     } else {
-      const result = await generatePhoneticsForNewWords();
+      const result = await generateUsageNotesForNewWords();
       return result;
     }
   } catch (error) {
@@ -268,7 +262,7 @@ async function main(): Promise<GenerationResult> {
 }
 
 // Export for use in other scripts
-export { getPhonetic, generatePhoneticsForNewWords, generatePhoneticsForAllWords };
+export { getUsageNotes, generateUsageNotesForNewWords, generateUsageNotesForAllWords };
 
 // Run if called directly
 if (require.main === module) {

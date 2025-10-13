@@ -8,7 +8,7 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env.local
-dotenv.config({ path: path.join(__dirname, '../.env.local') });
+dotenv.config({ path: path.join(__dirname, '../../.env.local') });
 
 // Initialize Braintrust logger
 initLogger({
@@ -106,7 +106,7 @@ async function generateDefinitionsForNewWords(): Promise<GenerationResult> {
 
   console.log(`→ Processing ${newWords.length} definition(s)`);
 
-  const wordsPath = path.join(__dirname, '../public/data/words.json');
+  const wordsPath = path.join(__dirname, '../../public/data/words.json');
   const words: WordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
   const definitions: Record<string, string> = {};
