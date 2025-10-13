@@ -62,13 +62,13 @@ export function Footer({ isMapView = false }: FooterProps) {
                   <Info className="h-3 w-3" />
                 </button>
               </DialogTrigger>
-              <DialogContent className="max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>About This Site</DialogTitle>
-                  <DialogDescription className="text-left pt-2">
-                    {infoContent}
-                  </DialogDescription>
-                </DialogHeader>
+              <DialogContent
+                className="max-w-sm"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+              >
+                <DialogDescription className="text-left">
+                  {infoContent}
+                </DialogDescription>
               </DialogContent>
             </Dialog>
           ) : (
