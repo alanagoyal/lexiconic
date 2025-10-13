@@ -5198,5 +5198,21 @@
     "lat": -35.2809,
     "lng": 149.13,
     "pronunciation": "76a61faae5bb4d080d880ad4174cb5f4.mp3"
+  },
+  {
+    "word": "stubby",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Indo-European",
+    "category": "food/drink",
+    "definition": "A short, squat 375-milliliter beer bottle commonly used in Australia, also colloquially extended to mean the beverage itself or related accessories like a stubby holder.",
+    "literal": "",
+    "usage_notes": "Used informally nationwide, especially in pubs and barbecues; also appears in compounds such as stubby holder.",
+    "english_approx": "short beer bottle (375 ml)",
+    "phonetic": "STUB-bee",
+    "location": "Australia",
+    "lat": -35.2809,
+    "lng": 149.13,
+    "pronunciation": "f30f041fc82e1b74d38c19e07230dc2b.mp3"
   }
 ]
