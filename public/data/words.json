@@ -5150,5 +5150,21 @@
     "lat": -35.2809,
     "lng": 149.13,
     "pronunciation": "b6600bd054d4ad1552d08c5881325b71.mp3"
+  },
+  {
+    "word": "bogan",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Germanic",
+    "category": "social/identity",
+    "definition": "A colloquial Australian term for a person perceived as unsophisticated, uncultured, or of low socio-economic status, often associated with loud behavior, unrefined taste, and suburban or rural working-class identity.",
+    "literal": "",
+    "usage_notes": "Used colloquially, often pejoratively, to label perceived unsophisticated behavior; sometimes reclaimed or used humorously among peers.",
+    "english_approx": "redneck",
+    "phonetic": "BOH-guhn",
+    "location": "Australia",
+    "lat": -25.2744,
+    "lng": 133.7751,
+    "pronunciation": "3e98ad3774203ff63f4090879973bd7c.mp3"
   }
 ]
