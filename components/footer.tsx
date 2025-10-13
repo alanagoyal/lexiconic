@@ -66,6 +66,7 @@ export function Footer({ isMapView = false }: FooterProps) {
               <DialogContent
                 className="max-w-sm"
                 onOpenAutoFocus={(e) => e.preventDefault()}
+                onCloseAutoFocus={(e) => e.preventDefault()}
               >
                 <DialogHeader>
                   <DialogTitle>Disclaimer</DialogTitle>
