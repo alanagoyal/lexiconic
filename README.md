@@ -305,11 +305,15 @@ lexiconic/
 │   ├── page.tsx           # Main page with server-side sorting
 │   ├── layout.tsx         # Root layout
 │   └── api/               # API routes for search, pronunciations, etc.
+├── braintrust/            # Braintrust prompts
 ├── components/            # React components
 │   ├── words-client.tsx   # Main client component
 │   ├── words-list.tsx     # List view
 │   ├── map-view.tsx       # Map visualization
 │   └── ...                # Other UI components
+├── hooks/                 # Custom React hooks
+│   ├── use-device-type.ts # Device type detection
+│   └── use-url-state.ts   # URL state management
 ├── lib/                   # Utility functions
 │   ├── load-words.ts      # Server-side word loading
 │   └── semantic-search.ts # Embedding and search logic
@@ -317,6 +321,8 @@ lexiconic/
 │   ├── data/
 │   │   ├── words.json           # Word metadata (no embeddings)
 │   │   └── embeddings.json      # Embeddings map (word → vector)
+│   ├── images/
+│   │   └── og.png               # Open Graph image
 │   └── pronunciations/          # MP3 pronunciation files
 └── scripts/                     # Utility scripts
 ```
