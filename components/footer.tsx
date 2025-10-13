@@ -31,8 +31,9 @@ export function Footer({ isMapView = false }: FooterProps) {
             </TooltipTrigger>
             <TooltipContent
               side="top"
-              className="bg-black text-primary-foreground max-w-[calc(100vw-2rem)] sm:max-w-sm text-left px-4 py-3"
+              className="bg-black text-primary-foreground w-[calc(100vw-2rem)] sm:w-auto sm:max-w-sm text-left px-4 py-3"
               sideOffset={5}
+              collisionPadding={16}
             >
               <p className="text-xs leading-relaxed">
                 Please note that definitions, pronunciations, and other metadata were generated using openai (gpt-5 and gpt-4o-mini-tts) and may not be fully accurate or precisely translated. To suggest edits or improvements, please{" "}
