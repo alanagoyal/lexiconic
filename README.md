@@ -102,7 +102,7 @@ If you want to run it locally at the root path (recommended for local developmen
    # Required for map view functionality
    NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token_here
 
-   # Required for running certain scripts (generate-definitions, generate-phonetics)
+   # Required for running certain scripts (generate-definition, generate-phonetic)
    BRAINTRUST_API_KEY=your_braintrust_api_key_here
 
    # Optional - defaults to localhost:3000 in development
@@ -134,8 +134,8 @@ If you want to run it locally at the root path (recommended for local developmen
 - `npm run add-word "word" "Language" "source"` - Add a new word with automatic generation
 - `npm run generate` - Generate all missing metadata, pronunciations, and embeddings
 - `npm run generate-metadata` - Generate metadata for words missing it
-- `npm run generate-pronunciations` - Generate audio for words missing it
-- `npm run generate-embeddings` - Generate embeddings for words with changed content
+- `npm run generate-pronunciation` - Generate audio for words missing it
+- `npm run generate-embedding` - Generate embeddings for words with changed content
 
 ## Adding New Words
 
@@ -182,8 +182,8 @@ npm run generate
 
 This runs three scripts in sequence, each processing only words that need processing:
 - `generate-metadata` - Fills in missing metadata fields
-- `generate-pronunciations` - Creates missing audio files
-- `generate-embeddings` - Generates missing/changed embeddings
+- `generate-pronunciation` - Creates missing audio files
+- `generate-embedding` - Generates missing/changed embeddings
 
 **3. Commit the changes:**
 ```bash
@@ -217,10 +217,10 @@ If you have your own metadata but want to generate only pronunciation and embedd
 **2. Generate only pronunciation and embeddings:**
 ```bash
 # Generate just pronunciation audio
-npm run generate-pronunciations
+npm run generate-pronunciation
 
 # Generate just embeddings
-npm run generate-embeddings
+npm run generate-embedding
 ```
 
 **3. Commit the changes:**
@@ -240,10 +240,10 @@ If you want to regenerate metadata, pronunciations, or embeddings for all words 
 npm run generate-metadata -- --all
 
 # Regenerate all pronunciations
-npm run generate-pronunciations -- --all
+npm run generate-pronunciation -- --all
 
 # Regenerate all embeddings
-npm run generate-embeddings -- --all
+npm run generate-embedding -- --all
 ```
 
 ### Updating Specific Fields
@@ -252,10 +252,10 @@ The `scripts/deprecated/` directory contains granular scripts for regenerating i
 
 **Available Scripts:**
 
-- **`generate-definitions.ts`** - Regenerates only the `definition` field
-- **`generate-phonetics.ts`** - Regenerates only the `phonetic` field
-- **`generate-usage-notes.ts`** - Regenerates only the `usage_notes` field
-- **`generate-locations.ts`** - Regenerates only the `location` field
+- **`generate-definition.ts`** - Regenerates only the `definition` field
+- **`generate-phonetic.ts`** - Regenerates only the `phonetic` field
+- **`generate-usage-note.ts`** - Regenerates only the `usage_notes` field
+- **`generate-location.ts`** - Regenerates only the `location` field
 
 **Requirements:**
 - `BRAINTRUST_API_KEY` must be set in `.env.local`
@@ -265,28 +265,28 @@ The `scripts/deprecated/` directory contains granular scripts for regenerating i
 
 ```bash
 # Regenerate definitions for words missing this field only (default)
-npx tsx scripts/deprecated/generate-definitions.ts
+npx tsx scripts/deprecated/generate-definition.ts
 
 # Regenerate definitions for ALL words (force regeneration)
-npx tsx scripts/deprecated/generate-definitions.ts -- --all
+npx tsx scripts/deprecated/generate-definition.ts -- --all
 
 # Regenerate phonetics for words missing this field only (default)
-npx tsx scripts/deprecated/generate-phonetics.ts
+npx tsx scripts/deprecated/generate-phonetic.ts
 
 # Regenerate phonetics for ALL words (force regeneration)
-npx tsx scripts/deprecated/generate-phonetics.ts -- --all
+npx tsx scripts/deprecated/generate-phonetic.ts -- --all
 
 # Regenerate usage notes for words missing this field only (default)
-npx tsx scripts/deprecated/generate-usage-notes.ts
+npx tsx scripts/deprecated/generate-usage-note.ts
 
 # Regenerate usage notes for ALL words (force regeneration)
-npx tsx scripts/deprecated/generate-usage-notes.ts -- --all
+npx tsx scripts/deprecated/generate-usage-note.ts -- --all
 
 # Regenerate locations for words missing this field only (default)
-npx tsx scripts/deprecated/generate-locations.ts
+npx tsx scripts/deprecated/generate-location.ts
 
 # Regenerate locations for ALL words (force regeneration)
-npx tsx scripts/deprecated/generate-locations.ts -- --all
+npx tsx scripts/deprecated/generate-location.ts -- --all
 ```
 
 **When to use:**

@@ -9,12 +9,9 @@
     "start": "next start",
     "add-word": "tsx scripts/add-word.ts",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
-    "generate-pronunciations": "tsx scripts/generate-pronunciations.ts",
-    "generate-embeddings": "tsx scripts/generate-embeddings.ts",
-    "generate-locations": "tsx scripts/generate-locations.ts",
-    "migrate-coordinates": "tsx scripts/migrate-coordinates.ts",
-    "generate": "npm run generate-metadata && npm run generate-pronunciations && npm run generate-embeddings",
-    "regenerate-pronunciations": "tsx scripts/regenerate-changed-pronunciations.ts"
+    "generate-pronunciation": "tsx scripts/generate-pronunciation.ts",
+    "generate-embedding": "tsx scripts/generate-embedding.ts",
+    "generate": "npm run generate-metadata && npm run generate-pronunciation && npm run generate-embedding"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
