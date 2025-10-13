@@ -131,7 +131,7 @@ If you want to run it locally at the root path (recommended for local developmen
 - `npm run build` - Build for production
 - `npm start` - Run production build
 - `npm run lint` - Run ESLint
-- `npm run add-word -- "word" "Language" "source"` - Add a new word with automatic generation
+- `npm run add-word "word" "Language" "source"` - Add a new word with automatic generation
 - `npm run generate` - Generate all missing metadata, pronunciations, and embeddings
 - `npm run generate-metadata` - Generate metadata for words missing it
 - `npm run generate-pronunciations` - Generate audio for words missing it
@@ -158,7 +158,7 @@ All other fields (metadata, pronunciation, embeddings) are generated automatical
 The easiest way to add a word:
 
 ```bash
-npm run add-word -- "saudade" "Portuguese" "https://example.com/source"
+npm run add-word "saudade" "Portuguese" "https://example.com/source"
 ```
 
 **What it does:**
