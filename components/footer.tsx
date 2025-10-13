@@ -68,12 +68,9 @@ export function Footer({ isMapView = false }: FooterProps) {
                 onOpenAutoFocus={(e) => e.preventDefault()}
                 onCloseAutoFocus={(e) => e.preventDefault()}
               >
-                <DialogHeader>
-                  <DialogTitle>Disclaimer</DialogTitle>
-                  <DialogDescription className="text-left">
-                    {disclaimerContent}
-                  </DialogDescription>
-                </DialogHeader>
+                <DialogDescription className="text-left">
+                  {disclaimerContent}
+                </DialogDescription>
               </DialogContent>
             </Dialog>
           ) : (
