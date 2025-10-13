@@ -44,6 +44,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{__html: `
+          // Prevent flash by hiding body until DOMContentLoaded (after scroll restoration)
+          document.documentElement.style.visibility = 'hidden';
+          document.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.style.visibility = 'visible';
+          });
+        `}} />
         <style>{`
 html {
   font-family: "GT Standard", ${GeistSans.style.fontFamily};
@@ -51,25 +58,7 @@ html {
   --font-mono: ${GeistMono.variable};
   --font-playfair: ${playfair.variable};
 }
-body {
-  visibility: hidden;
-}
-body.ready {
-  visibility: visible;
-}
         `}</style>
-        <script dangerouslySetInnerHTML={{__html: `
-          (function() {
-            // Make body visible immediately after scroll restoration
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', function() {
-                document.body.classList.add('ready');
-              });
-            } else {
-              document.body.classList.add('ready');
-            }
-          })();
-        `}} />
       </head>
       <body className={`${playfair.variable}`}>
         <NuqsAdapter>
