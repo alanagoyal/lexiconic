@@ -79,7 +79,6 @@ function needsMetadata(word: PartialWordData): boolean {
     'definition',
     'family',
     'category',
-    'literal',
     'usage_notes',
     'english_approx',
     'location',
@@ -99,9 +98,10 @@ function needsMetadata(word: PartialWordData): boolean {
 
 
 /**
- * Generate metadata for ALL words that don't have complete metadata
+ * Generate metadata for words that don't have complete metadata
+ * @param forceAll - If true, regenerate metadata for ALL words
  */
-async function generateMetadataForAllWords(): Promise<GenerationResult> {
+async function generateMetadataForAllWords(forceAll = false): Promise<GenerationResult> {
   // Check if Braintrust API key is set
   if (!process.env.BRAINTRUST_API_KEY) {
     console.error('❌ BRAINTRUST_API_KEY environment variable is not set. Please add it to your .env.local file.');
@@ -121,15 +121,17 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
 
   const words: PartialWordData[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
 
-  // Find ALL words that need metadata
-  const wordsToProcess = words.filter(word => needsMetadata(word));
+  // Find words that need metadata (all words if forceAll, otherwise only missing metadata)
+  const wordsToProcess = forceAll ? words : words.filter(word => needsMetadata(word));
 
   if (wordsToProcess.length === 0) {
     console.log('→ All words already have complete metadata');
+    // Delete backup if nothing to process
+    fs.unlinkSync(backupPath);
     return { updated: 0, metadata: {} };
   }
 
-  console.log(`→ Processing ${wordsToProcess.length} word(s) to generate metadata`);
+  console.log(`→ Processing ${wordsToProcess.length} word(s) to generate metadata${forceAll ? ' (--all mode)' : ''}`);
 
   const metadata: Record<string, BraintrustMetadata> = {};
   let processedCount = 0;
@@ -183,6 +185,9 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
     console.log(`→ Generated metadata for ${updatedCount} word(s)`);
   }
 
+  // Delete backup after successful completion
+  fs.unlinkSync(backupPath);
+
   return { updated: updatedCount, metadata };
 }
 
@@ -191,7 +196,9 @@ async function generateMetadataForAllWords(): Promise<GenerationResult> {
  */
 async function main(): Promise<GenerationResult> {
   try {
-    const result = await generateMetadataForAllWords();
+    // Check for --all flag
+    const forceAll = process.argv.includes('--all');
+    const result = await generateMetadataForAllWords(forceAll);
     return result;
   } catch (error) {
     console.error('   Error:', (error as Error).message);

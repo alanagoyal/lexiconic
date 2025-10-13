@@ -16,19 +16,26 @@ Lexiconic is a digital exploration of untranslatable words - terms from various 
 ## How It Works
 
 ### Data Structure
-Words are stored in `/public/data/words.json` with the following information:
+Words are stored in two separate files for optimal performance:
+
+**`/public/data/words.json`** - All word metadata (fast initial load ~236KB):
 - Word in native script and romanization
 - Language, language family, and geographic location
 - Definition, literal meaning, and usage notes
-- Pronunciation audio files (stored in `/public/pronunciations/`)
-- Pre-computed embeddings for semantic search
+- Pronunciation audio file references (stored in `/public/pronunciations/`)
+
+**`/public/data/embeddings.json`** - Pre-computed embeddings only (~14MB):
+- Map of word → embedding vector + hash
+- Loaded in background via SWR for semantic search
+- Separate to keep words.json small and editable
 
 ### Semantic Search
 The app uses AI embeddings to enable semantic search:
-1. Each word's content is converted to a vector embedding
+1. Each word's content is converted to a vector embedding (stored separately in embeddings.json)
 2. When you search, your query is also embedded
 3. Results are ranked by cosine similarity to find conceptually related words
-4. Embeddings are pre-computed and stored for fast searches
+4. Embeddings are pre-computed and loaded in background for fast searches
+5. Word metadata loads instantly (~236KB), embeddings load progressively (~14MB)
 
 ### Architecture
 - **Framework**: Next.js 15 with React 19
@@ -124,93 +131,171 @@ If you want to run it locally at the root path (recommended for local developmen
 - `npm run build` - Build for production
 - `npm start` - Run production build
 - `npm run lint` - Run ESLint
-- `npm run generate-pronunciations` - Generate audio for all words
-- `npm run regenerate-pronunciations` - Regenerate audio for changed words
-
-## Automation & Git Hooks
-
-This project uses a **post-commit hook** to automatically generate pronunciations, phonetics, definitions, and embeddings when you modify `public/data/words.json`.
-
-### Setting Up the Git Hook
-
-```bash
-cp scripts/post-commit .git/hooks/post-commit
-chmod +x .git/hooks/post-commit
-```
-
-### How It Works
-
-When you commit changes to `public/data/words.json`, the hook automatically:
-
-1. **Generates metadata** for new words (phonetic, definition, family, category, literal, usage_notes, english_approx, location) - requires `BRAINTRUST_API_KEY`
-2. **Generates pronunciations** for new/changed words (requires `OPENAI_API_KEY`)
-3. **Regenerates embeddings** intelligently - only when semantic fields change (requires `OPENAI_API_KEY`)
-4. **Stages all updated files** for you to review and commit
-
-The hook gracefully skips steps if API keys are missing.
-
-For detailed information about each script, see [scripts/README.md](scripts/README.md).
+- `npm run add-word "word" "Language" "source"` - Add a new word with automatic generation
+- `npm run generate` - Generate all missing metadata, pronunciations, and embeddings
+- `npm run generate-metadata` - Generate metadata for words missing it
+- `npm run generate-pronunciations` - Generate audio for words missing it
+- `npm run generate-embeddings` - Generate embeddings for words with changed content
 
 ## Adding New Words
 
-### Required Fields (You Must Provide)
+### Method 1: CLI (Recommended)
 
-When adding a new word to `/public/data/words.json`, you **must** manually provide these fields:
+The easiest way to add a word is to use the CLI tool:
 
+```bash
+npm run add-word "saudade" "Portuguese" "https://example.com/source"
+```
+
+**What it does:**
+1. Validates inputs and checks for duplicates
+2. Creates a temporary backup of `words.json`
+3. Generates comprehensive metadata via Braintrust AI
+4. Generates pronunciation audio via OpenAI TTS
+5. Generates semantic embeddings via OpenAI
+6. Rolls back on error or cleans up backup on success
+
+**Then commit:**
+```bash
+git add .
+git commit -m "add saudade"
+git push
+```
+
+### Method 2: Manually Add + Generate Metadata
+
+If you prefer to manually edit the JSON:
+
+**1. Add minimal entry to `/public/data/words.json`:**
 ```json
 {
-  "word": "saudade",              // The word in its native script/romanization
-  "language": "Portuguese",       // The language name
-  "source": "https://..."         // Source URL
+  "word": "saudade",
+  "language": "Portuguese",
+  "source": "https://example.com/source"
 }
 ```
 
-**Note:** The metadata generation script will now automatically generate all other required fields including `family`, `category`, `definition`, `literal`, `usage_notes`, `english_approx`, `phonetic`, and `location`.
-
-### Auto-Generated Fields (Scripts Handle These)
-
-The following fields are **automatically generated** by scripts (leave them out or set to empty strings):
-
-- `"family"` - Language family (e.g., "Indo-European")
-- `"category"` - Semantic category (e.g., "emotion/longing")
-- `"definition"` - Detailed definition
-- `"literal"` - Literal translation
-- `"usage_notes"` - Cultural context and usage
-- `"english_approx"` - Closest English approximation
-- `"phonetic"` - IPA phonetic spelling
-- `"location"` - Geographic location or origin
-- `"pronunciation"` - Audio file path (MP3)
-- `"embedding"` and `"embeddingHash"` - Semantic search vectors
-
-**Most fields are generated by `generate-metadata.ts`** (requires `BRAINTRUST_API_KEY`)
-**Audio files are generated by `generate-pronunciations.ts`** (requires `OPENAI_API_KEY`)
-**Embeddings are generated by `generate-embeddings.ts`** (requires `OPENAI_API_KEY`)
-
-### Workflow: CLI Tool (Recommended)
-
-Use the built-in CLI to add words with automatic generation:
-
+**2. Run generation (processes only what's needed):**
 ```bash
-npm run add-word -- "word" "Language" "https://source-url"
+npm run generate
 ```
 
-This single command handles everything automatically!
+This runs three scripts in sequence, each processing only words that need processing:
+- `generate-metadata` - Fills in missing metadata fields
+- `generate-pronunciations` - Creates missing audio files
+- `generate-embeddings` - Generates missing/changed embeddings
 
-### Workflow: With Git Hook
+**3. Commit the changes:**
+```bash
+git add .
+git commit -m "add saudade"
+```
 
-1. Edit `/public/data/words.json` and add your new word with minimal fields (word, language, source)
-2. Commit your changes: `git add public/data/words.json && git commit -m "add new words"`
-3. The post-commit hook automatically generates all metadata, pronunciations, and embeddings
-4. Review the staged changes and commit them when ready
+### Method 3: Manually Add Metadata
 
-### Workflow: Manual Process
+If you have your own metadata but want to generate only pronunciation and embeddings:
 
-If you prefer to run scripts manually:
+**1. Add complete metadata entry to `/public/data/words.json`:**
+```json
+{
+  "word": "saudade",
+  "language": "Portuguese",
+  "source": "https://example.com/source",
+  "family": "Indo-European",
+  "category": "Emotion",
+  "definition": "A deep emotional state of nostalgic or profound melancholic longing for something or someone that one cares for and/or loves.",
+  "literal": "Longing, missing, nostalgia",
+  "usage_notes": "Often associated with Portuguese and Brazilian culture, expressing the feeling of missing something that may never return.",
+  "english_approx": "nostalgia, longing, yearning",
+  "phonetic": "saw-ˈdɑ-dʒi",
+  "location": "Portugal",
+  "lat": 39.3999,
+  "lng": -8.2245
+}
+```
 
-1. Edit `/public/data/words.json` with your new word (minimal fields)
-2. Run `npm run generate-metadata` - Generates all metadata fields
-3. Run `npm run generate-pronunciations` - Generates audio files
-4. Run `npm run generate-embeddings` - Generates embeddings
+**2. Generate only pronunciation and embeddings:**
+```bash
+# Generate just pronunciation audio
+npm run generate-pronunciations
+
+# Generate just embeddings
+npm run generate-embeddings
+```
+
+**3. Commit the changes:**
+```bash
+git add .
+git commit -m "add saudade"
+```
+
+## Updating Words
+
+### Updating All Words
+
+If you want to regenerate metadata, pronunciations, or embeddings for all words (e.g., after updating prompts):
+
+```bash
+# Regenerate all metadata
+npm run generate-metadata -- --all
+
+# Regenerate all pronunciations
+npm run generate-pronunciations -- --all
+
+# Regenerate all embeddings
+npm run generate-embeddings -- --all
+```
+
+### Updating Specific Fields
+
+The `scripts/deprecated/` directory contains granular scripts for regenerating individual metadata fields. These are useful when you need to update or fix specific fields without regenerating all metadata:
+
+**Available Scripts:**
+
+- **`generate-definitions.ts`** - Regenerates only the `definition` field
+- **`generate-phonetics.ts`** - Regenerates only the `phonetic` field
+- **`generate-usage-notes.ts`** - Regenerates only the `usage_notes` field
+- **`generate-locations.ts`** - Regenerates only the `location` field
+
+**Requirements:**
+- `BRAINTRUST_API_KEY` must be set in `.env.local`
+- All scripts create automatic backups in `/public/data/backup/` before making changes (deleted on success)
+
+**Usage Examples:**
+
+```bash
+# Regenerate definitions for words missing this field only (default)
+npx tsx scripts/deprecated/generate-definitions.ts
+
+# Regenerate definitions for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-definitions.ts -- --all
+
+# Regenerate phonetics for words missing this field only (default)
+npx tsx scripts/deprecated/generate-phonetics.ts
+
+# Regenerate phonetics for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-phonetics.ts -- --all
+
+# Regenerate usage notes for words missing this field only (default)
+npx tsx scripts/deprecated/generate-usage-notes.ts
+
+# Regenerate usage notes for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-usage-notes.ts -- --all
+
+# Regenerate locations for words missing this field only (default)
+npx tsx scripts/deprecated/generate-locations.ts
+
+# Regenerate locations for ALL words (force regeneration)
+npx tsx scripts/deprecated/generate-locations.ts -- --all
+```
+
+**When to use:**
+- After updating a specific Braintrust prompt
+- To fix incorrect data in a specific field
+- To add a field to words that are missing it
+- When testing changes to field generation logic
+
+**Note:** These scripts are considered "deprecated" because the main workflow uses `generate-metadata.ts` which handles all fields at once. However, they remain useful for targeted updates.
 
 ## Project Structure
 
@@ -229,9 +314,11 @@ lexiconic/
 │   ├── load-words.ts      # Server-side word loading
 │   └── semantic-search.ts # Embedding and search logic
 ├── public/
-│   ├── data/              # Word data and embeddings
-│   └── pronunciations/    # MP3 pronunciation files
-└── scripts/               # Utility scripts
+│   ├── data/
+│   │   ├── words.json           # Word metadata (no embeddings)
+│   │   └── embeddings.json      # Embeddings map (word → vector)
+│   └── pronunciations/          # MP3 pronunciation files
+└── scripts/                     # Utility scripts
 ```
 
 ## License

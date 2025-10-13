@@ -106,7 +106,7 @@ export function WordsClient({
 
   // Load embeddings in the background with SWR
   const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
-    "/lexiconic/api/words-with-embeddings",
+    "/lexiconic/api/words",
     fetcher,
     {
       revalidateOnFocus: false,

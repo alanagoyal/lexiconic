@@ -5150,5 +5150,53 @@
     "lat": -35.2809,
     "lng": 149.13,
     "pronunciation": "b6600bd054d4ad1552d08c5881325b71.mp3"
+  },
+  {
+    "word": "bogan",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Germanic",
+    "category": "social/identity",
+    "definition": "A colloquial Australian term for a person perceived as unsophisticated, uncultured, or of low socio-economic status, often associated with loud behavior, unrefined taste, and suburban or rural working-class identity.",
+    "literal": "",
+    "usage_notes": "Used colloquially, often pejoratively, to label perceived unsophisticated behavior; sometimes reclaimed or used humorously among peers.",
+    "english_approx": "redneck",
+    "phonetic": "BOH-guhn",
+    "location": "Australia",
+    "lat": -25.2744,
+    "lng": 133.7751,
+    "pronunciation": "3e98ad3774203ff63f4090879973bd7c.mp3"
+  },
+  {
+    "word": "arvo",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Indo-European",
+    "category": "time/day",
+    "definition": "A colloquial Australian English abbreviation for 'afternoon,' commonly used in casual speech and writing to refer to the period between midday and evening or activities occurring then.",
+    "literal": "afternoon",
+    "usage_notes": "Used informally across Australia, especially in casual scheduling or social plans.",
+    "english_approx": "afternoon",
+    "phonetic": "AR-voh",
+    "location": "Australia",
+    "lat": -25.2744,
+    "lng": 133.7751,
+    "pronunciation": "f9ba22fb1ff25fd8f83d48f361aea0a4.mp3"
+  },
+  {
+    "word": "outback",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Germanic",
+    "category": "geography/region",
+    "definition": "The remote, sparsely populated interior regions of Australia, typically arid or semi-arid landscapes far from coastal cities and services, evoking notions of vastness, isolation, and rugged rural life.",
+    "literal": "",
+    "usage_notes": "Used to refer to remote inland Australia, often attributively (e.g., outback town).",
+    "english_approx": "the backcountry",
+    "phonetic": "OUT-back",
+    "location": "Australia",
+    "lat": -35.2809,
+    "lng": 149.13,
+    "pronunciation": "76a61faae5bb4d080d880ad4174cb5f4.mp3"
   }
 ]

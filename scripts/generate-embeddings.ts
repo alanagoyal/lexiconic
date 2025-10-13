@@ -1,10 +1,10 @@
 #!/usr/bin/env npx tsx
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync, unlinkSync } from 'fs';
+import { join, basename } from 'path';
 import { createHash } from 'crypto';
 import OpenAI from 'openai';
-import type { WordData, WordDataWithoutEmbedding } from '../types/word';
+import type { WordDataWithoutEmbedding, EmbeddingsMap } from '../types/word';
 
 // Load environment variables from .env.local
 function loadEnvLocal() {
@@ -56,7 +56,6 @@ function createEmbeddingText(word: WordDataWithoutEmbedding): string {
     `Language: ${word.language}`,
     `Category: ${word.category}`,
     `Definition: ${word.definition}`,
-    word.literal && word.literal !== '—' ? `Literal meaning: ${word.literal}` : '',
     word.usage_notes ? `Usage: ${word.usage_notes}` : '',
     word.english_approx ? `Similar to: ${word.english_approx}` : '',
   ].filter(Boolean);
@@ -68,41 +67,46 @@ function createTextHash(text: string): string {
   return createHash('sha256').update(text).digest('hex');
 }
 
-async function generateEmbeddingsForWords() {
+async function generateEmbeddingsForWords(forceAll = false) {
   try {
     const wordsPath = join(process.cwd(), 'public', 'data', 'words.json');
-    const embeddingsPath = join(process.cwd(), 'public', 'data', 'words-with-embeddings.json');
+    const embeddingsPath = join(process.cwd(), 'public', 'data', 'embeddings.json');
+
+    // Create backup before modifying
+    const backupPath = join(process.cwd(), 'public', 'data', 'backup', 'embeddings-backup-' + Date.now() + '.json');
+    const backupDir = join(process.cwd(), 'public', 'data', 'backup');
+    if (!existsSync(backupDir)) {
+      mkdirSync(backupDir, { recursive: true });
+    }
+    if (existsSync(embeddingsPath)) {
+      copyFileSync(embeddingsPath, backupPath);
+      console.log(`→ Created backup: ${join('public', 'data', 'backup', basename(backupPath))}`);
+    }
 
     const wordsData = JSON.parse(readFileSync(wordsPath, 'utf8')) as WordDataWithoutEmbedding[];
 
     // Load existing embeddings if they exist
-    let existingEmbeddings: WordData[] = [];
+    let existingEmbeddings: EmbeddingsMap = {};
     try {
-      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as WordData[];
+      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as EmbeddingsMap;
     } catch (error) {
       // No existing embeddings file
     }
 
-    // Create a map of existing embeddings by word
-    const embeddingMap = new Map<string, WordData>();
-    existingEmbeddings.forEach(item => {
-      embeddingMap.set(item.word, item);
-    });
-
     // First pass: determine what needs to be regenerated
     const wordsNeedingGeneration: WordDataWithoutEmbedding[] = [];
-    const wordsToReuse: Array<{ word: WordDataWithoutEmbedding; existing: WordData }> = [];
+    const wordsToReuse: WordDataWithoutEmbedding[] = [];
 
     for (const word of wordsData) {
-      const existing = embeddingMap.get(word.word);
+      const existing = existingEmbeddings[word.word];
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
       // Check if we need to regenerate the embedding
-      const needsRegeneration = !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
+      const needsRegeneration = forceAll || !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
 
       if (existing && !needsRegeneration) {
-        wordsToReuse.push({ word, existing });
+        wordsToReuse.push(word);
       } else {
         wordsNeedingGeneration.push(word);
       }
@@ -111,16 +115,19 @@ async function generateEmbeddingsForWords() {
     // Show summary upfront
     if (wordsNeedingGeneration.length === 0) {
       console.log(`→ No new or changed words detected`);
+      // Delete backup if nothing to process
+      if (existsSync(backupPath)) {
+        unlinkSync(backupPath);
+      }
     } else {
-      console.log(`→ Processing ${wordsNeedingGeneration.length} embedding(s)`);
+      console.log(`→ Processing ${wordsNeedingGeneration.length} embedding(s)${forceAll ? ' (--all mode)' : ''}`);
     }
 
-    const wordsWithEmbeddings: WordData[] = [];
+    const newEmbeddingsMap: EmbeddingsMap = {};
     let processedCount = 0;
 
     // Process words that need generation
     for (const word of wordsNeedingGeneration) {
-      const existing = embeddingMap.get(word.word);
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
@@ -128,11 +135,10 @@ async function generateEmbeddingsForWords() {
 
       const embedding = await generateEmbedding(embeddingText);
 
-      wordsWithEmbeddings.push({
-        ...word,
+      newEmbeddingsMap[word.word] = {
         embedding,
         embeddingHash: currentHash
-      });
+      };
 
       processedCount++;
 
@@ -141,28 +147,33 @@ async function generateEmbeddingsForWords() {
     }
 
     // Add reused embeddings
-    for (const { word, existing } of wordsToReuse) {
+    for (const word of wordsToReuse) {
+      const existing = existingEmbeddings[word.word];
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
       console.log(`  ✓ Using existing: ${word.word}`);
 
-      wordsWithEmbeddings.push({
-        ...word,
+      newEmbeddingsMap[word.word] = {
         embedding: existing.embedding,
         embeddingHash: currentHash
-      });
+      };
     }
 
     const newEmbeddingsCount = wordsNeedingGeneration.length;
     const reusedCount = wordsData.length - newEmbeddingsCount;
 
-    writeFileSync(embeddingsPath, JSON.stringify(wordsWithEmbeddings, null, 2));
+    writeFileSync(embeddingsPath, JSON.stringify(newEmbeddingsMap, null, 2));
 
     if (newEmbeddingsCount > 0) {
       console.log(`→ Generated ${newEmbeddingsCount} embedding(s), used ${reusedCount} existing`);
     } else {
       console.log(`→ Used ${reusedCount} existing embedding(s)`);
+    }
+
+    // Delete backup after successful completion
+    if (existsSync(backupPath)) {
+      unlinkSync(backupPath);
     }
 
   } catch (error) {
@@ -178,4 +189,5 @@ if (!process.env.OPENAI_API_KEY) {
   process.exit(1);
 }
 
-generateEmbeddingsForWords();
+const forceAll = process.argv.includes('--all');
+generateEmbeddingsForWords(forceAll);

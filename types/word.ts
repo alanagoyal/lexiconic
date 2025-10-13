@@ -38,9 +38,24 @@ export interface WordWithEmbedding extends WordData {
 /**
  * Complete Word type without embedding data.
  * Used in words.json which stores all word metadata except embeddings.
- * Embeddings are stored separately in words-with-embeddings.json.
+ * Embeddings are stored separately in embeddings.json.
  */
 export type WordDataWithoutEmbedding = Omit<WordData, 'embedding' | 'embeddingHash'>;
+
+/**
+ * Embedding data for a single word.
+ * Used in embeddings.json which stores only word-to-embedding mappings.
+ */
+export interface EmbeddingData {
+  embedding: number[];
+  embeddingHash: string;
+}
+
+/**
+ * Map of word strings to their embedding data.
+ * This is the format used in embeddings.json.
+ */
+export type EmbeddingsMap = Record<string, EmbeddingData>;
 
 /**
  * Partial Word type for scripts that don't require all fields.
