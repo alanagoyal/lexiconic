@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 import OpenAI from 'openai';
-import type { WordData, WordDataWithoutEmbedding } from '../types/word';
+import type { WordDataWithoutEmbedding, EmbeddingsMap } from '../types/word';
 
 // Load environment variables from .env.local
 function loadEnvLocal() {
@@ -71,30 +71,24 @@ function createTextHash(text: string): string {
 async function generateEmbeddingsForWords() {
   try {
     const wordsPath = join(process.cwd(), 'public', 'data', 'words.json');
-    const embeddingsPath = join(process.cwd(), 'public', 'data', 'words-with-embeddings.json');
+    const embeddingsPath = join(process.cwd(), 'public', 'data', 'embeddings.json');
 
     const wordsData = JSON.parse(readFileSync(wordsPath, 'utf8')) as WordDataWithoutEmbedding[];
 
     // Load existing embeddings if they exist
-    let existingEmbeddings: WordData[] = [];
+    let existingEmbeddings: EmbeddingsMap = {};
     try {
-      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as WordData[];
+      existingEmbeddings = JSON.parse(readFileSync(embeddingsPath, 'utf8')) as EmbeddingsMap;
     } catch (error) {
       // No existing embeddings file
     }
 
-    // Create a map of existing embeddings by word
-    const embeddingMap = new Map<string, WordData>();
-    existingEmbeddings.forEach(item => {
-      embeddingMap.set(item.word, item);
-    });
-
     // First pass: determine what needs to be regenerated
     const wordsNeedingGeneration: WordDataWithoutEmbedding[] = [];
-    const wordsToReuse: Array<{ word: WordDataWithoutEmbedding; existing: WordData }> = [];
+    const wordsToReuse: WordDataWithoutEmbedding[] = [];
 
     for (const word of wordsData) {
-      const existing = embeddingMap.get(word.word);
+      const existing = existingEmbeddings[word.word];
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
@@ -102,7 +96,7 @@ async function generateEmbeddingsForWords() {
       const needsRegeneration = !existing || !existing.embeddingHash || existing.embeddingHash !== currentHash;
 
       if (existing && !needsRegeneration) {
-        wordsToReuse.push({ word, existing });
+        wordsToReuse.push(word);
       } else {
         wordsNeedingGeneration.push(word);
       }
@@ -115,12 +109,11 @@ async function generateEmbeddingsForWords() {
       console.log(`→ Processing ${wordsNeedingGeneration.length} embedding(s)`);
     }
 
-    const wordsWithEmbeddings: WordData[] = [];
+    const newEmbeddingsMap: EmbeddingsMap = {};
     let processedCount = 0;
 
     // Process words that need generation
     for (const word of wordsNeedingGeneration) {
-      const existing = embeddingMap.get(word.word);
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
@@ -128,11 +121,10 @@ async function generateEmbeddingsForWords() {
 
       const embedding = await generateEmbedding(embeddingText);
 
-      wordsWithEmbeddings.push({
-        ...word,
+      newEmbeddingsMap[word.word] = {
         embedding,
         embeddingHash: currentHash
-      });
+      };
 
       processedCount++;
 
@@ -141,23 +133,23 @@ async function generateEmbeddingsForWords() {
     }
 
     // Add reused embeddings
-    for (const { word, existing } of wordsToReuse) {
+    for (const word of wordsToReuse) {
+      const existing = existingEmbeddings[word.word];
       const embeddingText = createEmbeddingText(word);
       const currentHash = createTextHash(embeddingText);
 
       console.log(`  ✓ Using existing: ${word.word}`);
 
-      wordsWithEmbeddings.push({
-        ...word,
+      newEmbeddingsMap[word.word] = {
         embedding: existing.embedding,
         embeddingHash: currentHash
-      });
+      };
     }
 
     const newEmbeddingsCount = wordsNeedingGeneration.length;
     const reusedCount = wordsData.length - newEmbeddingsCount;
 
-    writeFileSync(embeddingsPath, JSON.stringify(wordsWithEmbeddings, null, 2));
+    writeFileSync(embeddingsPath, JSON.stringify(newEmbeddingsMap, null, 2));
 
     if (newEmbeddingsCount > 0) {
       console.log(`→ Generated ${newEmbeddingsCount} embedding(s), used ${reusedCount} existing`);

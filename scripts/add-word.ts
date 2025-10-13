@@ -7,7 +7,7 @@ import { initLogger, invoke } from 'braintrust';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import type { WordData, WordDataWithoutEmbedding, BraintrustMetadata } from '../types/word';
+import type { WordDataWithoutEmbedding, BraintrustMetadata, EmbeddingsMap } from '../types/word';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
@@ -129,13 +129,13 @@ async function addWord(word: string, language: string, source: string) {
   }
 
   const wordsPath = path.join(__dirname, '../public/data/words.json');
-  const embeddingsPath = path.join(__dirname, '../public/data/words-with-embeddings.json');
-  
+  const embeddingsPath = path.join(__dirname, '../public/data/embeddings.json');
+
   // Read existing words
   let words: WordDataWithoutEmbedding[] = JSON.parse(fs.readFileSync(wordsPath, 'utf8'));
-  let wordsWithEmbeddings: WordData[] = [];
+  let embeddingsMap: EmbeddingsMap = {};
   try {
-    wordsWithEmbeddings = JSON.parse(fs.readFileSync(embeddingsPath, 'utf8'));
+    embeddingsMap = JSON.parse(fs.readFileSync(embeddingsPath, 'utf8'));
   } catch {
     // File might not exist yet
   }
@@ -193,13 +193,12 @@ async function addWord(word: string, language: string, source: string) {
     words.push(completeWord);
     fs.writeFileSync(wordsPath, JSON.stringify(words, null, 2));
 
-    // Add to words-with-embeddings.json
-    wordsWithEmbeddings.push({
-      ...completeWord,
+    // Add to embeddings.json
+    embeddingsMap[word] = {
       embedding,
       embeddingHash: hash,
-    });
-    fs.writeFileSync(embeddingsPath, JSON.stringify(wordsWithEmbeddings, null, 2));
+    };
+    fs.writeFileSync(embeddingsPath, JSON.stringify(embeddingsMap, null, 2));
 
     console.log('✨ All generation complete!\n');
 
