@@ -27,7 +27,7 @@ export const generateMetadata_4263 = project.prompts.create({
     },
   ],
   params: {
-    use_cache: false,
+    use_cache: true,
     temperature: 0,
   },
   tools: [
