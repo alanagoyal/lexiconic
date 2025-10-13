@@ -38,7 +38,7 @@ async function generateMetadata(word: string, language: string): Promise<Braintr
   
   const result = await invoke({
     projectName: "lexiconic",
-    slug: "generate-metadata-4263",
+    slug: "generate-metadata",
     input: { word, language },
   });
   
