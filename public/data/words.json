@@ -5182,5 +5182,21 @@
     "lat": -25.2744,
     "lng": 133.7751,
     "pronunciation": "f9ba22fb1ff25fd8f83d48f361aea0a4.mp3"
+  },
+  {
+    "word": "outback",
+    "language": "Australian English",
+    "source": "https://www.macquariedictionary.com.au/",
+    "family": "Germanic",
+    "category": "geography/region",
+    "definition": "The remote, sparsely populated interior regions of Australia, typically arid or semi-arid landscapes far from coastal cities and services, evoking notions of vastness, isolation, and rugged rural life.",
+    "literal": "",
+    "usage_notes": "Used to refer to remote inland Australia, often attributively (e.g., outback town).",
+    "english_approx": "the backcountry",
+    "phonetic": "OUT-back",
+    "location": "Australia",
+    "lat": -35.2809,
+    "lng": 149.13,
+    "pronunciation": "76a61faae5bb4d080d880ad4174cb5f4.mp3"
   }
 ]
