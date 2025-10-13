@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Info } from "lucide-react";
 import {
   Tooltip,
@@ -10,14 +13,19 @@ interface FooterProps {
 }
 
 export function Footer({ isMapView = false }: FooterProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <footer className={`bg-background border-t border-border ${isMapView ? 'fixed bottom-0 left-0 right-0 z-10' : '-mt-px'}`}>
       <div className="p-6 text-center">
         <div className="text-xs text-muted-foreground uppercase letter-spacing-wide font-playfair flex items-center justify-center gap-1.5">
           A digital exploration of linguistic untranslatability
-          <Tooltip>
+          <Tooltip open={isOpen} onOpenChange={setIsOpen}>
             <TooltipTrigger asChild>
-              <button className="inline-flex items-center hover:text-foreground transition-colors">
+              <button
+                className="inline-flex items-center hover:text-foreground transition-colors"
+                onClick={() => setIsOpen(!isOpen)}
+              >
                 <Info className="h-3 w-3" />
               </button>
             </TooltipTrigger>
