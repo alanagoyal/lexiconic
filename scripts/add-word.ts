@@ -51,15 +51,17 @@ async function generateMetadata(word: string, language: string): Promise<Braintr
   return metadataSchema.parse(metadata);
 }
 
-async function generatePronunciation(word: string): Promise<string> {
-  console.log(`  • Generating pronunciation for: ${word}`);
+async function generatePronunciation(word: string, phonetic?: string): Promise<string> {
+  const input = phonetic || word;
+  const displayInfo = phonetic ? `${word} (${phonetic})` : word;
+  console.log(`  • Generating pronunciation for: ${displayInfo}`);
   
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   
   const mp3 = await openai.audio.speech.create({
     model: 'gpt-4o-mini-tts',
     voice: 'alloy',
-    input: word,
+    input: input,
   });
 
   const buffer = Buffer.from(await mp3.arrayBuffer());
@@ -162,7 +164,7 @@ async function addWord(word: string, language: string, source: string) {
 
     // Step 2: Generate pronunciation
     console.log('🔊 Step 2/3: Generating pronunciation...');
-    const pronunciationFile = await generatePronunciation(word);
+    const pronunciationFile = await generatePronunciation(word, metadata.phonetic);
     console.log('✅ Pronunciation generated\n');
 
     // Create complete word object

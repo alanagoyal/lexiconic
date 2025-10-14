@@ -5,7 +5,6 @@ import { promises as fs } from 'fs';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { execSync } from 'child_process';
 import type { WordDataWithoutEmbedding } from '../types/word';
 
 // Load environment variables from .env.local
@@ -51,18 +50,21 @@ function generateAudioFileName(word: string): string {
 }
 
 // Generate pronunciation for a single word
-async function generatePronunciation(word: string, outputPath: string): Promise<void> {
+async function generatePronunciation(wordObj: WordDataWithoutEmbedding, outputPath: string): Promise<void> {
   try {
+    // Use phonetic spelling if available, otherwise fall back to the word itself
+    const input = wordObj.phonetic || wordObj.word;
+    
     const mp3 = await openai.audio.speech.create({
       model: 'gpt-4o-mini-tts',
       voice: 'alloy',
-      input: word,
+      input: input,
     });
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
     await fs.writeFile(outputPath, buffer);
   } catch (error) {
-    console.error(`   Error generating pronunciation for "${word}":`, error);
+    console.error(`   Error generating pronunciation for "${wordObj.word}":`, error);
     throw error;
   }
 }
@@ -129,8 +131,9 @@ async function generatePronunciations(forceAll = false) {
         console.log(`  ✓ Using existing: ${wordObj.word}`);
         reusedCount++;
       } else {
-        console.log(`  • Generating: ${wordObj.word}`);
-        await generatePronunciation(wordObj.word, outputPath);
+        const inputInfo = wordObj.phonetic ? `${wordObj.word} (${wordObj.phonetic})` : wordObj.word;
+        console.log(`  • Generating: ${inputInfo}`);
+        await generatePronunciation(wordObj, outputPath);
         wordObj.pronunciation = fileName;
         generatedCount++;
 
