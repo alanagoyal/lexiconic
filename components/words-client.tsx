@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -117,6 +117,11 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
+  // Cache unique languages for efficient exact matching
+  const uniqueLanguages = useMemo(() => {
+    return new Set(activeWords.map(word => word.language.toLowerCase()));
+  }, [activeWords]);
+
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   // Search results stored by relevance (unsorted)
@@ -185,9 +190,18 @@ export function WordsClient({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, viewMode, sortMode, seed, router]);
 
+  // Filter words by exact language match
+  const filterByExactLanguage = (query: string): WordWithEmbedding[] => {
+    const searchLower = query.toLowerCase();
+    return activeWords.filter((word) =>
+      word.language.toLowerCase().includes(searchLower)
+    );
+  };
+
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase();
+
     return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
@@ -204,6 +218,14 @@ export function WordsClient({
   const performSemanticSearch = async (
     query: string
   ): Promise<WordWithEmbedding[]> => {
+    const searchLower = query.toLowerCase();
+
+    // If exact language match, only return words from that language
+    if (uniqueLanguages.has(searchLower)) {
+      return filterByExactLanguage(query);
+    }
+
+    // Otherwise, perform normal semantic + keyword search
     try {
       const response = await fetch("/lexiconic/api/search-embedding", {
         method: "POST",
