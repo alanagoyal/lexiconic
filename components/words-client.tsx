@@ -185,14 +185,17 @@ export function WordsClient({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, viewMode, sortMode, seed, router]);
 
-  // Perform keyword search
-  const performKeywordSearch = (query: string): WordWithEmbedding[] => {
+  // Check if query is an exact language match
+  const isExactLanguageMatch = (query: string): boolean => {
     const searchLower = query.toLowerCase();
-
-    // Check if the query is an exact match for any language
-    const exactLanguageMatch = activeWords.some(
+    return activeWords.some(
       (word) => word.language.toLowerCase() === searchLower
     );
+  };
+
+  // Perform keyword search
+  const performKeywordSearch = (query: string, exactLanguageMatch: boolean): WordWithEmbedding[] => {
+    const searchLower = query.toLowerCase();
 
     // If exact language match, only show words with that language in their language field
     if (exactLanguageMatch) {
@@ -218,6 +221,17 @@ export function WordsClient({
   const performSemanticSearch = async (
     query: string
   ): Promise<WordWithEmbedding[]> => {
+    const exactLanguageMatch = isExactLanguageMatch(query);
+    const searchLower = query.toLowerCase();
+
+    // If exact language match, only return words from that language
+    if (exactLanguageMatch) {
+      return activeWords.filter((word) =>
+        word.language.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Otherwise, perform normal semantic + keyword search
     try {
       const response = await fetch("/lexiconic/api/search-embedding", {
         method: "POST",
@@ -234,7 +248,7 @@ export function WordsClient({
         0.3,
         30
       );
-      const keywordResults = performKeywordSearch(query);
+      const keywordResults = performKeywordSearch(query, false);
 
       // Combine results (semantic first, then keyword)
       const combined = [...semanticResults];
@@ -247,7 +261,7 @@ export function WordsClient({
       return combined;
     } catch (error) {
       console.error("Semantic search failed, using keyword only:", error);
-      return performKeywordSearch(query);
+      return performKeywordSearch(query, false);
     }
   };
 
