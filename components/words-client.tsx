@@ -188,6 +188,20 @@ export function WordsClient({
   // Perform keyword search
   const performKeywordSearch = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase();
+
+    // Check if the query is an exact match for any language
+    const exactLanguageMatch = activeWords.some(
+      (word) => word.language.toLowerCase() === searchLower
+    );
+
+    // If exact language match, only show words with that language in their language field
+    if (exactLanguageMatch) {
+      return activeWords.filter((word) =>
+        word.language.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Otherwise, do normal keyword search across all fields
     return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
