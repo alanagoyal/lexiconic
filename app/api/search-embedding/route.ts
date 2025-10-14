@@ -29,7 +29,7 @@ class EmbeddingCache {
     this.cache.set(key, value)
     // Evict oldest if over size
     if (this.cache.size > this.maxSize) {
-      const firstKey = this.cache.keys().next().value
+      const firstKey = this.cache.keys().next().value as string
       this.cache.delete(firstKey)
     }
   }
