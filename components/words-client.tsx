@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { SearchFilter } from "@/components/search-filter";
 import { WordsList } from "@/components/words-list";
 import { LexiconicHeader } from "@/components/header";
@@ -117,6 +117,11 @@ export function WordsClient({
   // Use words with embeddings if available, otherwise use initial words
   const activeWords = wordsWithEmbeddings || words;
 
+  // Cache unique languages for efficient exact matching
+  const uniqueLanguages = useMemo(() => {
+    return new Set(activeWords.map(word => word.language.toLowerCase()));
+  }, [activeWords]);
+
   const [searchTerm, setSearchTerm] = useState(initialSearchQuery);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   // Search results stored by relevance (unsorted)
@@ -185,26 +190,18 @@ export function WordsClient({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, viewMode, sortMode, seed, router]);
 
-  // Check if query is an exact language match
-  const isExactLanguageMatch = (query: string): boolean => {
+  // Filter words by exact language match
+  const filterByExactLanguage = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase();
-    return activeWords.some(
-      (word) => word.language.toLowerCase() === searchLower
+    return activeWords.filter((word) =>
+      word.language.toLowerCase().includes(searchLower)
     );
   };
 
   // Perform keyword search
-  const performKeywordSearch = (query: string, exactLanguageMatch: boolean): WordWithEmbedding[] => {
+  const performKeywordSearch = (query: string): WordWithEmbedding[] => {
     const searchLower = query.toLowerCase();
 
-    // If exact language match, only show words with that language in their language field
-    if (exactLanguageMatch) {
-      return activeWords.filter((word) =>
-        word.language.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Otherwise, do normal keyword search across all fields
     return activeWords.filter(
       (word) =>
         word.word.toLowerCase().includes(searchLower) ||
@@ -221,14 +218,11 @@ export function WordsClient({
   const performSemanticSearch = async (
     query: string
   ): Promise<WordWithEmbedding[]> => {
-    const exactLanguageMatch = isExactLanguageMatch(query);
     const searchLower = query.toLowerCase();
 
     // If exact language match, only return words from that language
-    if (exactLanguageMatch) {
-      return activeWords.filter((word) =>
-        word.language.toLowerCase().includes(searchLower)
-      );
+    if (uniqueLanguages.has(searchLower)) {
+      return filterByExactLanguage(query);
     }
 
     // Otherwise, perform normal semantic + keyword search
@@ -248,7 +242,7 @@ export function WordsClient({
         0.3,
         30
       );
-      const keywordResults = performKeywordSearch(query, false);
+      const keywordResults = performKeywordSearch(query);
 
       // Combine results (semantic first, then keyword)
       const combined = [...semanticResults];
@@ -261,7 +255,7 @@ export function WordsClient({
       return combined;
     } catch (error) {
       console.error("Semantic search failed, using keyword only:", error);
-      return performKeywordSearch(query, false);
+      return performKeywordSearch(query);
     }
   };
 
