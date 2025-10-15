@@ -6526,5 +6526,21 @@
     "lat": 28.6139,
     "lng": 77.209,
     "pronunciation": "3bfebd356b2c4ec792196f87c8320245.mp3"
+  },
+  {
+    "word": "apapacho",
+    "language": "Nahuatl",
+    "source": "https://en.wikipedia.org/wiki/Apapachar",
+    "family": "Uto-Aztecan",
+    "category": "emotion/affection",
+    "definition": "A tender act of physical affection, usually a gentle embrace or caress intended to comfort, soothe, or express warmth and emotional support to another person.",
+    "literal": "to caress",
+    "usage_notes": "Used to describe a comforting hug or gentle caress offered to soothe or reassure someone.",
+    "english_approx": "comforting hug",
+    "phonetic": "ah-pah-PAH-cho",
+    "location": "Mexico (Central Mexico / Valley of Mexico)",
+    "lat": 19.4326,
+    "lng": -99.1332,
+    "pronunciation": "65b26179e77fc96337c46f46e8bc5fd7.mp3"
   }
 ]
