@@ -6542,5 +6542,21 @@
     "lat": 19.4326,
     "lng": -99.1332,
     "pronunciation": "65b26179e77fc96337c46f46e8bc5fd7.mp3"
+  },
+  {
+    "word": "grok",
+    "language": "English (Heinleinian)",
+    "source": "https://en.wikipedia.org/wiki/Grok",
+    "family": "Indo-European (Germanic)",
+    "category": "understanding/intuition",
+    "definition": "A fictional Martian verb roughly meaning to drink, or metaphorically, to understand so fully that the observer becomes part of the observed.",
+    "literal": "to drink",
+    "usage_notes": "Used colloquially to denote exceptionally deep, intuitive comprehension, often in technical or literary contexts.",
+    "english_approx": "deeply understand",
+    "phonetic": "GROK",
+    "location": "United States",
+    "lat": 38.9072,
+    "lng": -77.0369,
+    "pronunciation": "220ac0149c9032f67825992936e3f385.mp3"
   }
 ]
