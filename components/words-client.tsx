@@ -105,9 +105,10 @@ export function WordsClient({
   const [sortMode, setSortMode] = useState(initialSortMode);
   const [seed, setSeed] = useState(initialSeed);
 
-  // Load embeddings in the background with SWR
+  // Load embeddings lazily with SWR - only when needed for semantic search
+  const shouldLoadEmbeddings = searchTerm.trim().length > 0;
   const { data: wordsWithEmbeddings, isLoading: embeddingsLoading } = useSWR<WordWithEmbedding[]>(
-    "/lexiconic/api/words",
+    shouldLoadEmbeddings ? "/lexiconic/api/words?embeddings=true" : null,
     fetcher,
     {
       revalidateOnFocus: false,
