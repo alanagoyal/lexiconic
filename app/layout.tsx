@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Lexiconic",
     description: "A digital exploration of linguistic untranslatability",
+    url: "https://basecase.vc/lexiconic",
     images: [
       {
         url: "/lexiconic/images/og.png",
