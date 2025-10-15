@@ -12,6 +12,7 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useDeviceType } from "@/hooks/use-device-type";
 import { Footer } from "@/components/footer";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 const MapView = dynamic(
   () =>
@@ -393,6 +394,40 @@ export function WordsClient({
     setViewMode(newViewMode);
     updateURLParams({ view: newViewMode });
   };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: "r",
+      handler: () => handleSortModeChange("random"),
+      description: "Randomize order",
+    },
+    {
+      key: "a",
+      handler: () => handleSortModeChange("asc"),
+      description: "Sort A to Z",
+    },
+    {
+      key: "z",
+      handler: () => handleSortModeChange("desc"),
+      description: "Sort Z to A",
+    },
+    {
+      key: "g",
+      handler: () => !isMobile && handleViewModeChange("grid"),
+      description: "Switch to grid view",
+    },
+    {
+      key: "l",
+      handler: () => handleViewModeChange("list"),
+      description: "Switch to list view",
+    },
+    {
+      key: "m",
+      handler: () => !isMobile && handleViewModeChange("map"),
+      description: "Switch to map view",
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
