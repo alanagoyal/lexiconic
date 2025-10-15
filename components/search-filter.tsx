@@ -1,6 +1,7 @@
 "use client"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
+import { forwardRef } from "react"
 
 interface SearchFilterProps {
   searchTerm: string
@@ -11,22 +12,27 @@ interface SearchFilterProps {
   isSearching?: boolean
 }
 
-export function SearchFilter({
-  searchTerm,
-  onSearchChange,
-  onClear,
-  totalWords,
-  filteredCount,
-  isSearching = false,
-}: SearchFilterProps) {
-  return (
-    <div className="w-full relative">
-      <Input
-        placeholder="Search words, definitions, or languages..."
-        value={searchTerm}
-        onChange={(e) => onSearchChange(e.target.value)}
-        className="w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-      />
+export const SearchFilter = forwardRef<HTMLInputElement, SearchFilterProps>(
+  function SearchFilter(
+    {
+      searchTerm,
+      onSearchChange,
+      onClear,
+      totalWords,
+      filteredCount,
+      isSearching = false,
+    },
+    ref
+  ) {
+    return (
+      <div className="w-full relative">
+        <Input
+          ref={ref}
+          placeholder="Search words, definitions, or languages..."
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full border-none bg-background text-base px-4 py-2 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+        />
       
       {searchTerm && (
         <div className="absolute bottom-2 right-2 text-xs text-muted-foreground flex items-center gap-2">
@@ -45,5 +51,5 @@ export function SearchFilter({
         </div>
       )}
     </div>
-  )
-}
+  );
+});

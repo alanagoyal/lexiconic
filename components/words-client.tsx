@@ -95,6 +95,7 @@ export function WordsClient({
 }: WordsClientProps) {
   const router = useRouter();
   const { isMobile } = useDeviceType();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Force list view on mobile devices, even if URL says grid/map
   const sanitizedInitialView = (isMobile && (initialViewMode === "grid" || initialViewMode === "map"))
@@ -398,6 +399,21 @@ export function WordsClient({
   // Keyboard shortcuts
   useKeyboardShortcuts([
     {
+      key: "/",
+      handler: () => {
+        searchInputRef.current?.focus();
+      },
+      description: "Focus search",
+    },
+    {
+      key: "Escape",
+      handler: () => {
+        searchInputRef.current?.blur();
+      },
+      description: "Unfocus search",
+      allowInInput: true,
+    },
+    {
       key: "r",
       handler: () => handleSortModeChange("random"),
       description: "Randomize order",
@@ -444,6 +460,7 @@ export function WordsClient({
         {/* Search - full width */}
         <div className="border-b border-border bg-background">
           <SearchFilter
+            ref={searchInputRef}
             searchTerm={searchTerm}
             onSearchChange={handleSearchChange}
             onClear={handleClear}

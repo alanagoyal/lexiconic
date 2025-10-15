@@ -4,6 +4,7 @@ export type KeyboardShortcut = {
   key: string;
   handler: () => void;
   description: string;
+  allowInInput?: boolean;
 };
 
 /**
@@ -19,15 +20,11 @@ export function useKeyboardShortcuts(
     if (!enabled) return;
 
     const handleKeyPress = (event: KeyboardEvent) => {
-      // Ignore if user is typing in an input, textarea, or contenteditable
       const target = event.target as HTMLElement;
-      if (
+      const isInInput =
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA" ||
-        target.contentEditable === "true"
-      ) {
-        return;
-      }
+        target.contentEditable === "true";
 
       // Ignore if modifier keys are pressed
       if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
@@ -38,8 +35,11 @@ export function useKeyboardShortcuts(
       const shortcut = shortcuts.find((s) => s.key.toLowerCase() === pressedKey);
 
       if (shortcut) {
-        event.preventDefault();
-        shortcut.handler();
+        // Allow shortcut if allowInInput is true, or if not in an input
+        if (shortcut.allowInInput || !isInInput) {
+          event.preventDefault();
+          shortcut.handler();
+        }
       }
     };
 
