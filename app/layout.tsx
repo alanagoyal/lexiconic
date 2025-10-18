@@ -45,6 +45,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{__html: `
+          // Prevent flash by hiding body until DOMContentLoaded (after scroll restoration)
+          document.documentElement.style.visibility = 'hidden';
+          document.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.style.visibility = 'visible';
+          });
+        `}} />
         <style>{`
 html {
   font-family: "GT Standard", ${GeistSans.style.fontFamily};
