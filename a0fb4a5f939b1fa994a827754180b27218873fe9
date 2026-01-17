@@ -1,0 +1,23 @@
+public/data/words.json
+  3398edf098535e7e 3293
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.31",
+  "base_commit_sha": "a0fb4a5f939b1fa994a827754180b27218873fe9",
+  "prompts": {
+    "3398edf098535e7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2232efea-8338-4fca-8a8d-2d699ba4c371",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "alanagoyal <alanaan@gmail.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
