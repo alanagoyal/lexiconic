@@ -1,62 +1,62 @@
-# Lexiconic
+# lexiconic
 
-Lexiconic is a digital exploration of untranslatable words - terms from various languages that express concepts, feelings, or situations that lack a direct translation in English. Each word includes:
+lexiconic is a digital exploration of untranslatable words - terms from various languages that express concepts, feelings, or situations that lack a direct translation in english. each word includes:
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/alanagoyals-projects/v0-untranslatable-words-website)
+[![deployed on vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/alanagoyals-projects/v0-untranslatable-words-website)
 
-## Features
+## features
 
-- **Multiple viewing modes**: List, grid, and interactive map visualization
-- **Semantic search**: Search by meaning, not just keywords
-- **Audio pronunciations**: Hear how each word is pronounced
-- **Flexible sorting**: Alphabetical, reverse, or randomized (with consistent seeds)
-- **Responsive design**: Beautiful interface across all devices
-- **Rich word data**: Includes categories, literal translations, and usage notes
+- **multiple viewing modes**: list, grid, and interactive map visualization
+- **semantic search**: search by meaning, not just keywords
+- **audio pronunciations**: hear how each word is pronounced
+- **flexible sorting**: alphabetical, reverse, or randomized (with consistent seeds)
+- **responsive design**: beautiful interface across all devices
+- **rich word data**: includes categories, literal translations, and usage notes
 
-## How It Works
+## how it works
 
-### Data Structure
-Words are stored in two separate files for optimal performance:
+### data structure
+words are stored in two separate files for optimal performance:
 
-**`/public/data/words.json`** - All word metadata (fast initial load ~236KB):
-- Word in native script and romanization
-- Language, language family, and geographic location
-- Definition, literal meaning, and usage notes
-- Pronunciation audio file references (stored in `/public/pronunciations/`)
+**`/public/data/words.json`** - all word metadata (fast initial load ~236kb):
+- word in native script and romanization
+- language, language family, and geographic location
+- definition, literal meaning, and usage notes
+- pronunciation audio file references (stored in `/public/pronunciations/`)
 
-**`/public/data/embeddings.json`** - Pre-computed embeddings only (~14MB):
-- Map of word → embedding vector + hash
-- Loaded in background via SWR for semantic search
-- Separate to keep words.json small and editable
+**`/public/data/embeddings.json`** - pre-computed embeddings only (~14mb):
+- map of word → embedding vector + hash
+- loaded in background via swr for semantic search
+- separate to keep words.json small and editable
 
-### Semantic Search
-The app uses AI embeddings to enable semantic search:
-1. Each word's content is converted to a vector embedding (stored separately in embeddings.json)
-2. When you search, your query is also embedded
-3. Results are ranked by cosine similarity to find conceptually related words
-4. Embeddings are pre-computed and loaded in background for fast searches
-5. Word metadata loads instantly (~236KB), embeddings load progressively (~14MB)
+### semantic search
+the app uses ai embeddings to enable semantic search:
+1. each word's content is converted to a vector embedding (stored separately in embeddings.json)
+2. when you search, your query is also embedded
+3. results are ranked by cosine similarity to find conceptually related words
+4. embeddings are pre-computed and loaded in background for fast searches
+5. word metadata loads instantly (~236kb), embeddings load progressively (~14mb)
 
-### Architecture
-- **Framework**: Next.js 15 with React 19
-- **Styling**: Tailwind CSS with shadcn/ui components
-- **Maps**: Mapbox GL for geographic visualization
-- **Search**: Client-side semantic search with SWR for data fetching
-- **Audio**: OpenAI TTS for pronunciation generation
+### architecture
+- **framework**: next.js 15 with react 19
+- **styling**: tailwind css with shadcn/ui components
+- **maps**: mapbox gl for geographic visualization
+- **search**: client-side semantic search with swr for data fetching
+- **audio**: openai tts for pronunciation generation
 
-## Running Locally
+## running locally
 
-### Prerequisites
-- Node.js 18+ and npm
-- (Optional) OpenAI API key for pronunciation generation
+### prerequisites
+- node.js 18+ and npm
+- (optional) openai api key for pronunciation generation
 
-### Important: `/lexiconic` Base Path
+### important: `/lexiconic` base path
 
-**This project is currently configured to be hosted at `/lexiconic` (not at the root).**
+**this project is currently configured to be hosted at `/lexiconic` (not at the root).**
 
-If you want to run it locally at the root path (recommended for local development), you'll need to make the following changes:
+if you want to run it locally at the root path (recommended for local development), you'll need to make the following changes:
 
-1. **Remove the basePath in `next.config.mjs`:**
+1. **remove the `basePath` in `next.config.mjs`:**
    ```javascript
    // Change this:
    basePath: '/lexiconic',
@@ -65,36 +65,36 @@ If you want to run it locally at the root path (recommended for local developmen
    // basePath: '', // or remove the line entirely
    ```
 
-2. **Update hardcoded paths in the codebase:**
-   - `app/api/og/route.tsx` - Remove `/lexiconic` from font and image paths
-   - Any other references to `/lexiconic` in your code
+2. **update hardcoded paths in the codebase:**
+   - `app/api/og/route.tsx` - remove `/lexiconic` from font and image paths
+   - any other references to `/lexiconic` in your code
 
-3. **Update environment variables:**
+3. **update environment variables:**
    ```bash
    # For local development, you can omit NEXT_PUBLIC_VERCEL_URL
    # or set it to your local URL:
    NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
    ```
 
-### Installation
+### installation
 
-1. **Clone the repository**
+1. **clone the repository**
    ```bash
    git clone <repository-url>
    cd lexiconic
    ```
 
-2. **Install dependencies**
+2. **install dependencies**
    ```bash
    npm install
    ```
 
-3. **Configure for local development** (see "Important: `/lexiconic` Base Path" above)
-   - Comment out or remove `basePath: '/lexiconic'` in `next.config.mjs`
-   - Search for `/lexiconic` in the codebase and update paths as needed
+3. **configure for local development** (see "important: `/lexiconic` base path" above)
+   - comment out or remove `basePath: '/lexiconic'` in `next.config.mjs`
+   - search for `/lexiconic` in the codebase and update paths as needed
 
-4. **Set up environment variables**
-   Create a `.env.local` file:
+4. **set up environment variables**
+   create a `.env.local` file:
    ```bash
    # Required for pronunciation generation
    OPENAI_API_KEY=your_openai_api_key_here
@@ -109,64 +109,64 @@ If you want to run it locally at the root path (recommended for local developmen
    NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
    ```
 
-   **Getting API Keys:**
-   - **OpenAI**: Get from [platform.openai.com](https://platform.openai.com/api-keys)
-   - **Mapbox**: Get from [mapbox.com/account/access-tokens](https://account.mapbox.com/access-tokens/)
-   - **Braintrust**: Get from [braintrust.dev](https://www.braintrust.dev/)
+   **getting api keys:**
+   - **openai**: get from [platform.openai.com](https://platform.openai.com/api-keys)
+   - **mapbox**: get from [mapbox.com/account/access-tokens](https://account.mapbox.com/access-tokens/)
+   - **braintrust**: get from [braintrust.dev](https://www.braintrust.dev/)
 
-   **Note:** The map view won't work without `NEXT_PUBLIC_MAPBOX_TOKEN`. Pronunciation generation and some scripts won't work without their respective API keys.
+   **note:** the map view won't work without `NEXT_PUBLIC_MAPBOX_TOKEN`. pronunciation generation and some scripts won't work without their respective api keys.
 
-5. **Run the development server**
+5. **run the development server**
    ```bash
    npm run dev
    ```
 
-6. **Open your browser**
-   - If you removed the basePath: [http://localhost:3000](http://localhost:3000)
-   - If you kept the basePath: [http://localhost:3000/lexiconic](http://localhost:3000/lexiconic)
+6. **open your browser**
+   - if you removed the `basePath`: [http://localhost:3000](http://localhost:3000)
+   - if you kept the `basePath`: [http://localhost:3000/lexiconic](http://localhost:3000/lexiconic)
 
-### Available Scripts
+### available scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Run production build
-- `npm run lint` - Run ESLint
-- `npm run add-word "word" "Language" "source"` - Add a new word with automatic generation
-- `npm run generate` - Generate all missing metadata, pronunciations, and embeddings
-- `npm run generate-metadata` - Generate metadata for words missing it
-- `npm run generate-pronunciation` - Generate audio for words missing it
-- `npm run generate-embedding` - Generate embeddings for words with changed content
+- `npm run dev` - start development server
+- `npm run build` - build for production
+- `npm start` - run production build
+- `npm run lint` - run eslint
+- `npm run add-word "word" "Language" "source"` - add a new word with automatic generation
+- `npm run generate` - generate all missing metadata, pronunciations, and embeddings
+- `npm run generate-metadata` - generate metadata for words missing it
+- `npm run generate-pronunciation` - generate audio for words missing it
+- `npm run generate-embedding` - generate embeddings for words with changed content
 
-## Adding New Words
+## adding new words
 
-### Method 1: CLI (Recommended)
+### method 1: cli (recommended)
 
-The easiest way to add a word is to use the CLI tool:
+the easiest way to add a word is to use the cli tool:
 
 ```bash
 npm run add-word "saudade" "Portuguese" "https://example.com/source"
 ```
 
-**What it does:**
-1. Validates inputs and checks for duplicates
-2. Creates a temporary backup of `words.json`
-3. Generates comprehensive metadata via Braintrust AI
-4. Generates pronunciation audio via OpenAI TTS
-5. Generates semantic embeddings via OpenAI
-6. Rolls back on error or cleans up backup on success
+**what it does:**
+1. validates inputs and checks for duplicates
+2. creates a temporary backup of `words.json`
+3. generates comprehensive metadata via braintrust ai
+4. generates pronunciation audio via openai tts
+5. generates semantic embeddings via openai
+6. rolls back on error or cleans up backup on success
 
-**Then commit:**
+**then commit:**
 ```bash
 git add .
 git commit -m "add saudade"
 git push
 ```
 
-### Method 2: Manually Add + Generate Metadata
+### method 2: manually add + generate metadata
 
-If you prefer to manually edit the JSON:
+if you prefer to manually edit the json:
 
-**1. Add minimal entry to `/public/data/words.json`:**
+**1. add minimal entry to `/public/data/words.json`:**
 ```json
 {
   "word": "saudade",
@@ -175,27 +175,27 @@ If you prefer to manually edit the JSON:
 }
 ```
 
-**2. Run generation (processes only what's needed):**
+**2. run generation (processes only what's needed):**
 ```bash
 npm run generate
 ```
 
-This runs three scripts in sequence, each processing only words that need processing:
-- `generate-metadata` - Fills in missing metadata fields
-- `generate-pronunciation` - Creates missing audio files
-- `generate-embedding` - Generates missing/changed embeddings
+this runs three scripts in sequence, each processing only words that need processing:
+- `generate-metadata` - fills in missing metadata fields
+- `generate-pronunciation` - creates missing audio files
+- `generate-embedding` - generates missing/changed embeddings
 
-**3. Commit the changes:**
+**3. commit the changes:**
 ```bash
 git add .
 git commit -m "add saudade"
 ```
 
-### Method 3: Manually Add Metadata
+### method 3: manually add metadata
 
-If you have your own metadata but want to generate only pronunciation and embeddings:
+if you have your own metadata but want to generate only pronunciation and embeddings:
 
-**1. Add complete metadata entry to `/public/data/words.json`:**
+**1. add complete metadata entry to `/public/data/words.json`:**
 ```json
 {
   "word": "saudade",
@@ -214,7 +214,7 @@ If you have your own metadata but want to generate only pronunciation and embedd
 }
 ```
 
-**2. Generate only pronunciation and embeddings:**
+**2. generate only pronunciation and embeddings:**
 ```bash
 # Generate just pronunciation audio
 npm run generate-pronunciation
@@ -223,17 +223,17 @@ npm run generate-pronunciation
 npm run generate-embedding
 ```
 
-**3. Commit the changes:**
+**3. commit the changes:**
 ```bash
 git add .
 git commit -m "add saudade"
 ```
 
-## Updating Words
+## updating words
 
-### Updating All Words
+### updating all words
 
-If you want to regenerate metadata, pronunciations, or embeddings for all words (e.g., after updating prompts):
+if you want to regenerate metadata, pronunciations, or embeddings for all words (e.g., after updating prompts):
 
 ```bash
 # Regenerate all metadata
@@ -246,22 +246,22 @@ npm run generate-pronunciation -- --all
 npm run generate-embedding -- --all
 ```
 
-### Updating Specific Fields
+### updating specific fields
 
-The `scripts/deprecated/` directory contains granular scripts for regenerating individual metadata fields. These are useful when you need to update or fix specific fields without regenerating all metadata:
+the `scripts/deprecated/` directory contains granular scripts for regenerating individual metadata fields. these are useful when you need to update or fix specific fields without regenerating all metadata:
 
-**Available Scripts:**
+**available scripts:**
 
-- **`generate-definition.ts`** - Regenerates only the `definition` field
-- **`generate-phonetic.ts`** - Regenerates only the `phonetic` field
-- **`generate-usage-note.ts`** - Regenerates only the `usage_notes` field
-- **`generate-location.ts`** - Regenerates only the `location` field
+- **`generate-definition.ts`** - regenerates only the `definition` field
+- **`generate-phonetic.ts`** - regenerates only the `phonetic` field
+- **`generate-usage-note.ts`** - regenerates only the `usage_notes` field
+- **`generate-location.ts`** - regenerates only the `location` field
 
-**Requirements:**
+**requirements:**
 - `BRAINTRUST_API_KEY` must be set in `.env.local`
-- All scripts create automatic backups in `/public/data/backup/` before making changes (deleted on success)
+- all scripts create automatic backups in `/public/data/backup/` before making changes (deleted on success)
 
-**Usage Examples:**
+**usage examples:**
 
 ```bash
 # Regenerate definitions for words missing this field only (default)
@@ -289,15 +289,15 @@ npx tsx scripts/deprecated/generate-location.ts
 npx tsx scripts/deprecated/generate-location.ts -- --all
 ```
 
-**When to use:**
-- After updating a specific Braintrust prompt
-- To fix incorrect data in a specific field
-- To add a field to words that are missing it
-- When testing changes to field generation logic
+**when to use:**
+- after updating a specific braintrust prompt
+- to fix incorrect data in a specific field
+- to add a field to words that are missing it
+- when testing changes to field generation logic
 
-**Note:** These scripts are considered "deprecated" because the main workflow uses `generate-metadata.ts` which handles all fields at once. However, they remain useful for targeted updates.
+**note:** these scripts are considered "deprecated" because the main workflow uses `generate-metadata.ts` which handles all fields at once. however, they remain useful for targeted updates.
 
-## Project Structure
+## project structure
 
 ```
 lexiconic/
@@ -327,10 +327,10 @@ lexiconic/
 └── scripts/                     # Utility scripts
 ```
 
-## License
+## license
 
-MIT
+mit
 
-## Contributing
+## contributing
 
-Contributions are welcome! Feel free to submit pull requests with new words, features, or improvements.
+contributions are welcome! feel free to submit pull requests with new words, features, or improvements.
